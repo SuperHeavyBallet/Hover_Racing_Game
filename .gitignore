@@ -1,0 +1,25 @@
+﻿# Unity generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Oo]bj/
+[Mm]emoryCaptures/
+.vs/
+
+# IDE-specific
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+
+# Unity packages
+Packages/com.unity.*
+
+# OS stuff
+.DS_Store
+Thumbs.db
