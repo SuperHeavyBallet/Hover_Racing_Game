@@ -27,6 +27,7 @@ public class Input_Receiver : MonoBehaviour
         moveInput = ctx.ReadValue<Vector2>();
 
         SCRIPT_Ship_Movement.UpdateMovement(moveInput);
+
     }
 
     public void Boost(InputAction.CallbackContext ctx)

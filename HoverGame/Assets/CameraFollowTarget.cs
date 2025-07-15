@@ -13,7 +13,12 @@ public class CameraFollowTarget : MonoBehaviour
     float maxZoomOut = 0.25f;            // Max additional distance allowed from speed
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void LateUpdate()
+    void FixedUpdate()
+    {
+        FollowTarget();
+    }
+
+    void FollowTarget()
     {
         if (target == null) return;
 

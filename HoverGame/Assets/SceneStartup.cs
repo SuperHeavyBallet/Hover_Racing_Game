@@ -7,7 +7,7 @@ public class SceneStartup : MonoBehaviour
     public static SceneStartup Instance { get; private set; }
 
     [SerializeField]
-    private string selectedVehicleClass = "heavy";
+    private string selectedVehicleClass = "light";
     public Vector3 spawnPosition;
     public float gameDifficulty;
 

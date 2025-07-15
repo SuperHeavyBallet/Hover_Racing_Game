@@ -1,8 +1,15 @@
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using TMPro;
 using UnityEngine;
-using static Ship_Movement;
+using Unity.VisualScripting;
+
 
 public class Ship_Movement : MonoBehaviour
 {
+    /*
     public enum VehicleClass
     {
         light,
@@ -10,7 +17,10 @@ public class Ship_Movement : MonoBehaviour
         heavy
     }
 
-    public VehicleClass vehicleClass = VehicleClass.medium;
+    public VehicleClass vehicleClass = VehicleClass.medium;*/
+
+    public TextMeshProUGUI boostText;
+    public TextMeshProUGUI speedDisplay;
 
     public ShipMeshSelector shipMeshSelector;
 
@@ -35,6 +45,9 @@ public class Ship_Movement : MonoBehaviour
     public float STAT_NormalTopSpeed = 300f;
     public float STAT_BoostTopSpeed = 400f;
     public float STAT_TopSpeed;
+
+    private float baseTopSpeed;
+    private float baseMovementForce;
 
     public float STAT_NormalMovementForce = 80f;
     public float STAT_BoostMovementForce = 100f;
@@ -67,58 +80,121 @@ public class Ship_Movement : MonoBehaviour
 
     public bool boostActivated;
 
+    private List<IEngineFireListener> engineFireListeners = new List<IEngineFireListener>();
+
+    float bounceAmplitude = 0.1f;   // Max up/down movement
+    float bounceSpeed = 2f;         // How fast it bounces
+
+    float idleBounceSpeed = 2f;
+    float idleBounceAmplitude = 0.1f;
+
+    float movingBounceSpeed = 4f;
+    float movingBounceAmplitude = 0.025f;
+
+    private Vector3 visualBasePosition;              // Starting point
+    private float bounceTimer;                       // Internal time tracker
+
+    public float currentBoostFuel = 100f;
+    public float maxBoostFuel = 100f;
+    public TextMeshProUGUI currentBoostFuelText;
+    public bool enteredBoostZone;
+    private Coroutine extraBoost;
+    public TextMeshProUGUI megaBoostText;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
+    {
+        
+        
+        megaBoostText.gameObject.SetActive(false);
+        rigidBody = GetComponent<Rigidbody>();
+        SelectShip();
+
+        // Store the original local position to oscillate from
+        visualBasePosition = shipVisual.localPosition;
+
+
+
+    }
+    void SelectShip()
     {
         shipMeshSelector = this.GetComponent<ShipMeshSelector>();
         SceneStartup sceneStartup = SceneStartup.Instance;
 
-        rigidBody = GetComponent<Rigidbody>();
-        VehicleClass_Received = sceneStartup.GetVehicleClass();
-        Debug.Log("Received: " + VehicleClass_Received);
+        if (sceneStartup != null)
+        {
+            VehicleClass_Received = sceneStartup.GetVehicleClass();
+        }
+
+       
         SwitchShipClass(VehicleClass_Received);
-        
+    }
+
+    public void RegisterEngineFireListener(IEngineFireListener listener)
+    {
+
+       
+
+        if(!engineFireListeners.Contains(listener))
+        {
+            engineFireListeners.Add(listener);
+        }
+
+       
+
+    }
+
+    public void UnregisterEngineFireListener(IEngineFireListener listener)
+    {
+        if(engineFireListeners.Contains(listener))
+        {
+            engineFireListeners.Remove(listener);
+        }
     }
 
     void SwitchShipClass(string vehicleClass)
     {
+        
+
         if (vehicleClass == "light")
         {
-            Debug.Log("Light Vehicle");
             shipMeshSelector.ShipMeshSelect("Light");
             STAT_NormalTopSpeed = 400f;
             STAT_BoostTopSpeed = 500f;
-            STAT_NormalMovementForce = 100f;
-            STAT_BoostMovementForce = 180f;
-            //movementForce = 100f;
+            STAT_NormalMovementForce = 120f;
+            STAT_BoostMovementForce = 200f;
             rotationSpeed = 280f;
+            maxBoostFuel = 100f;
+            
         }
         else if (vehicleClass == "medium")
         {
-            Debug.Log("Medium Vehicle");
             shipMeshSelector.ShipMeshSelect("Medium");
             STAT_NormalTopSpeed = 300f;
             STAT_BoostTopSpeed = 400f;
             STAT_NormalMovementForce = 80f;
             STAT_BoostMovementForce = 140f;
-            //movementForce = 80f;
             rotationSpeed = 200f;
+            maxBoostFuel = 150f;
         }
         else if (vehicleClass == "heavy")
         {
-            Debug.Log("Heavy Vehicle");
             shipMeshSelector.ShipMeshSelect("Heavy");
             STAT_NormalTopSpeed = 300f;
             STAT_BoostTopSpeed = 400f;
             STAT_NormalMovementForce = 60f;
             STAT_BoostMovementForce = 120f;
-            //movementForce = 60f;
             rotationSpeed = 100f;
+            maxBoostFuel = 200f;
         }
         else
         {
             Debug.Log("Error");
         }
+
+        currentBoostFuel = maxBoostFuel;
+        baseTopSpeed = STAT_NormalTopSpeed;
+        baseMovementForce = STAT_NormalMovementForce;
     }
 
     // Update is called once per frame
@@ -126,16 +202,112 @@ public class Ship_Movement : MonoBehaviour
     {
        // HoverHeight();
 
-        if(boostActivated)
+        if(boostActivated && forwardSpeed > 2 && currentBoostFuel > 0)
         {
             STAT_TopSpeed = STAT_BoostTopSpeed;
             STAT_MovementForce = STAT_BoostMovementForce;
+            boostText.text = "BOOST";
+            foreach (var listener in engineFireListeners)
+            {
+                if (listener != null)
+                {
+                    listener.OnShipBoostFiring(true);
+                }
+
+            }
+
+            currentBoostFuel -= 0.25f;
         }
         else
         {
+            boostActivated = false;
             STAT_TopSpeed = STAT_NormalTopSpeed;
             STAT_MovementForce = STAT_NormalMovementForce;
+            boostText.text = "--";
+            foreach (var listener in engineFireListeners)
+            {
+                if (listener != null)
+                {
+                    listener.OnShipBoostFiring(false);
+                }
+
+            }
+
+            if(currentBoostFuel < maxBoostFuel)
+            {
+                currentBoostFuel += 0.5f;
+            }
+            
         }
+
+        currentBoostFuelText.text = currentBoostFuel.ToString();
+
+        if (forwardSpeed > 0)
+        {
+            speedDisplay.text = Mathf.RoundToInt(forwardSpeed).ToString();
+        }
+        else
+        {
+            speedDisplay.text = "00";
+            boostActivated = false;
+        }
+        
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+     
+         
+            if (other.gameObject.CompareTag("BoostZone") && !enteredBoostZone)
+            {
+                enteredBoostZone = true;
+                megaBoostText.gameObject.SetActive(true);
+
+              
+
+                
+
+                // Stop any previous coroutine before starting a new one
+                if (extraBoost != null)
+                {
+                    StopCoroutine(extraBoost);
+                }
+
+            STAT_NormalTopSpeed = baseTopSpeed * 1.5f;
+            STAT_NormalMovementForce = baseMovementForce * 1.5f;
+
+
+
+            extraBoost = StartCoroutine(ResetSpeed());
+
+
+
+
+            }
+        
+   
+        
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.gameObject.CompareTag("BoostZone"))
+        {
+            enteredBoostZone = false;
+        }
+    }
+
+    private IEnumerator ResetSpeed()
+    {
+        yield return new WaitForSeconds(5);
+        megaBoostText.gameObject.SetActive(false);
+        STAT_NormalTopSpeed = baseTopSpeed;
+        STAT_NormalMovementForce = baseMovementForce;
+
+        extraBoost = null; // Clear reference
+
+
+
     }
 
     void FixedUpdate()
@@ -143,11 +315,9 @@ public class Ship_Movement : MonoBehaviour
         ApplyMovement();
         CastHoverZone();
         UpdateVisualTilt();
-    }
+        UpdateVisualBounce();
 
-    private void LateUpdate()
-    {
-       
+        
     }
 
 
@@ -165,8 +335,21 @@ public class Ship_Movement : MonoBehaviour
 
         Quaternion cameraRotation = Quaternion.Euler(0f, 0f, currentTilt / 1.5f);
 
-        worldCamera.transform.localRotation = cameraRotation;
-        playerCamera.transform.localRotation = cameraRotation;
+       worldCamera.transform.localRotation = cameraRotation;
+       playerCamera.transform.localRotation = cameraRotation;
+    }
+
+    void UpdateVisualBounce()
+    {
+        bounceTimer += Time.deltaTime * bounceSpeed;
+
+        // Sin wave for smooth bounce
+        float offsetY = Mathf.Sin(bounceTimer) * bounceAmplitude;
+
+        Vector3 targetPosition = visualBasePosition + new Vector3(0f, offsetY, 0f);
+
+        // Smoothly interpolate to target
+        shipVisual.localPosition = Vector3.Lerp(shipVisual.localPosition, targetPosition, Time.deltaTime * 5f);
     }
 
     public void ActivateBoost(bool isBoosting)
@@ -195,10 +378,30 @@ public class Ship_Movement : MonoBehaviour
         if(recievedMoveInput.y > 0)
         {
             isFiring = true;
+            foreach (var listener in engineFireListeners)
+            {
+                if(listener != null)
+                {
+                    listener.OnShipEngineFiring(true);
+                }
+                
+            }
+            bounceSpeed = movingBounceSpeed;
+            bounceAmplitude = movingBounceAmplitude;
         }
         else
         {
-            isFiring = false;
+            isFiring = false; 
+            foreach (var listener in engineFireListeners)
+            {
+                if(listener != null)
+                {
+                    listener.OnShipEngineFiring(false);
+                }
+                
+            }
+            bounceSpeed = idleBounceSpeed;
+            bounceAmplitude = idleBounceAmplitude;
         }
 
     }
@@ -214,6 +417,8 @@ public class Ship_Movement : MonoBehaviour
                 controller.isFiring = true;
             }
         }
+
+        
     }
 
     void CastHoverZone()
@@ -279,13 +484,17 @@ public class Ship_Movement : MonoBehaviour
 
             rigidBody.linearVelocity = clampedVelocity;
         }
+
+
         
 
         // Rotation (Y axis only)
         float turnAmount = recievedMoveInput.x * rotationSpeed * Time.deltaTime;
         transform.RotateAround(pivotPoint.position, Vector3.up, turnAmount);
 
-      
+       
+
+
     }
 
     void HoverHeight()

@@ -9,12 +9,22 @@ public class ComponentController : MonoBehaviour
     void Start()
     {
        string componentType = componentScipt.componentType.ToString();
-       Debug.Log("BRRR " + componentType);
+      
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    public string GetComponentName()
+    {
+        return componentScipt.componentType.ToString();
+    }
+
+    public string GetComponentWeight()
+    {
+        return componentScipt.componentWeight.ToString();
     }
 }

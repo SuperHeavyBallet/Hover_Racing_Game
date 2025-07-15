@@ -8,7 +8,7 @@ public class MainMenu_ShipSelector : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        SceneStartup sceneStartup = SceneStartup.Instance;
+        sceneStartup = SceneStartup.Instance;
 
 
     }
