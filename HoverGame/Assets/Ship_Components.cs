@@ -84,14 +84,14 @@ public class Ship_Components : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        SelectShip();
+       // SelectShip();
 
-        SpawnComponent(COMPONENT_BackLeft, POSITION_BackLeft);
-        SpawnComponent(COMPONENT_BackRight, POSITION_BackRight);
-        SpawnComponent(COMPONENT_FrontLeft, POSITION_FrontLeft);
-        SpawnComponent(COMPONENT_FrontRight, POSITION_FrontRight);
+       // SpawnComponent(COMPONENT_BackLeft, POSITION_BackLeft);
+        //SpawnComponent(COMPONENT_BackRight, POSITION_BackRight);
+       // SpawnComponent(COMPONENT_FrontLeft, POSITION_FrontLeft);
+       // SpawnComponent(COMPONENT_FrontRight, POSITION_FrontRight);
 
-        SpawnFrameEngine();
+       // SpawnFrameEngine();
 
        
     }

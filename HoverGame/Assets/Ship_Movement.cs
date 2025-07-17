@@ -32,26 +32,15 @@ public class Ship_Movement : MonoBehaviour
     public Camera playerCamera;
     
 
-    float movementForce = 80f;
-    float rotationSpeed = 200f;
+
+    
 
     
 
     Vector2 recievedMoveInput = Vector2.zero;
 
 
-    float STAT_BOOSTTopSpeed = 400f;
 
-    public float STAT_NormalTopSpeed = 300f;
-    public float STAT_BoostTopSpeed = 400f;
-    public float STAT_TopSpeed;
-
-    private float baseTopSpeed;
-    private float baseMovementForce;
-
-    public float STAT_NormalMovementForce = 80f;
-    public float STAT_BoostMovementForce = 100f;
-    public float STAT_MovementForce;
 
     public float forwardSpeed;
 
@@ -79,6 +68,7 @@ public class Ship_Movement : MonoBehaviour
     public string VehicleClass_Received;
 
     public bool boostActivated;
+    public bool limitActivated;
 
     private List<IEngineFireListener> engineFireListeners = new List<IEngineFireListener>();
 
@@ -100,6 +90,26 @@ public class Ship_Movement : MonoBehaviour
     public bool enteredBoostZone;
     private Coroutine extraBoost;
     public TextMeshProUGUI megaBoostText;
+
+    /// <summary>
+
+    int BASE_TopSpeed;
+    int BASE_MovementForce;
+    int BASE_RotationSpeed;
+
+    public int CURRENT_TopSpeed;
+    public int CURRENT_MovementForce;
+    public int CURRENT_RotationSpeed;
+
+    int STAT_ManualBoostAmount;
+    float STAT_RotationSpeed;
+
+    bool trackBoostActivated;
+
+    int boostZoneAmount = 50;
+
+
+    /// </summary>
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -154,58 +164,136 @@ public class Ship_Movement : MonoBehaviour
 
     void SwitchShipClass(string vehicleClass)
     {
-        
+
 
         if (vehicleClass == "light")
         {
             shipMeshSelector.ShipMeshSelect("Light");
-            STAT_NormalTopSpeed = 400f;
-            STAT_BoostTopSpeed = 500f;
-            STAT_NormalMovementForce = 120f;
-            STAT_BoostMovementForce = 200f;
-            rotationSpeed = 280f;
+
+            BASE_RotationSpeed = 280;
             maxBoostFuel = 100f;
-            
+
+            BASE_TopSpeed = 350;
+            BASE_MovementForce = 120;
+
+            STAT_ManualBoostAmount = 50;
+
         }
         else if (vehicleClass == "medium")
         {
             shipMeshSelector.ShipMeshSelect("Medium");
-            STAT_NormalTopSpeed = 300f;
-            STAT_BoostTopSpeed = 400f;
-            STAT_NormalMovementForce = 80f;
-            STAT_BoostMovementForce = 140f;
-            rotationSpeed = 200f;
+
+
+            BASE_RotationSpeed = 200;
             maxBoostFuel = 150f;
+
+            BASE_TopSpeed = 300;
+            BASE_MovementForce = 100;
+
+            STAT_ManualBoostAmount = 50;
         }
         else if (vehicleClass == "heavy")
         {
             shipMeshSelector.ShipMeshSelect("Heavy");
-            STAT_NormalTopSpeed = 300f;
-            STAT_BoostTopSpeed = 400f;
-            STAT_NormalMovementForce = 60f;
-            STAT_BoostMovementForce = 120f;
-            rotationSpeed = 100f;
+
+
+            BASE_RotationSpeed = 100;
             maxBoostFuel = 200f;
+
+            BASE_TopSpeed = 350;
+            BASE_MovementForce = 80;
+
+            STAT_ManualBoostAmount = 50;
         }
         else
         {
             Debug.Log("Error");
+            vehicleClass = "unknown Class";
+
+           
+
+
+            BASE_RotationSpeed = 200;
+            maxBoostFuel = 150f;
+
+            BASE_TopSpeed = 300;
+            BASE_MovementForce = 100;
+
+            STAT_ManualBoostAmount = 50;
         }
 
         currentBoostFuel = maxBoostFuel;
-        baseTopSpeed = STAT_NormalTopSpeed;
-        baseMovementForce = STAT_NormalMovementForce;
+
+
+    }
+
+    int CalculateCurrentTopSpeed(bool isManualBoosting, bool isTrackBoosting, bool isLimiting)
+    {
+
+        int workingTopSpeed = 0;
+
+        if (isManualBoosting)
+        {
+            workingTopSpeed += STAT_ManualBoostAmount;
+        }
+
+        if ( isTrackBoosting)
+        {
+            workingTopSpeed += boostZoneAmount;
+        }
+
+        if (isLimiting)
+        {
+            workingTopSpeed = -60;
+        }
+        
+
+        return BASE_TopSpeed + workingTopSpeed;
+    }
+
+    int CalculateCurrentRotationSpeed(bool isManualBoosting, bool isTrackBoosting, bool isLimiting)
+    {
+        int workingRotationSpeed = 0;
+
+        if (isLimiting)
+        {
+            workingRotationSpeed += 100;
+        }
+
+        return BASE_RotationSpeed + workingRotationSpeed;
+    }
+
+    int CalculateCurrentMovementForce(bool isManualBoosting, bool isTrackBoosting, bool isLimiting)
+    {
+        int workingMovementForce = 0;
+        if (isManualBoosting)
+        {
+            workingMovementForce += STAT_ManualBoostAmount;
+        }
+        if (isTrackBoosting)
+        {
+            workingMovementForce += boostZoneAmount;
+        }
+
+        if (isLimiting)
+        {
+            workingMovementForce = -60;
+        }
+
+        return BASE_MovementForce + workingMovementForce;
     }
 
     // Update is called once per frame
     void Update()
     {
-       // HoverHeight();
+        CURRENT_TopSpeed = CalculateCurrentTopSpeed(boostActivated, trackBoostActivated, limitActivated);
+        CURRENT_MovementForce = CalculateCurrentMovementForce(boostActivated, trackBoostActivated, limitActivated);
+        CURRENT_RotationSpeed = CalculateCurrentRotationSpeed(boostActivated, trackBoostActivated, limitActivated);
+
 
         if(boostActivated && forwardSpeed > 2 && currentBoostFuel > 0)
         {
-            STAT_TopSpeed = STAT_BoostTopSpeed;
-            STAT_MovementForce = STAT_BoostMovementForce;
+
             boostText.text = "BOOST";
             foreach (var listener in engineFireListeners)
             {
@@ -221,9 +309,8 @@ public class Ship_Movement : MonoBehaviour
         else
         {
             boostActivated = false;
-            STAT_TopSpeed = STAT_NormalTopSpeed;
-            STAT_MovementForce = STAT_NormalMovementForce;
             boostText.text = "--";
+
             foreach (var listener in engineFireListeners)
             {
                 if (listener != null)
@@ -239,6 +326,8 @@ public class Ship_Movement : MonoBehaviour
             }
             
         }
+
+        currentBoostFuel = Mathf.Clamp(currentBoostFuel, 0f, maxBoostFuel);
 
         currentBoostFuelText.text = currentBoostFuel.ToString();
 
@@ -256,37 +345,27 @@ public class Ship_Movement : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-     
-         
+
             if (other.gameObject.CompareTag("BoostZone") && !enteredBoostZone)
             {
                 enteredBoostZone = true;
                 megaBoostText.gameObject.SetActive(true);
 
-              
-
+                trackBoostActivated = true;
                 
-
-                // Stop any previous coroutine before starting a new one
                 if (extraBoost != null)
                 {
                     StopCoroutine(extraBoost);
                 }
 
-            STAT_NormalTopSpeed = baseTopSpeed * 1.5f;
-            STAT_NormalMovementForce = baseMovementForce * 1.5f;
-
-
-
-            extraBoost = StartCoroutine(ResetSpeed());
-
-
-
-
+                extraBoost = StartCoroutine(ResetSpeed());
             }
-        
-   
-        
+            
+        if(other.gameObject.CompareTag("PickUp"))
+        {
+              other.gameObject.SetActive(false);
+        }
+    
     }
 
     private void OnTriggerExit(Collider other)
@@ -301,13 +380,8 @@ public class Ship_Movement : MonoBehaviour
     {
         yield return new WaitForSeconds(5);
         megaBoostText.gameObject.SetActive(false);
-        STAT_NormalTopSpeed = baseTopSpeed;
-        STAT_NormalMovementForce = baseMovementForce;
-
-        extraBoost = null; // Clear reference
-
-
-
+        trackBoostActivated = false;
+        extraBoost = null;
     }
 
     void FixedUpdate()
@@ -356,6 +430,11 @@ public class Ship_Movement : MonoBehaviour
     {
         boostActivated = isBoosting;
 
+    }
+
+    public void ActivateLimit(bool isLimiting)
+    {
+        limitActivated = isLimiting;
     }
 
     public void UpdateMovement(Vector2 movementValue)
@@ -466,16 +545,16 @@ public class Ship_Movement : MonoBehaviour
         flatVelocity.y = 0f; // Only consider horizontal movement
         forwardSpeed = Vector3.Dot(flatVelocity, transform.forward);
 
-        if (forwardSpeed < STAT_TopSpeed)
+        if (forwardSpeed < CURRENT_TopSpeed)
         {
             // Apply acceleration forward
-            Vector3 forwardForce = transform.forward * recievedMoveInput.y * STAT_MovementForce;
+            Vector3 forwardForce = transform.forward * recievedMoveInput.y * CURRENT_MovementForce;
             rigidBody.AddForce(forwardForce, ForceMode.Acceleration);
         }
         else
         {
             // Clamp velocity to top speed in forward direction
-            Vector3 clampedVelocity = transform.forward * STAT_TopSpeed;
+            Vector3 clampedVelocity = transform.forward * CURRENT_TopSpeed;
 
             // Keep vertical + sideways velocity (no full overwrite)
             Vector3 currentVelocity = rigidBody.linearVelocity;
@@ -489,7 +568,7 @@ public class Ship_Movement : MonoBehaviour
         
 
         // Rotation (Y axis only)
-        float turnAmount = recievedMoveInput.x * rotationSpeed * Time.deltaTime;
+        float turnAmount = recievedMoveInput.x * CURRENT_RotationSpeed * Time.deltaTime;
         transform.RotateAround(pivotPoint.position, Vector3.up, turnAmount);
 
        

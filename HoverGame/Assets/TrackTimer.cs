@@ -10,7 +10,10 @@ public class TrackTimer : MonoBehaviour
 
     public TextMeshProUGUI highScoreText;
     public float lapScore;
-    private float bestLapTime = 999999999;
+    //private float bestLapTime = 999999999;
+
+
+    public Ghost_Ship_Controller ghostShipController;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -32,12 +35,11 @@ public class TrackTimer : MonoBehaviour
     {
         if(other.gameObject.CompareTag("TimeStart"))
         {
-
-            StartTimer();       // then start again for a new run
+            StartTimer();
         }
-        else if(other.gameObject.CompareTag("TimeStop"))
+        else if(other.gameObject.CompareTag("TimeStop") && timerActive)
         {
-            StopTimer();   // second entry = stop + check
+            StopTimer();
         }
     }
 
@@ -48,6 +50,7 @@ public class TrackTimer : MonoBehaviour
         timer = 0f;
         timerActive = true;
         UpdateScoreDisplay();
+        ghostShipController.StartRecordingRun();
     }
 
     private void StopTimer()
@@ -55,6 +58,7 @@ public class TrackTimer : MonoBehaviour
         lapScore = timer;
         timerActive = false;
         UpdateHighScore(lapScore); // Now we catch the actual completed lap time
+        ghostShipController.CaptureRun();
     }
 
     private void UpdateScoreDisplay()

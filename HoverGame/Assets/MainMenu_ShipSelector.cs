@@ -42,4 +42,99 @@ public class MainMenu_ShipSelector : MonoBehaviour
                 break;
         }
     }
+
+    public void ChooseComponentSlotFrame(string component)
+    {
+        sceneStartup.SetComponentSlotFrame(component);
+    }
+
+    public void ChooseComponentFL(int val)
+    {
+        string chosenComponent = "engine";
+
+        if(val == 0)
+        {
+            chosenComponent = "engine";
+        }
+        else if(val == 1)
+        {
+            chosenComponent = "jetEngine";
+        }
+        sceneStartup.SetComponentSlotFL(chosenComponent);
+    }
+
+    public void ChooseComponentFR(int val)
+    {
+        string chosenComponent = "engine";
+
+        if (val == 0)
+        {
+            chosenComponent = "engine";
+        }
+        else if (val == 1)
+        {
+            chosenComponent = "jetEngine";
+        }
+        sceneStartup.SetComponentSlotFR(chosenComponent);
+    }
+
+    public void ChooseComponentBL(int val)
+    {
+        string chosenComponent = "engine";
+
+        if (val == 0)
+        {
+            chosenComponent = "engine";
+        }
+        else if (val == 1)
+        {
+            chosenComponent = "jetEngine";
+        }
+        sceneStartup.SetComponentSlotBL(chosenComponent);
+    }
+
+    public void ChooseComponentBR(int val)
+    {
+        string chosenComponent = "engine";
+
+        if (val == 0)
+        {
+            chosenComponent = "engine";
+        }
+        else if (val == 1)
+        {
+            chosenComponent = "jetEngine";
+        }
+        sceneStartup.SetComponentSlotBR(chosenComponent);
+    }
+
+    public void ChooseComponentBL1(int val)
+    {
+        string chosenComponent = "engine";
+
+        if (val == 0)
+        {
+            chosenComponent = "engine";
+        }
+        else if (val == 1)
+        {
+            chosenComponent = "jetEngine";
+        }
+        sceneStartup.SetComponentSlotBL1(chosenComponent);
+    }
+
+    public void ChooseComponentBR1(int val)
+    {
+        string chosenComponent = "engine";
+
+        if (val == 0)
+        {
+            chosenComponent = "engine";
+        }
+        else if (val == 1)
+        {
+            chosenComponent = "jetEngine";
+        }
+        sceneStartup.SetComponentSlotBR1(chosenComponent);
+    }
 }

@@ -34,12 +34,23 @@ public class Input_Receiver : MonoBehaviour
     {
        if(ctx.performed)
         {
-            Debug.Log("BOOST!");
             SCRIPT_Ship_Movement.ActivateBoost(true);
         }
        else if (ctx.canceled)
         {
             SCRIPT_Ship_Movement.ActivateBoost(false);
+        }
+    }
+
+    public void Limit(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+        {
+            SCRIPT_Ship_Movement.ActivateLimit(true);
+        }
+        else if(ctx.canceled)
+        {
+            SCRIPT_Ship_Movement.ActivateLimit(false);
         }
     }
 }
