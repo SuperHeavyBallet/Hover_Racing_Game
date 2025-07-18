@@ -45,7 +45,7 @@ public class MainMenu_ShipSelector : MonoBehaviour
 
     public void ChooseComponentSlotFrame(string component)
     {
-        sceneStartup.SetComponentSlotFrame(component);
+        //sceneStartup.SetComponentSlotFrame(component);
     }
 
     public void ChooseComponentFL(int val)
@@ -60,7 +60,7 @@ public class MainMenu_ShipSelector : MonoBehaviour
         {
             chosenComponent = "jetEngine";
         }
-        sceneStartup.SetComponentSlotFL(chosenComponent);
+        //sceneStartup.SetComponentSlotFL(chosenComponent);
     }
 
     public void ChooseComponentFR(int val)
@@ -75,7 +75,7 @@ public class MainMenu_ShipSelector : MonoBehaviour
         {
             chosenComponent = "jetEngine";
         }
-        sceneStartup.SetComponentSlotFR(chosenComponent);
+        //sceneStartup.SetComponentSlotFR(chosenComponent);
     }
 
     public void ChooseComponentBL(int val)
@@ -90,7 +90,7 @@ public class MainMenu_ShipSelector : MonoBehaviour
         {
             chosenComponent = "jetEngine";
         }
-        sceneStartup.SetComponentSlotBL(chosenComponent);
+        //sceneStartup.SetComponentSlotBL(chosenComponent);
     }
 
     public void ChooseComponentBR(int val)
@@ -105,7 +105,7 @@ public class MainMenu_ShipSelector : MonoBehaviour
         {
             chosenComponent = "jetEngine";
         }
-        sceneStartup.SetComponentSlotBR(chosenComponent);
+       // sceneStartup.SetComponentSlotBR(chosenComponent);
     }
 
     public void ChooseComponentBL1(int val)
@@ -120,7 +120,7 @@ public class MainMenu_ShipSelector : MonoBehaviour
         {
             chosenComponent = "jetEngine";
         }
-        sceneStartup.SetComponentSlotBL1(chosenComponent);
+        //sceneStartup.SetComponentSlotBL1(chosenComponent);
     }
 
     public void ChooseComponentBR1(int val)
@@ -135,6 +135,6 @@ public class MainMenu_ShipSelector : MonoBehaviour
         {
             chosenComponent = "jetEngine";
         }
-        sceneStartup.SetComponentSlotBR1(chosenComponent);
+       // sceneStartup.SetComponentSlotBR1(chosenComponent);
     }
 }

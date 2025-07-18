@@ -1260,6 +1260,9 @@ MonoBehaviour:
   frontRightPosition: {fileID: 3615042963379928048}
   backRightPosition: {fileID: 6108339245573756949}
   backLeftPosition: {fileID: 5309039599207702705}
+  backLeft1Position: {fileID: 0}
+  backRight1Position: {fileID: 0}
+  frameSize: 1
 --- !u!1 &7329583366698741296
 GameObject:
   m_ObjectHideFlags: 0

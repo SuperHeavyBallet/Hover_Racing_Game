@@ -36,9 +36,15 @@ public class Ship_Constructor : MonoBehaviour
 
     string frameSize;
 
+    SceneStartup sceneStartup;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+
+        sceneStartup = SceneStartup.Instance;
+        sceneStartup.GetShipLoadouut();
+
         SCRIPT_ShipMovement = this.GetComponent<Ship_Movement>();
 
         SelectShip();
