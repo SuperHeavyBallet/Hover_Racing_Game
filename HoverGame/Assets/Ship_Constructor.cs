@@ -1,172 +1,183 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using static SceneStartup;
+
+/// <summary>
+/// This Script takes the components set in the Main Menu and builds the ship from that list
+/// </summary>
 
 public class Ship_Constructor : MonoBehaviour
 {
+    SceneStartup sceneStartup;
+    Ship_Passport shipPassport;
 
-    public ShipClass BASE_ShipStatSheet;
+    Dictionary<ComponentSlotType, string> componentSlots = new();
 
-    GameObject frame;
     public Transform framePosition;
-
-    GameObject frameEngine;
-
-    GameObject frontLeftComponent;
-    GameObject frontRightComponent;
-    GameObject backRightComponent;
-    GameObject backLeftComponent;
-
-    GameObject backRight1Component;
-    GameObject backLeft1Component;
-
-    Transform frameEnginePosition;
 
     Transform frontLeftPosition;
     Transform frontRightPosition;
     Transform backLeftPosition;
     Transform backRightPosition;
 
+    Transform extraLeftPosition;
+    Transform extraRightPosition;
+
     Transform backLeft1Position;
     Transform backRight1Position;
 
-    public string vehicleClass;
-
-    public TextMeshProUGUI shipClassText;
     Ship_Movement SCRIPT_ShipMovement;
 
-    string frameSize;
+    public GameObject lightFramePrefab;
+    public GameObject mediumFramePrefab;
+    public GameObject heavyFramePrefab;
+    public GameObject enginePrefab;
+    public GameObject jetEnginePrefab;
+    public GameObject aireonPrefab;
+    public GameObject fuelTankPrefab;
 
-    SceneStartup sceneStartup;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
-
-        sceneStartup = SceneStartup.Instance;
-        sceneStartup.GetShipLoadouut();
-
         SCRIPT_ShipMovement = this.GetComponent<Ship_Movement>();
-
-        SelectShip();
-        SpawnFrame();
-        SpawnFrameEngine();
-        SpawnComponents();
+        CheckInstance();
+        PlaceFrame();
+        PlaceComponent();
     }
 
-
-
-    void SelectShip()
+    void CheckInstance()
     {
-        SceneStartup sceneStartup = SceneStartup.Instance;
+        //sceneStartup = SceneStartup.Instance;
+        shipPassport = Ship_Passport.Instance;
 
-        if(sceneStartup != null )
+        if (shipPassport != null)
         {
-            vehicleClass = sceneStartup.GetVehicleClass();
+            componentSlots = shipPassport.GetShipLoadout();
         }
         else
         {
-           vehicleClass = BASE_ShipStatSheet.SELECTED_shipWeightClass.ToString();
+            componentSlots = shipPassport.GetShipLoadout();
         }
+    }
 
-        shipClassText.text = vehicleClass;
+    public List<string> GetShipLoadout()
+    {
+        List<string> componentList = new List<string>();
+
+        foreach (var pair in componentSlots)
+        {
+            componentList.Add(pair.Value);
+        }
+        return componentList;
     }
 
 
-    void SpawnFrame()
+    void PlaceFrame()
     {
-        frame = Instantiate(BASE_ShipStatSheet.frame, framePosition);
+        Transform position = null;
+        GameObject newComponent = null;
 
-        Frame_Layout frameLayout = frame.GetComponent<Frame_Layout>();
-
-        if(frameLayout != null )
+        foreach (var pair in componentSlots)
         {
-            frontLeftPosition = frameLayout.GetFrontLeftPosition();
-            frontRightPosition = frameLayout.GetFrontRightPosition();
-            backLeftPosition = frameLayout.GetBackLeftPosition();
-            backRightPosition = frameLayout.GetBackRightPosition();
-            frameEnginePosition = frameLayout.GetFrameEnginePosition();
-
-            string frameSize = frameLayout.GetFrameSize();
-            if(frameSize == "heavy")
+            if(pair.Key == ComponentSlotType.Frame)
             {
-                AddExtraEngins(frameLayout);
+                position = framePosition;
+
+                switch (pair.Value)
+                {
+                    case "light":
+                        newComponent = lightFramePrefab;  break;
+                    case "medium":
+                        newComponent = mediumFramePrefab; break;
+                    case "heavy": 
+                        newComponent = heavyFramePrefab; break;
+                    default:
+                        Debug.LogWarning("No Frame Type Assigned");
+                        break;
+                }
+
+                if (newComponent != null && position != null)
+                {
+                    GameObject chosenComponent = Instantiate(newComponent, position);
+                    chosenComponent.gameObject.SetActive(true);
+
+                    Frame_Layout frameLayout = chosenComponent.GetComponent<Frame_Layout>();
+
+                    if(frameLayout != null)
+                    {
+                        frontLeftPosition = frameLayout.GetFrontLeftPosition();
+                        frontRightPosition = frameLayout.GetFrontRightPosition();
+                        backLeftPosition = frameLayout.GetBackLeftPosition();
+                        backRightPosition = frameLayout.GetBackRightPosition();
+                        backLeft1Position = frameLayout.GetBackLeft1Position();
+                        backRight1Position = frameLayout.GetBackRight1Position();
+                        extraLeftPosition = frameLayout.GetExtraLeftPosition();
+                        extraRightPosition = frameLayout.GetExtraRightPosition();
+                    }
+                }
+                break;
             }
         }
     }
 
-    void AddExtraEngins(Frame_Layout frameLayout)
-    {
-        backLeft1Position = frameLayout.GetBackLeft1Position();
-        backRight1Position = frameLayout.GetBackRight1Position();
-
-        SpawnExtraComponents();
-    }
-
-    void SpawnFrameEngine()
-    {
-        frameEngine = Instantiate(BASE_ShipStatSheet.frameEngine, frameEnginePosition);
-
-        EngineController en_controller = frameEngine.GetComponent<EngineController>();
-
-        if( en_controller != null )
+    void PlaceComponent()
+    { 
+        foreach(var pair in componentSlots)
         {
-            SCRIPT_ShipMovement.RegisterEngineFireListener(en_controller);
+            Transform position = null;
+            GameObject newComponent = null;
+
+            switch (pair.Key)
+            {
+                case ComponentSlotType.FrontLeft: 
+                    position = frontLeftPosition; break;
+                case ComponentSlotType.FrontRight: 
+                    position = frontRightPosition; break;
+                case ComponentSlotType.BackLeft: 
+                    position = backLeftPosition; break;
+                case ComponentSlotType.BackRight: 
+                    position = backRightPosition; break;
+                case ComponentSlotType.BackLeft1: 
+                    position = backRight1Position; break;
+                case ComponentSlotType.BackRight1: 
+                    position = backRight1Position; break;
+                case ComponentSlotType.ExtraLeft:
+                    position = extraLeftPosition; break;
+                case ComponentSlotType.ExtraRight:
+                    position = extraRightPosition; break;
+                default:
+                    Debug.LogWarning("No Slot Assigned");
+                    break;
+            }
+            
+            switch (pair.Value)
+            {
+                case "engine":
+                    newComponent = enginePrefab; break;
+                case "jetEngine":
+                    newComponent = jetEnginePrefab; break;
+                case "aireon":
+                    newComponent = aireonPrefab; break;
+                case "fuelTank":
+                    newComponent = fuelTankPrefab; break;
+                default:
+                    Debug.LogWarning("No Component Value Assigned");
+                    break;
+            }
+
+            if (newComponent != null && position != null)
+            {
+                GameObject chosenComponent = Instantiate(newComponent, position);
+                chosenComponent.gameObject.SetActive(true);
+
+                EngineController engineController = chosenComponent.GetComponent<EngineController>();
+                if(engineController != null )
+                {
+                    SCRIPT_ShipMovement.RegisterEngineFireListener(engineController);
+                }
+            }
         }
     }
 
-    void SpawnComponents()
-    {
-        frontLeftComponent = Instantiate(BASE_ShipStatSheet.frontLeftComponent, frontLeftPosition);
-        frontRightComponent = Instantiate(BASE_ShipStatSheet.frontRightComponent, frontRightPosition);
-        backLeftComponent = Instantiate(BASE_ShipStatSheet.backLeftComponent, backLeftPosition);
-        backRightComponent = Instantiate(BASE_ShipStatSheet.backRightComponent, backRightPosition);
-
-        EngineController fl_controller = frontLeftComponent.GetComponent<EngineController>();
-        EngineController fr_controller = frontRightComponent.GetComponent<EngineController>();
-        EngineController bl_controller = backLeftComponent.GetComponent<EngineController>();
-        EngineController br_controller = backRightComponent.GetComponent<EngineController>();
-
-        if (fl_controller != null)
-        {
-            SCRIPT_ShipMovement.RegisterEngineFireListener(fl_controller);
-        }
-
-        if (fr_controller != null)
-        {
-            SCRIPT_ShipMovement.RegisterEngineFireListener(fr_controller);
-        }
-
-        if (bl_controller != null)
-        {
-            SCRIPT_ShipMovement.RegisterEngineFireListener(bl_controller);
-        }
-
-        if (br_controller != null)
-        {
-            SCRIPT_ShipMovement.RegisterEngineFireListener(br_controller);
-        }
-
-
-
-
-    }
-
-    void SpawnExtraComponents()
-    {
-        backLeft1Component = Instantiate(BASE_ShipStatSheet.backLeft1Component, backLeft1Position);
-        backRight1Component = Instantiate(BASE_ShipStatSheet.backRight1Component, backRight1Position);
-
-        EngineController bl1_controller = backLeft1Component.GetComponent<EngineController>();
-        EngineController br1_controller = backRight1Component.GetComponent<EngineController>();
-
-        if (bl1_controller != null)
-        {
-            SCRIPT_ShipMovement.RegisterEngineFireListener(bl1_controller);
-        }
-
-        if (br1_controller != null)
-        {
-            SCRIPT_ShipMovement.RegisterEngineFireListener(br1_controller);
-        }
-    }
+  
 }

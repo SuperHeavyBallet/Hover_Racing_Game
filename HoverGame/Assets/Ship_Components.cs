@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class Ship_Components : MonoBehaviour
 {
+
+    // POTENTIALLY REMOVE THIS ENTIRE SCRIPT
+
     private GameObject COMPONENT_ShipFrame;
     private GameObject COMPONENT_FrameEngine;
 
@@ -98,7 +101,7 @@ public class Ship_Components : MonoBehaviour
 
     void SelectShip()
     {
-        
+        /*
         SceneStartup sceneStartup = SceneStartup.Instance;
 
         if (sceneStartup != null)
@@ -169,7 +172,7 @@ public class Ship_Components : MonoBehaviour
             POSITION_BackLeft = MED_POSITION_BackLeft;
             POSITION_BackRight = MED_POSITION_BackRight;
 
-        }
+        }*/
     }
 
     void SpawnFrameEngine()

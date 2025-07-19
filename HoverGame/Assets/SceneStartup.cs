@@ -1,12 +1,15 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
+/// <summary>
+/// This Script is where the ship components are decided upon in the main menu
+/// </summary>
+/// 
 public class SceneStartup : MonoBehaviour
 {
 
-    public static SceneStartup Instance { get; private set; }
+    //public static SceneStartup Instance { get; private set; }
 
     [SerializeField]
     private string selectedVehicleClass = "light";
@@ -22,6 +25,8 @@ public class SceneStartup : MonoBehaviour
     public TextMeshProUGUI bRText;
     public TextMeshProUGUI bL1Text;
     public TextMeshProUGUI bR1Text;
+    public TextMeshProUGUI extraLeftText;
+    public TextMeshProUGUI extraRightText;
 
     public GameObject engine;
     public GameObject jetEngine;
@@ -29,14 +34,8 @@ public class SceneStartup : MonoBehaviour
     public GameObject lightFrame;
     public GameObject mediumFrame;
     public GameObject heavyFrame;
+    public GameObject fuelTank;
 
-    //GameObject frameComponent;
-    //GameObject fLComponent;
-    //GameObject fRComponent;
-    //GameObject bLComponent;
-    //GameObject bRComponent;
-    //GameObject bL1Component;
-    //GameObject bR1Component;
 
     public Transform framePosition;
     public Transform fLPosition;
@@ -45,38 +44,12 @@ public class SceneStartup : MonoBehaviour
     public Transform bRPosition;
     public Transform bL1Position;
     public Transform bR1Position;
+    public Transform extraLeftPosition;
+    public Transform extraRightPosition;
 
-    /*
-    public GameObject frame_Display_Light;
-    public GameObject frame_Display_Medium;
-    public GameObject frame_Display_Heavy;
+    Ship_Passport shipPassport;
 
-    public GameObject fL_Component_Engine;
-    public GameObject fL_Component_JetEngine;
-    public GameObject fL_Component_Aireon;
-
-    public GameObject fR_Component_Engine;
-    public GameObject fR_Component_JetEngine;
-    public GameObject fR_Component_Aireon;
-
-    public GameObject bL_Component_Engine;
-    public GameObject bL_Component_JetEngine;
-    public GameObject bL_Component_Aireon;
-
-    public GameObject bR_Component_Engine;
-    public GameObject bR_Component_JetEngine;
-    public GameObject bR_Component_Aireon;
-
-    public GameObject bL1_Component_Engine;
-    public GameObject bL1_Component_JetEngine;
-    public GameObject bL1_Component_Aireon;
-
-    public GameObject bR1_Component_Engine;
-    public GameObject bR1_Component_JetEngine;
-    public GameObject bR1_Component_Aireon;*/
-
-    //Array of components, [0] = Frame, [1] = FrontLeft, [2] = FrontRight, [3] = BackLeft, [4] = BackRight...
-
+    
     public enum ComponentSlotType
     {
         Frame,
@@ -85,15 +58,19 @@ public class SceneStartup : MonoBehaviour
         BackLeft,
         BackRight,
         BackLeft1,
-        BackRight1
+        BackRight1,
+        ExtraLeft,
+        ExtraRight
     }
 
     public Dictionary<ComponentSlotType, ComponentSlot> componentSlots = new();
 
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
+
+        
+        /*
         // Singleton enforcement
         if (Instance != null && Instance != this)
         {
@@ -103,22 +80,34 @@ public class SceneStartup : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject); // Keep across scene loads
-
-        //StartWithDisplayNotActive();
+        */
 
         InitializeComponentSlots();
 
-        SetComponentSlot(ComponentSlotType.Frame, "heavy");
-        SetComponentSlot(ComponentSlotType.FrontLeft, "engine");
-        SetComponentSlot(ComponentSlotType.FrontRight, "jetEngine");
-        SetComponentSlot(ComponentSlotType.BackLeft, "engine");
-        SetComponentSlot(ComponentSlotType.BackRight, "jetEngine");
-        SetComponentSlot(ComponentSlotType.BackLeft1, "empty");
-        SetComponentSlot(ComponentSlotType.BackRight1, "empty");
+        GenerateShip();
 
         DisplayComponentMeshes();
 
-        //GetShipLoadouut();
+        
+    }
+
+    private void Start()
+    {
+        shipPassport = GameObject.Find("ShipPassport").GetComponent<Ship_Passport>();
+        
+    }
+
+    public void GenerateShip()
+    {
+        SetComponentSlot(ComponentSlotType.Frame, "medium");
+        SetComponentSlot(ComponentSlotType.FrontLeft, "engine");
+        SetComponentSlot(ComponentSlotType.FrontRight, "engine");
+        SetComponentSlot(ComponentSlotType.BackLeft, "engine");
+        SetComponentSlot(ComponentSlotType.BackRight, "engine");
+        SetComponentSlot(ComponentSlotType.BackLeft1, "empty");
+        SetComponentSlot(ComponentSlotType.BackRight1, "empty");
+        SetComponentSlot(ComponentSlotType.ExtraLeft, "fuelTank");
+        SetComponentSlot(ComponentSlotType.ExtraRight, "fuelTank");
     }
 
     void DisplayComponentMeshes()
@@ -140,10 +129,10 @@ public class SceneStartup : MonoBehaviour
     public void UpdateComponent_Frame(string newComponentName)
     {
 
-        if(componentSlots.TryGetValue(ComponentSlotType.Frame, out var frameSlot))
+        if (componentSlots.TryGetValue(ComponentSlotType.Frame, out var frameSlot))
         {
 
-            if(frameSlot.selectedComponentKey != newComponentName)
+            if (frameSlot.selectedComponentKey != newComponentName)
             {
                 foreach (Transform child in frameSlot.position)
                 {
@@ -154,10 +143,10 @@ public class SceneStartup : MonoBehaviour
 
                 DisplayComponentMeshes();
             }
-            
+
         }
 
-        
+
 
 
     }
@@ -176,6 +165,8 @@ public class SceneStartup : MonoBehaviour
                 break;
             case 2:
                 replacementComponent = "aireon";
+                break;
+            case 3: replacementComponent = "fuelTank";
                 break;
             default:
                 replacementComponent = "empty";
@@ -205,7 +196,7 @@ public class SceneStartup : MonoBehaviour
     {
         string replacementComponent = GetComponentName(val);
 
-        UpdateComponent(ComponentSlotType.FrontLeft, replacementComponent);  
+        UpdateComponent(ComponentSlotType.FrontLeft, replacementComponent);
     }
 
     public void UpdateComponentSlot_FR(int val)
@@ -241,6 +232,20 @@ public class SceneStartup : MonoBehaviour
         string replacementComponent = GetComponentName(val);
 
         UpdateComponent(ComponentSlotType.BackRight1, replacementComponent);
+    }
+
+    public void UpdateComponentSlot_ExtraLeft(int val)
+    {
+        string replacementComponent = GetComponentName(val);
+
+        UpdateComponent(ComponentSlotType.ExtraLeft, replacementComponent);
+    }
+
+    public void UpdateComponentSlot_ExtraRight(int val)
+    {
+        string replacementComponent = GetComponentName(val);
+
+        UpdateComponent(ComponentSlotType.ExtraRight, replacementComponent);
     }
 
     void InitializeComponentSlots()
@@ -335,6 +340,33 @@ public class SceneStartup : MonoBehaviour
                 { "empty", aireon }
             }
         };
+
+        componentSlots[ComponentSlotType.ExtraLeft] = new ComponentSlot
+        {
+            label = extraLeftText,
+            position = extraLeftPosition,
+            components = new Dictionary<string, GameObject>
+            {
+                { "fuelTank", fuelTank },
+                { "engine", engine },
+                { "jetEngine", jetEngine },
+                { "empty", aireon }
+            }
+        };
+
+        componentSlots[ComponentSlotType.ExtraRight] = new ComponentSlot
+        {
+            label = extraRightText,
+            position = extraRightPosition,
+            components = new Dictionary<string, GameObject>
+            {
+                { "fuelTank", fuelTank },
+                { "engine", engine },
+                { "jetEngine", jetEngine },
+                { "empty", aireon }
+            }
+        };
+
     }
 
 
@@ -345,15 +377,16 @@ public class SceneStartup : MonoBehaviour
         if (!componentSlots.TryGetValue(slot, out var slotData)) return;
 
         slotData.label.text = componentKey;
-        slotData.selectedComponentKey = componentKey; 
+        slotData.selectedComponentKey = componentKey;
 
         foreach (var kvp in slotData.components)
         {
             kvp.Value.SetActive(kvp.Key == componentKey);
         }
-      
+
     }
 
+    /*
     // Update is called once per frame
     void Update()
     {
@@ -370,27 +403,42 @@ public class SceneStartup : MonoBehaviour
     public string GetVehicleClass()
     {
         //Debug.Log("Get Vehicle: " + selectedVehicleClass);
-        return shipClass.SELECTED_shipWeightClass.ToString();
+        return "light";
     }
 
-    public Dictionary<ComponentSlotType, string> GetShipLoadouut()
+    public Dictionary<ComponentSlotType, string> GetShipLoadout()
     {
         var result = new Dictionary<ComponentSlotType, string>();
 
-        foreach(var pair in componentSlots)
+        foreach (var pair in componentSlots)
         {
             result[pair.Key] = pair.Value.selectedComponentKey;
+
+            
         }
 
-        foreach (var pair in result)
-        {
-            Debug.Log(pair.Value.ToString());
-        }
+
 
         return result;
-       
+
     }
-    
+
+    */
+
+    public void SetShipLoadout()
+    {
+        var shipLoadout = new Dictionary<ComponentSlotType, string>();
+
+        foreach (var pair in componentSlots)
+        {
+            shipLoadout[pair.Key] = pair.Value.selectedComponentKey;
+        }
+
+        shipPassport.ReceiveShipLoadout(shipLoadout);
+
+        
+    }
+
 
 
 }

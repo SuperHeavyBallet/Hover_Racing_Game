@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Frame_Layout : MonoBehaviour
@@ -12,6 +13,9 @@ public class Frame_Layout : MonoBehaviour
 
     public Transform backLeft1Position;
     public Transform backRight1Position;
+
+    public Transform extraSlotLeftPosition;
+    public Transform extraSlotRightPosition;
 
 
     public FrameSize frameSize = FrameSize.medium;
@@ -53,6 +57,16 @@ public class Frame_Layout : MonoBehaviour
         return backRight1Position;
     }
 
+    public Transform GetExtraLeftPosition()
+    {
+        return extraSlotLeftPosition;
+    }
+
+    public Transform GetExtraRightPosition()
+    {
+        return extraSlotRightPosition;
+    }
+
     public Transform GetFrameEnginePosition()
     {
         return frameEnginePosition;
@@ -61,5 +75,14 @@ public class Frame_Layout : MonoBehaviour
     public string GetFrameSize()
     {
         return frameSize.ToString();
+    }
+
+    public Dictionary<string, Transform> GetFramePositions()
+    {
+        Dictionary<string, Transform> newFramePositions = new Dictionary<string, Transform>();
+
+        
+
+        return newFramePositions;
     }
 }

@@ -9,15 +9,7 @@ using Unity.VisualScripting;
 
 public class Ship_Movement : MonoBehaviour
 {
-    /*
-    public enum VehicleClass
-    {
-        light,
-        medium,
-        heavy
-    }
 
-    public VehicleClass vehicleClass = VehicleClass.medium;*/
 
     public TextMeshProUGUI boostText;
     public TextMeshProUGUI speedDisplay;
@@ -108,6 +100,13 @@ public class Ship_Movement : MonoBehaviour
 
     int boostZoneAmount = 50;
 
+    Ship_Constructor shipConstructor;
+
+    List<string> componentList= new List<string>();
+
+    public TextMeshProUGUI topSpeedText;
+    public TextMeshProUGUI topPowerText;
+    public TextMeshProUGUI topWeightText;
 
     /// </summary>
 
@@ -118,32 +117,97 @@ public class Ship_Movement : MonoBehaviour
         
         megaBoostText.gameObject.SetActive(false);
         rigidBody = GetComponent<Rigidbody>();
-        SelectShip();
+        //SelectShip();
 
         // Store the original local position to oscillate from
         visualBasePosition = shipVisual.localPosition;
 
+        
+        shipConstructor = GetComponent<Ship_Constructor>();
+        componentList = shipConstructor.GetShipLoadout();
+
+        foreach (string component in componentList)
+        {
+            Debug.Log("LIST: " + component);
+        }
+
+        CalculateWeight(componentList);
+
+        
+
 
 
     }
-    void SelectShip()
-    {
-        shipMeshSelector = this.GetComponent<ShipMeshSelector>();
-        SceneStartup sceneStartup = SceneStartup.Instance;
 
-        if (sceneStartup != null)
+    void CalculateWeight(List<string> components)
+    {
+        int totalWeight = 0;
+        int totalBoostPower = 0;
+        int totalTopSpeed = 0;
+        int totalFuelCapacity = 100;
+
+        foreach (string component in components)
         {
-            VehicleClass_Received = sceneStartup.GetVehicleClass();
+            switch(component)
+            {
+                case "light":
+                    totalWeight += 50;
+                    totalFuelCapacity += 30; break;
+                case "medium":
+                    totalWeight += 70;
+                    totalFuelCapacity += 10; break;
+                case "heavy":
+                    totalWeight += 100; break;
+                case "engine":
+                    totalWeight += 100;
+                    totalBoostPower += 10;
+                    totalTopSpeed += 30; break;
+                case "jetEngine":
+                    totalWeight += 70;
+                    totalBoostPower += 15;
+                    totalTopSpeed += 25; break;
+            }
+
+            
         }
 
+        BASE_RotationSpeed = totalWeight;
+        maxBoostFuel = totalFuelCapacity;
+
+        BASE_TopSpeed = totalTopSpeed;
+        BASE_MovementForce = totalBoostPower;
+
+        STAT_ManualBoostAmount = totalBoostPower;
+
+        topSpeedText.text = "Top Speed: " + totalTopSpeed.ToString();
+        topPowerText.text = "Top Power: " + totalBoostPower.ToString();
+        topWeightText.text = "Top Weight: " + totalWeight.ToString();
+
+        /*
+         * We need: 
+         * Top Base Speed (How fast the ship can reach)
+         * Top Base Power (How fast the ship can reach Top Speed)
+         * Top Boost Speed (How much added to Base speed)
+         * Top Boost Power (How much added to Base Power)
+         */
+    }
+    void SelectShip()
+    {
+        //shipMeshSelector = this.GetComponent<ShipMeshSelector>();
+        //SceneStartup sceneStartup = SceneStartup.Instance;
+
+        //if (sceneStartup != null)
+        //{
+           // VehicleClass_Received = sceneStartup.GetVehicleClass();
+        //}
+
        
-        SwitchShipClass(VehicleClass_Received);
+        //SwitchShipClass("medium");
     }
 
     public void RegisterEngineFireListener(IEngineFireListener listener)
     {
 
-       
 
         if(!engineFireListeners.Contains(listener))
         {
@@ -168,7 +232,7 @@ public class Ship_Movement : MonoBehaviour
 
         if (vehicleClass == "light")
         {
-            shipMeshSelector.ShipMeshSelect("Light");
+            //shipMeshSelector.ShipMeshSelect("Light");
 
             BASE_RotationSpeed = 280;
             maxBoostFuel = 100f;
@@ -181,7 +245,7 @@ public class Ship_Movement : MonoBehaviour
         }
         else if (vehicleClass == "medium")
         {
-            shipMeshSelector.ShipMeshSelect("Medium");
+            //shipMeshSelector.ShipMeshSelect("Medium");
 
 
             BASE_RotationSpeed = 200;
@@ -194,7 +258,7 @@ public class Ship_Movement : MonoBehaviour
         }
         else if (vehicleClass == "heavy")
         {
-            shipMeshSelector.ShipMeshSelect("Heavy");
+           // shipMeshSelector.ShipMeshSelect("Heavy");
 
 
             BASE_RotationSpeed = 100;
@@ -290,8 +354,8 @@ public class Ship_Movement : MonoBehaviour
         CURRENT_MovementForce = CalculateCurrentMovementForce(boostActivated, trackBoostActivated, limitActivated);
         CURRENT_RotationSpeed = CalculateCurrentRotationSpeed(boostActivated, trackBoostActivated, limitActivated);
 
-
-        if(boostActivated && forwardSpeed > 2 && currentBoostFuel > 0)
+    
+        if (boostActivated && forwardSpeed > 2 && currentBoostFuel > 0)
         {
 
             boostText.text = "BOOST";
@@ -300,6 +364,8 @@ public class Ship_Movement : MonoBehaviour
                 if (listener != null)
                 {
                     listener.OnShipBoostFiring(true);
+
+                  
                 }
 
             }

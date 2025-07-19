@@ -8,7 +8,7 @@ public class MainMenu_ShipSelector : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        sceneStartup = SceneStartup.Instance;
+       // sceneStartup = SceneStartup.Instance;
 
 
     }
@@ -23,7 +23,7 @@ public class MainMenu_ShipSelector : MonoBehaviour
     {
         SceneManager.LoadScene("Level1");
     }
-
+    /*
     public void ChooseShip(string shipClass)
     {
         switch(shipClass)
@@ -137,4 +137,6 @@ public class MainMenu_ShipSelector : MonoBehaviour
         }
        // sceneStartup.SetComponentSlotBR1(chosenComponent);
     }
+
+    */
 }
