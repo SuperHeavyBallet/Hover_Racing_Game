@@ -85,13 +85,13 @@ public class Ship_Movement : MonoBehaviour
 
     /// <summary>
 
-    int BASE_TopSpeed;
-    int BASE_MovementForce;
-    int BASE_RotationSpeed;
+    float BASE_TopSpeed;
+    float BASE_MovementForce;
+    float BASE_RotationSpeed;
 
-    public int CURRENT_TopSpeed;
-    public int CURRENT_MovementForce;
-    public int CURRENT_RotationSpeed;
+    public float CURRENT_TopSpeed;
+    public float CURRENT_MovementForce;
+    public float CURRENT_RotationSpeed;
 
     int STAT_ManualBoostAmount;
     float STAT_RotationSpeed;
@@ -108,16 +108,28 @@ public class Ship_Movement : MonoBehaviour
     public TextMeshProUGUI topPowerText;
     public TextMeshProUGUI topWeightText;
 
+    Audio_Manager audioManager;
+    public AudioClip AUDIO_boostTrigger;
+    public AudioClip AUDIO_boostOFF;
+    public AudioClip AUDIO_boostFlow;
+    public AudioClip AUDIO_engineIdle;
+
+    public bool boostersActive;
+
+    public bool engineIdle = false;
+
+    public Inner_CameraController innerCameraController;
+
     /// </summary>
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         
-        
+        audioManager = GameObject.Find("AudioManager").GetComponent<Audio_Manager>();
+
         megaBoostText.gameObject.SetActive(false);
         rigidBody = GetComponent<Rigidbody>();
-        //SelectShip();
 
         // Store the original local position to oscillate from
         visualBasePosition = shipVisual.localPosition;
@@ -126,62 +138,51 @@ public class Ship_Movement : MonoBehaviour
         shipConstructor = GetComponent<Ship_Constructor>();
         componentList = shipConstructor.GetShipLoadout();
 
-        foreach (string component in componentList)
-        {
-            Debug.Log("LIST: " + component);
-        }
+       
 
         CalculateWeight(componentList);
 
-        
-
+        engineIdle = true;
+        audioManager.PlayEngineIdleSound(AUDIO_engineIdle);
 
 
     }
 
     void CalculateWeight(List<string> components)
     {
+        int rawSpeed = 0;
+        int rawPower = 0;
         int totalWeight = 0;
-        int totalBoostPower = 0;
-        int totalTopSpeed = 0;
-        int totalFuelCapacity = 100;
+        int fuel = 100;
 
-        foreach (string component in components)
+        foreach (var c in components)
         {
-            switch(component)
+            switch (c)
             {
-                case "light":
-                    totalWeight += 50;
-                    totalFuelCapacity += 30; break;
-                case "medium":
-                    totalWeight += 70;
-                    totalFuelCapacity += 10; break;
-                case "heavy":
-                    totalWeight += 100; break;
-                case "engine":
-                    totalWeight += 100;
-                    totalBoostPower += 10;
-                    totalTopSpeed += 30; break;
-                case "jetEngine":
-                    totalWeight += 70;
-                    totalBoostPower += 15;
-                    totalTopSpeed += 25; break;
-            }
+                case "light": totalWeight += 50; fuel += 30; break;
+                case "medium": totalWeight += 70; fuel += 10; break;
+                case "heavy": totalWeight += 100; break;
 
-            
+                case "engine": totalWeight += 100; rawPower += 15; rawSpeed += 30; break;
+                case "jetEngine": totalWeight += 70; rawPower += 20; rawSpeed += 25; break;
+
+                case "fuelTank": totalWeight += 10; fuel += 50; break;
+                default: break;
+            }
         }
 
-        BASE_RotationSpeed = totalWeight;
-        maxBoostFuel = totalFuelCapacity;
+        float weightFactor = Mathf.Max(totalWeight, 1);
 
-        BASE_TopSpeed = totalTopSpeed;
-        BASE_MovementForce = totalBoostPower;
+        BASE_TopSpeed = rawSpeed - weightFactor * 0.1f;
+        BASE_MovementForce = rawPower - weightFactor * 0.05f;
+        BASE_RotationSpeed = weightFactor / 4;
 
-        STAT_ManualBoostAmount = totalBoostPower;
+        maxBoostFuel = fuel;
+        STAT_ManualBoostAmount = rawPower;
 
-        topSpeedText.text = "Top Speed: " + totalTopSpeed.ToString();
-        topPowerText.text = "Top Power: " + totalBoostPower.ToString();
-        topWeightText.text = "Top Weight: " + totalWeight.ToString();
+        topSpeedText.text = $"Top Speed: {BASE_TopSpeed:F1}";
+        topPowerText.text = $"Top Power: {BASE_MovementForce:F1}";
+        topWeightText.text = $"Weight: {totalWeight}";
 
         /*
          * We need: 
@@ -191,31 +192,14 @@ public class Ship_Movement : MonoBehaviour
          * Top Boost Power (How much added to Base Power)
          */
     }
-    void SelectShip()
-    {
-        //shipMeshSelector = this.GetComponent<ShipMeshSelector>();
-        //SceneStartup sceneStartup = SceneStartup.Instance;
 
-        //if (sceneStartup != null)
-        //{
-           // VehicleClass_Received = sceneStartup.GetVehicleClass();
-        //}
-
-       
-        //SwitchShipClass("medium");
-    }
 
     public void RegisterEngineFireListener(IEngineFireListener listener)
     {
-
-
         if(!engineFireListeners.Contains(listener))
         {
             engineFireListeners.Add(listener);
         }
-
-       
-
     }
 
     public void UnregisterEngineFireListener(IEngineFireListener listener)
@@ -226,72 +210,8 @@ public class Ship_Movement : MonoBehaviour
         }
     }
 
-    void SwitchShipClass(string vehicleClass)
-    {
 
-
-        if (vehicleClass == "light")
-        {
-            //shipMeshSelector.ShipMeshSelect("Light");
-
-            BASE_RotationSpeed = 280;
-            maxBoostFuel = 100f;
-
-            BASE_TopSpeed = 350;
-            BASE_MovementForce = 120;
-
-            STAT_ManualBoostAmount = 50;
-
-        }
-        else if (vehicleClass == "medium")
-        {
-            //shipMeshSelector.ShipMeshSelect("Medium");
-
-
-            BASE_RotationSpeed = 200;
-            maxBoostFuel = 150f;
-
-            BASE_TopSpeed = 300;
-            BASE_MovementForce = 100;
-
-            STAT_ManualBoostAmount = 50;
-        }
-        else if (vehicleClass == "heavy")
-        {
-           // shipMeshSelector.ShipMeshSelect("Heavy");
-
-
-            BASE_RotationSpeed = 100;
-            maxBoostFuel = 200f;
-
-            BASE_TopSpeed = 350;
-            BASE_MovementForce = 80;
-
-            STAT_ManualBoostAmount = 50;
-        }
-        else
-        {
-            Debug.Log("Error");
-            vehicleClass = "unknown Class";
-
-           
-
-
-            BASE_RotationSpeed = 200;
-            maxBoostFuel = 150f;
-
-            BASE_TopSpeed = 300;
-            BASE_MovementForce = 100;
-
-            STAT_ManualBoostAmount = 50;
-        }
-
-        currentBoostFuel = maxBoostFuel;
-
-
-    }
-
-    int CalculateCurrentTopSpeed(bool isManualBoosting, bool isTrackBoosting, bool isLimiting)
+    float CalculateCurrentTopSpeed(bool isManualBoosting, bool isTrackBoosting, bool isLimiting)
     {
 
         int workingTopSpeed = 0;
@@ -315,7 +235,7 @@ public class Ship_Movement : MonoBehaviour
         return BASE_TopSpeed + workingTopSpeed;
     }
 
-    int CalculateCurrentRotationSpeed(bool isManualBoosting, bool isTrackBoosting, bool isLimiting)
+    float CalculateCurrentRotationSpeed(bool isManualBoosting, bool isTrackBoosting, bool isLimiting)
     {
         int workingRotationSpeed = 0;
 
@@ -327,7 +247,7 @@ public class Ship_Movement : MonoBehaviour
         return BASE_RotationSpeed + workingRotationSpeed;
     }
 
-    int CalculateCurrentMovementForce(bool isManualBoosting, bool isTrackBoosting, bool isLimiting)
+    float CalculateCurrentMovementForce(bool isManualBoosting, bool isTrackBoosting, bool isLimiting)
     {
         int workingMovementForce = 0;
         if (isManualBoosting)
@@ -354,29 +274,67 @@ public class Ship_Movement : MonoBehaviour
         CURRENT_MovementForce = CalculateCurrentMovementForce(boostActivated, trackBoostActivated, limitActivated);
         CURRENT_RotationSpeed = CalculateCurrentRotationSpeed(boostActivated, trackBoostActivated, limitActivated);
 
-    
-        if (boostActivated && forwardSpeed > 2 && currentBoostFuel > 0)
+        CheckBoostFiring();
+
+        
+        UpdateEngineSound();
+       
+
+        DisplaySpeed();
+
+        
+        
+    }
+
+    void UpdateEngineSound()
+    {
+        if (forwardSpeed * 1.25f > audioManager.baseEnginePitch)
         {
 
+            audioManager.UpdateEnginePitch(forwardSpeed * 1.25f);
+        }
+        else
+        {
+            audioManager.ResetEnginePitch();
+        }
+    }
+
+    void CheckBoostFiring()
+    {
+        if (boostActivated && forwardSpeed > 2 && currentBoostFuel > 0)
+        {
+            boostersActive = true;
             boostText.text = "BOOST";
             foreach (var listener in engineFireListeners)
             {
                 if (listener != null)
                 {
                     listener.OnShipBoostFiring(true);
-
-                  
                 }
 
             }
 
             currentBoostFuel -= 0.25f;
+
+         
+        }
+        else if (boostActivated && currentBoostFuel <= 0)
+        {
+            boostActivated = false;
+            audioManager.StopPlayerSound();
+            audioManager.PlayPlayerSound_OneShot(AUDIO_boostOFF);
+        }
+        else if(boostActivated && forwardSpeed <= 2)
+        {
+            boostActivated = false;
+            audioManager.StopPlayerSound();
+            audioManager.PlayPlayerSound_OneShot(AUDIO_boostOFF);
         }
         else
         {
             boostActivated = false;
             boostText.text = "--";
-
+            boostersActive = false;
             foreach (var listener in engineFireListeners)
             {
                 if (listener != null)
@@ -386,16 +344,23 @@ public class Ship_Movement : MonoBehaviour
 
             }
 
-            if(currentBoostFuel < maxBoostFuel)
+            if (currentBoostFuel < maxBoostFuel)
             {
                 currentBoostFuel += 0.5f;
             }
-            
+
         }
 
         currentBoostFuel = Mathf.Clamp(currentBoostFuel, 0f, maxBoostFuel);
 
         currentBoostFuelText.text = currentBoostFuel.ToString();
+    }
+
+    void DisplaySpeed()
+    {/*
+        Debug.Log("RECORD SPEED");
+        Debug.Log(forwardSpeed);
+        Debug.Log(rigidBody.linearVelocity.magnitude);*/
 
         if (forwardSpeed > 0)
         {
@@ -406,7 +371,6 @@ public class Ship_Movement : MonoBehaviour
             speedDisplay.text = "00";
             boostActivated = false;
         }
-        
     }
 
     private void OnTriggerEnter(Collider other)
@@ -456,8 +420,7 @@ public class Ship_Movement : MonoBehaviour
         CastHoverZone();
         UpdateVisualTilt();
         UpdateVisualBounce();
-
-        
+  
     }
 
 
@@ -496,7 +459,25 @@ public class Ship_Movement : MonoBehaviour
     {
         boostActivated = isBoosting;
 
+        if (isBoosting == true && forwardSpeed > 2 && currentBoostFuel > 0)
+        {
+            innerCameraController.TriggerShake();
+
+            audioManager.PlayPlayerSound_OneShot(AUDIO_boostTrigger);
+            audioManager.PlayBoostSound();
+            
+        }
+        
+        else if(isBoosting == false && boostersActive)
+        {
+            audioManager.StopBoostSound();
+            audioManager.PlayPlayerSound_OneShot(AUDIO_boostOFF);
+        }
+
+        
     }
+
+    
 
     public void ActivateLimit(bool isLimiting)
     {
@@ -595,16 +576,10 @@ public class Ship_Movement : MonoBehaviour
             }
         }
 
-        if(!atLeastOneGrounded)
-        {
-           
-        }
-
     }
 
     void ApplyMovement()
     {
-        // Movement
 
         // Get current forward velocity component
         Vector3 flatVelocity = rigidBody.linearVelocity;
@@ -642,19 +617,4 @@ public class Ship_Movement : MonoBehaviour
 
     }
 
-    void HoverHeight()
-    {
-        RaycastHit hit;
-
-        if (Physics.Raycast(hoverCastPosition.position, Vector3.down, out hit, hoverHeight, groundMask))
-        {
-            float distanceToGround = hit.distance;
-            float hoverError = hoverHeight - distanceToGround;
-
-            float hoverForce = hoverError * 10f; // spring force
-            float damping = rigidBody.linearVelocity.y * 2f; // dampen bouncing
-
-            rigidBody.AddForce(Vector3.up * (hoverForce - damping), ForceMode.Acceleration);
-        }
-    }
 }

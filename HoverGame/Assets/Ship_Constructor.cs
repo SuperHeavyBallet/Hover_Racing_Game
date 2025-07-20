@@ -13,6 +13,7 @@ public class Ship_Constructor : MonoBehaviour
     Ship_Passport shipPassport;
 
     Dictionary<ComponentSlotType, string> componentSlots = new();
+    Dictionary<ComponentSlotType, string> BACKUP_componentSlots = new();
 
     public Transform framePosition;
 
@@ -56,8 +57,28 @@ public class Ship_Constructor : MonoBehaviour
         }
         else
         {
-            componentSlots = shipPassport.GetShipLoadout();
+            Debug.LogWarning("Ship Passport not found or loadout not received. Using default backup loadout.");
+
+            componentSlots = CreateDefaultLoadout();
+
+        
         }
+    }
+
+    Dictionary<ComponentSlotType, string> CreateDefaultLoadout()
+    {
+        return new Dictionary<ComponentSlotType, string>
+    {
+        { ComponentSlotType.Frame, "medium" },
+        { ComponentSlotType.FrontLeft, "engine" },
+        { ComponentSlotType.FrontRight, "engine" },
+        { ComponentSlotType.BackLeft, "engine" },
+        { ComponentSlotType.BackRight, "engine" },
+        { ComponentSlotType.BackLeft1, "empty" },
+        { ComponentSlotType.BackRight1, "empty" },
+        { ComponentSlotType.ExtraLeft, "fuelTank" },
+        { ComponentSlotType.ExtraRight, "fuelTank" }
+    };
     }
 
     public List<string> GetShipLoadout()

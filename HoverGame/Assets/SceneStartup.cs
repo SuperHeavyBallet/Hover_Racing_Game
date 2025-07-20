@@ -9,8 +9,6 @@ using UnityEngine;
 public class SceneStartup : MonoBehaviour
 {
 
-    //public static SceneStartup Instance { get; private set; }
-
     [SerializeField]
     private string selectedVehicleClass = "light";
     public Vector3 spawnPosition;
@@ -68,33 +66,16 @@ public class SceneStartup : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-
-        
-        /*
-        // Singleton enforcement
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject); // Keep across scene loads
-        */
-
         InitializeComponentSlots();
 
         GenerateShip();
 
-        DisplayComponentMeshes();
-
-        
+        DisplayComponentMeshes();    
     }
 
     private void Start()
     {
-        shipPassport = GameObject.Find("ShipPassport").GetComponent<Ship_Passport>();
-        
+        shipPassport = GameObject.Find("ShipPassport").GetComponent<Ship_Passport>();  
     }
 
     public void GenerateShip()
@@ -128,10 +109,8 @@ public class SceneStartup : MonoBehaviour
 
     public void UpdateComponent_Frame(string newComponentName)
     {
-
         if (componentSlots.TryGetValue(ComponentSlotType.Frame, out var frameSlot))
         {
-
             if (frameSlot.selectedComponentKey != newComponentName)
             {
                 foreach (Transform child in frameSlot.position)
@@ -143,12 +122,7 @@ public class SceneStartup : MonoBehaviour
 
                 DisplayComponentMeshes();
             }
-
         }
-
-
-
-
     }
 
     string GetComponentName(int val)
@@ -386,44 +360,6 @@ public class SceneStartup : MonoBehaviour
 
     }
 
-    /*
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    public void SetVehicleClass(string vehicleClass)
-    {
-
-        selectedVehicleClass = vehicleClass;
-        //Debug.Log("Scene Startup: " + vehicleClass);
-    }
-
-    public string GetVehicleClass()
-    {
-        //Debug.Log("Get Vehicle: " + selectedVehicleClass);
-        return "light";
-    }
-
-    public Dictionary<ComponentSlotType, string> GetShipLoadout()
-    {
-        var result = new Dictionary<ComponentSlotType, string>();
-
-        foreach (var pair in componentSlots)
-        {
-            result[pair.Key] = pair.Value.selectedComponentKey;
-
-            
-        }
-
-
-
-        return result;
-
-    }
-
-    */
 
     public void SetShipLoadout()
     {

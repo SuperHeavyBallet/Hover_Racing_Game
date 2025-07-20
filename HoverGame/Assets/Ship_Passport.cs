@@ -10,11 +10,12 @@ using static Ship_Passport;
 public class Ship_Passport : MonoBehaviour
 {
     public static Ship_Passport Instance {  get; private set; }
-    public Dictionary<ComponentSlotType, string> componentSlots { get; private set; } = new(); 
+    public Dictionary<ComponentSlotType, string> componentSlots { get; private set; } = new();
+    public bool receivedShipLoadout = false;   
 
 
 // Start is called once before the first execution of Update after the MonoBehaviour is created
-void Awake()
+    void Awake()
     {
         if(Instance != null && Instance != this)
         {
@@ -25,7 +26,11 @@ void Awake()
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        Debug.Log("PASSPORT");
+        if (!receivedShipLoadout)
+        {
+           
+
+        }
     }
 
     // Update is called once per frame
@@ -36,6 +41,8 @@ void Awake()
 
     public void ReceiveShipLoadout(Dictionary<ComponentSlotType, string> shipLoadout )
     {
+        receivedShipLoadout = true;
+
         componentSlots.Clear();
 
         componentSlots = shipLoadout;
