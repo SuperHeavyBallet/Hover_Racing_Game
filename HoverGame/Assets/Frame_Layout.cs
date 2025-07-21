@@ -14,6 +14,7 @@ public class Frame_Layout : MonoBehaviour
     public Transform backLeft1Position;
     public Transform backRight1Position;
 
+    public Transform extraFrontPosition;
     public Transform extraSlotLeftPosition;
     public Transform extraSlotRightPosition;
 
@@ -55,6 +56,11 @@ public class Frame_Layout : MonoBehaviour
     public Transform GetBackRight1Position()
     {
         return backRight1Position;
+    }
+
+    public Transform GetExtraFrontPosition()
+    {
+        return extraFrontPosition;
     }
 
     public Transform GetExtraLeftPosition()

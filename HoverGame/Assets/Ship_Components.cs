@@ -27,58 +27,12 @@ public class Ship_Components : MonoBehaviour
 
     public int totalWeight;
 
-    [Header("Light Ship Components")]
-    public GameObject LIGHT_COMPONENT_ShipFrame;
-    public GameObject LIGHT_COMPONENT_FrameEngine;
-
-    public GameObject LIGHT_COMPONENT_FrontRight;
-    public GameObject LIGHT_COMPONENT_FrontLeft;
-    public GameObject LIGHT_COMPONENT_BackRight;
-    public GameObject LIGHT_COMPONENT_BackLeft;
-
-    public Transform LIGHT_POSITION_FrontRight;
-    public Transform LIGHT_POSITION_FrontLeft;
-    public Transform LIGHT_POSITION_BackRight;
-    public Transform LIGHT_POSITION_BackLeft;
-
-    public Transform LIGHT_POSITION_FrameEngine;
-
-    [Header("Medium Ship Components")]
-    public GameObject MED_COMPONENT_ShipFrame;
-    public GameObject MED_COMPONENT_FrameEngine;
-
-    public GameObject MED_COMPONENT_FrontRight;
-    public GameObject MED_COMPONENT_FrontLeft;
-    public GameObject MED_COMPONENT_BackRight;
-    public GameObject MED_COMPONENT_BackLeft;
-
-    public Transform MED_POSITION_FrontRight;
-    public Transform MED_POSITION_FrontLeft;
-    public Transform MED_POSITION_BackRight;
-    public Transform MED_POSITION_BackLeft;
-
-    public Transform MED_POSITION_FrameEngine;
-
-    [Header("Heavy Ship Components")]
-    public GameObject HEAVY_COMPONENT_ShipFrame;
-    public GameObject HEAVY_COMPONENT_FrameEngine;
-
-    public GameObject HEAVY_COMPONENT_FrontRight;
-    public GameObject HEAVY_COMPONENT_FrontLeft;
-    public GameObject HEAVY_COMPONENT_BackRight;
-    public GameObject HEAVY_COMPONENT_BackLeft;
-
-    public Transform HEAVY_POSITION_FrontRight;
-    public Transform HEAVY_POSITION_FrontLeft;
-    public Transform HEAVY_POSITION_BackRight;
-    public Transform HEAVY_POSITION_BackLeft;
-
-    public Transform HEAVY_POSITION_FrameEngine;
-
-    public string vehicleClass;
 
 
-    public TextMeshProUGUI shipClassText;
+
+
+
+
 
 
 
@@ -87,93 +41,12 @@ public class Ship_Components : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-       // SelectShip();
-
-       // SpawnComponent(COMPONENT_BackLeft, POSITION_BackLeft);
-        //SpawnComponent(COMPONENT_BackRight, POSITION_BackRight);
-       // SpawnComponent(COMPONENT_FrontLeft, POSITION_FrontLeft);
-       // SpawnComponent(COMPONENT_FrontRight, POSITION_FrontRight);
-
-       // SpawnFrameEngine();
+    
 
        
     }
 
-    void SelectShip()
-    {
-        /*
-        SceneStartup sceneStartup = SceneStartup.Instance;
-
-        if (sceneStartup != null)
-        {
-            vehicleClass = sceneStartup.GetVehicleClass();
-        }
-        else
-        {
-            vehicleClass = "light";
-        }
-
-        shipClassText.text = vehicleClass;  
-
-        if (vehicleClass == "light")
-        {
-            COMPONENT_FrameEngine = LIGHT_COMPONENT_FrameEngine;
-            COMPONENT_FrontLeft = LIGHT_COMPONENT_FrontLeft;
-            COMPONENT_FrontRight = LIGHT_COMPONENT_FrontRight;
-            COMPONENT_BackLeft = LIGHT_COMPONENT_BackLeft;
-            COMPONENT_BackRight = LIGHT_COMPONENT_BackRight;
-
-            POSITION_FrameEngine = LIGHT_POSITION_FrameEngine;
-            POSITION_FrontLeft = LIGHT_POSITION_FrontLeft;
-            POSITION_FrontRight = LIGHT_POSITION_FrontRight;
-            POSITION_BackLeft = LIGHT_POSITION_BackLeft;
-            POSITION_BackRight = LIGHT_POSITION_BackRight;
-        }
-        else if (vehicleClass == "medium")
-        {
-            COMPONENT_FrameEngine = MED_COMPONENT_FrameEngine;
-            COMPONENT_FrontLeft = MED_COMPONENT_FrontLeft;
-            COMPONENT_FrontRight= MED_COMPONENT_FrontRight;
-            COMPONENT_BackLeft= MED_COMPONENT_BackLeft;
-            COMPONENT_BackRight= MED_COMPONENT_BackRight;
-
-            POSITION_FrameEngine= MED_POSITION_FrameEngine;
-            POSITION_FrontLeft= MED_POSITION_FrontLeft;
-            POSITION_FrontRight= MED_POSITION_FrontRight;
-            POSITION_BackLeft= MED_POSITION_BackLeft;
-            POSITION_BackRight= MED_POSITION_BackRight;
-        }
-        else if (vehicleClass == "heavy")
-        {
-            COMPONENT_FrameEngine = HEAVY_COMPONENT_FrameEngine;
-            COMPONENT_FrontLeft= HEAVY_COMPONENT_FrontLeft;
-            COMPONENT_FrontRight = HEAVY_COMPONENT_FrontRight;
-            COMPONENT_BackLeft = HEAVY_COMPONENT_BackLeft;
-            COMPONENT_BackRight = HEAVY_COMPONENT_BackRight;
-
-            POSITION_FrameEngine = HEAVY_POSITION_FrameEngine;
-            POSITION_FrontLeft = HEAVY_POSITION_FrontLeft;
-            POSITION_FrontRight = HEAVY_POSITION_FrontRight;
-            POSITION_BackLeft = HEAVY_POSITION_BackLeft;
-            POSITION_BackRight = HEAVY_POSITION_BackRight;
-        }
-        else
-        {
-            Debug.Log("Error");
-            COMPONENT_FrameEngine = MED_COMPONENT_FrameEngine;
-            COMPONENT_FrontLeft = MED_COMPONENT_FrontLeft;
-            COMPONENT_FrontRight = MED_COMPONENT_FrontRight;
-            COMPONENT_BackLeft = MED_COMPONENT_BackLeft;
-            COMPONENT_BackRight = MED_COMPONENT_BackRight;
-
-            POSITION_FrameEngine = MED_POSITION_FrameEngine;
-            POSITION_FrontLeft = MED_POSITION_FrontLeft;
-            POSITION_FrontRight = MED_POSITION_FrontRight;
-            POSITION_BackLeft = MED_POSITION_BackLeft;
-            POSITION_BackRight = MED_POSITION_BackRight;
-
-        }*/
-    }
+   
 
     void SpawnFrameEngine()
     {

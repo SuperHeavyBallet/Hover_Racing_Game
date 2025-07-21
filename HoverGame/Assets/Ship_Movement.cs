@@ -117,8 +117,12 @@ public class Ship_Movement : MonoBehaviour
     public bool boostersActive;
 
     public bool engineIdle = false;
+    public bool hasBoostGulp = false;
+    public GameObject boostGulpText;
 
     public Inner_CameraController innerCameraController;
+
+    Ship_Passport shipPassport;
 
     /// </summary>
 
@@ -138,13 +142,27 @@ public class Ship_Movement : MonoBehaviour
         shipConstructor = GetComponent<Ship_Constructor>();
         componentList = shipConstructor.GetShipLoadout();
 
-       
+        shipPassport = Ship_Passport.Instance;
+        
 
         CalculateWeight(componentList);
+        CheckBoostGulp();
 
         engineIdle = true;
         audioManager.PlayEngineIdleSound(AUDIO_engineIdle);
 
+
+    }
+
+    void CheckBoostGulp()
+    {
+        foreach(var component in componentList)
+        {
+            if(component == "boostGulp")
+            {
+                hasBoostGulp = true;
+            }
+        }
 
     }
 
@@ -178,6 +196,7 @@ public class Ship_Movement : MonoBehaviour
         BASE_RotationSpeed = weightFactor / 4;
 
         maxBoostFuel = fuel;
+        currentBoostFuel = fuel;
         STAT_ManualBoostAmount = rawPower;
 
         topSpeedText.text = $"Top Speed: {BASE_TopSpeed:F1}";
@@ -276,11 +295,14 @@ public class Ship_Movement : MonoBehaviour
 
         CheckBoostFiring();
 
+        innerCameraController.SetShakeAmount(forwardSpeed / 2000);
         
         UpdateEngineSound();
        
 
         DisplaySpeed();
+
+        
 
         
         
@@ -303,6 +325,7 @@ public class Ship_Movement : MonoBehaviour
     {
         if (boostActivated && forwardSpeed > 2 && currentBoostFuel > 0)
         {
+
             boostersActive = true;
             boostText.text = "BOOST";
             foreach (var listener in engineFireListeners)
@@ -347,8 +370,20 @@ public class Ship_Movement : MonoBehaviour
             if (currentBoostFuel < maxBoostFuel)
             {
                 currentBoostFuel += 0.5f;
+
+          
             }
 
+        }
+
+        if (hasBoostGulp && forwardSpeed > (CURRENT_TopSpeed / 4) && currentBoostFuel < maxBoostFuel)
+        {
+            boostGulpText.SetActive(true);
+            currentBoostFuel += forwardSpeed / 500;
+        }
+        else
+        {
+            boostGulpText.SetActive(false);
         }
 
         currentBoostFuel = Mathf.Clamp(currentBoostFuel, 0f, maxBoostFuel);
@@ -461,7 +496,7 @@ public class Ship_Movement : MonoBehaviour
 
         if (isBoosting == true && forwardSpeed > 2 && currentBoostFuel > 0)
         {
-            innerCameraController.TriggerShake();
+           // innerCameraController.TriggerShake();
 
             audioManager.PlayPlayerSound_OneShot(AUDIO_boostTrigger);
             audioManager.PlayBoostSound();

@@ -21,7 +21,7 @@ public class Ship_Constructor : MonoBehaviour
     Transform frontRightPosition;
     Transform backLeftPosition;
     Transform backRightPosition;
-
+    Transform extraFrontPosition;
     Transform extraLeftPosition;
     Transform extraRightPosition;
 
@@ -37,6 +37,7 @@ public class Ship_Constructor : MonoBehaviour
     public GameObject jetEnginePrefab;
     public GameObject aireonPrefab;
     public GameObject fuelTankPrefab;
+    public GameObject boostGulpPrefab;
 
     void Awake()
     {
@@ -45,6 +46,7 @@ public class Ship_Constructor : MonoBehaviour
         PlaceFrame();
         PlaceComponent();
     }
+
 
     void CheckInstance()
     {
@@ -76,6 +78,7 @@ public class Ship_Constructor : MonoBehaviour
         { ComponentSlotType.BackRight, "engine" },
         { ComponentSlotType.BackLeft1, "empty" },
         { ComponentSlotType.BackRight1, "empty" },
+        { ComponentSlotType.ExtraFront, "boostGulp" },
         { ComponentSlotType.ExtraLeft, "fuelTank" },
         { ComponentSlotType.ExtraRight, "fuelTank" }
     };
@@ -132,6 +135,7 @@ public class Ship_Constructor : MonoBehaviour
                         backRightPosition = frameLayout.GetBackRightPosition();
                         backLeft1Position = frameLayout.GetBackLeft1Position();
                         backRight1Position = frameLayout.GetBackRight1Position();
+                        extraFrontPosition = frameLayout.GetExtraFrontPosition();
                         extraLeftPosition = frameLayout.GetExtraLeftPosition();
                         extraRightPosition = frameLayout.GetExtraRightPosition();
                     }
@@ -159,9 +163,11 @@ public class Ship_Constructor : MonoBehaviour
                 case ComponentSlotType.BackRight: 
                     position = backRightPosition; break;
                 case ComponentSlotType.BackLeft1: 
-                    position = backRight1Position; break;
+                    position = backLeft1Position; break;
                 case ComponentSlotType.BackRight1: 
                     position = backRight1Position; break;
+                case ComponentSlotType.ExtraFront:
+                    position = extraFrontPosition; break;
                 case ComponentSlotType.ExtraLeft:
                     position = extraLeftPosition; break;
                 case ComponentSlotType.ExtraRight:
@@ -181,6 +187,8 @@ public class Ship_Constructor : MonoBehaviour
                     newComponent = aireonPrefab; break;
                 case "fuelTank":
                     newComponent = fuelTankPrefab; break;
+                case "boostGulp":
+                    newComponent = boostGulpPrefab; break;
                 default:
                     Debug.LogWarning("No Component Value Assigned");
                     break;
@@ -197,6 +205,10 @@ public class Ship_Constructor : MonoBehaviour
                     SCRIPT_ShipMovement.RegisterEngineFireListener(engineController);
                 }
             }
+            else
+{
+    Debug.LogWarning($"Component {pair.Value} not placed. Position is {(position == null ? "null" : "OK")}");
+}
         }
     }
 

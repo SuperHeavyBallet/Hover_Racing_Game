@@ -10,11 +10,11 @@ public class SceneStartup : MonoBehaviour
 {
 
     [SerializeField]
-    private string selectedVehicleClass = "light";
-    public Vector3 spawnPosition;
-    public float gameDifficulty;
+    //private string selectedVehicleClass = "light";
+    //public Vector3 spawnPosition;
+    //public float gameDifficulty;
 
-    public ShipClass shipClass;
+    //public ShipClass shipClass;
 
     public TextMeshProUGUI frameText;
     public TextMeshProUGUI fLText;
@@ -23,6 +23,7 @@ public class SceneStartup : MonoBehaviour
     public TextMeshProUGUI bRText;
     public TextMeshProUGUI bL1Text;
     public TextMeshProUGUI bR1Text;
+    public TextMeshProUGUI extraFrontText;
     public TextMeshProUGUI extraLeftText;
     public TextMeshProUGUI extraRightText;
 
@@ -33,6 +34,7 @@ public class SceneStartup : MonoBehaviour
     public GameObject mediumFrame;
     public GameObject heavyFrame;
     public GameObject fuelTank;
+    public GameObject boostGulp;
 
 
     public Transform framePosition;
@@ -42,6 +44,7 @@ public class SceneStartup : MonoBehaviour
     public Transform bRPosition;
     public Transform bL1Position;
     public Transform bR1Position;
+    public Transform extraFrontPosition;
     public Transform extraLeftPosition;
     public Transform extraRightPosition;
 
@@ -57,8 +60,22 @@ public class SceneStartup : MonoBehaviour
         BackRight,
         BackLeft1,
         BackRight1,
+        ExtraFront,
         ExtraLeft,
         ExtraRight
+    }
+
+    public enum ComponentName
+    {
+        lightFrame,
+        mediumFrame,
+        heavyFrame,
+        engine,
+        jetEngine,
+        aireon,
+        fuelTank,
+        boostGulp,
+
     }
 
     public Dictionary<ComponentSlotType, ComponentSlot> componentSlots = new();
@@ -87,6 +104,7 @@ public class SceneStartup : MonoBehaviour
         SetComponentSlot(ComponentSlotType.BackRight, "engine");
         SetComponentSlot(ComponentSlotType.BackLeft1, "empty");
         SetComponentSlot(ComponentSlotType.BackRight1, "empty");
+        SetComponentSlot(ComponentSlotType.ExtraFront, "boostGulp");
         SetComponentSlot(ComponentSlotType.ExtraLeft, "fuelTank");
         SetComponentSlot(ComponentSlotType.ExtraRight, "fuelTank");
     }
@@ -127,6 +145,8 @@ public class SceneStartup : MonoBehaviour
 
     string GetComponentName(int val)
     {
+
+       
         string replacementComponent = "empty";
 
         switch (val)
@@ -140,7 +160,11 @@ public class SceneStartup : MonoBehaviour
             case 2:
                 replacementComponent = "aireon";
                 break;
-            case 3: replacementComponent = "fuelTank";
+            case 3: 
+                replacementComponent = "fuelTank";
+                break;
+            case 4:
+                replacementComponent = "boostGulp";
                 break;
             default:
                 replacementComponent = "empty";
@@ -206,6 +230,13 @@ public class SceneStartup : MonoBehaviour
         string replacementComponent = GetComponentName(val);
 
         UpdateComponent(ComponentSlotType.BackRight1, replacementComponent);
+    }
+
+    public void UpdateComponentSlot_ExtraFront(int val)
+    {
+        string replacementComponent = GetComponentName(val);
+
+        UpdateComponent(ComponentSlotType.ExtraFront, replacementComponent);
     }
 
     public void UpdateComponentSlot_ExtraLeft(int val)
@@ -311,6 +342,19 @@ public class SceneStartup : MonoBehaviour
                 { "engine", engine },
                 { "jetEngine", jetEngine },
                 { "aireon" , aireon },
+                { "empty", aireon }
+            }
+        };
+
+        componentSlots[ComponentSlotType.ExtraFront] = new ComponentSlot
+        {
+            label = extraFrontText,
+            position = extraFrontPosition,
+            components = new Dictionary<string, GameObject>
+            {
+                { "fuelTank", fuelTank },
+                { "boostGulp", boostGulp },
+                
                 { "empty", aireon }
             }
         };
