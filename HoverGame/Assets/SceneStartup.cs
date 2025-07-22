@@ -50,33 +50,15 @@ public class SceneStartup : MonoBehaviour
 
     Ship_Passport shipPassport;
 
+    public GameObject backLeft1Option;
+    public GameObject backRight1Option;
+    public GameObject backLeft1Label;
+    public GameObject backRight1Label;
+
     
-    public enum ComponentSlotType
-    {
-        Frame,
-        FrontLeft,
-        FrontRight,
-        BackLeft,
-        BackRight,
-        BackLeft1,
-        BackRight1,
-        ExtraFront,
-        ExtraLeft,
-        ExtraRight
-    }
+  
 
-    public enum ComponentName
-    {
-        lightFrame,
-        mediumFrame,
-        heavyFrame,
-        engine,
-        jetEngine,
-        aireon,
-        fuelTank,
-        boostGulp,
 
-    }
 
     public Dictionary<ComponentSlotType, ComponentSlot> componentSlots = new();
 
@@ -97,25 +79,26 @@ public class SceneStartup : MonoBehaviour
 
     public void GenerateShip()
     {
-        SetComponentSlot(ComponentSlotType.Frame, "medium");
-        SetComponentSlot(ComponentSlotType.FrontLeft, "engine");
-        SetComponentSlot(ComponentSlotType.FrontRight, "engine");
-        SetComponentSlot(ComponentSlotType.BackLeft, "engine");
-        SetComponentSlot(ComponentSlotType.BackRight, "engine");
-        SetComponentSlot(ComponentSlotType.BackLeft1, "empty");
-        SetComponentSlot(ComponentSlotType.BackRight1, "empty");
-        SetComponentSlot(ComponentSlotType.ExtraFront, "boostGulp");
-        SetComponentSlot(ComponentSlotType.ExtraLeft, "fuelTank");
-        SetComponentSlot(ComponentSlotType.ExtraRight, "fuelTank");
+        SetComponentSlot(ComponentSlotType.Frame, ComponentName.mediumFrame);
+        TestFrameType();
+        SetComponentSlot(ComponentSlotType.FrontLeft, ComponentName.engine);
+        SetComponentSlot(ComponentSlotType.FrontRight, ComponentName.engine);
+        SetComponentSlot(ComponentSlotType.BackLeft, ComponentName.engine);
+        SetComponentSlot(ComponentSlotType.BackRight, ComponentName.engine);
+        SetComponentSlot(ComponentSlotType.BackLeft1, ComponentName.empty);
+        SetComponentSlot(ComponentSlotType.BackRight1, ComponentName.empty);
+        SetComponentSlot(ComponentSlotType.ExtraFront, ComponentName.boostGulp);
+        SetComponentSlot(ComponentSlotType.ExtraLeft, ComponentName.fuelTank);
+        SetComponentSlot(ComponentSlotType.ExtraRight, ComponentName.fuelTank);
     }
 
     void DisplayComponentMeshes()
     {
         foreach (var pair in componentSlots)
         {
-            string selectedKey = pair.Value.selectedComponentKey;
+            var selectedKey = pair.Value.selectedComponentKey;
 
-            if (string.IsNullOrEmpty(selectedKey) || selectedKey == "empty") continue;
+            if (selectedKey == ComponentName.empty) continue;
 
             if (pair.Value.components.TryGetValue(selectedKey, out GameObject prefab))
             {
@@ -125,7 +108,7 @@ public class SceneStartup : MonoBehaviour
         }
     }
 
-    public void UpdateComponent_Frame(string newComponentName)
+    public void UpdateComponent_Frame(ComponentName newComponentName)
     {
         if (componentSlots.TryGetValue(ComponentSlotType.Frame, out var frameSlot))
         {
@@ -141,40 +124,47 @@ public class SceneStartup : MonoBehaviour
                 DisplayComponentMeshes();
             }
         }
+
+        TestFrameType();
     }
 
-    string GetComponentName(int val)
+    ComponentName GetFrameType(int val)
     {
+        ComponentName replacementComponent = ComponentName.empty;
 
-       
-        string replacementComponent = "empty";
-
-        switch (val)
+        switch(val)
         {
-            case 0:
-                replacementComponent = "engine";
-                break;
-            case 1:
-                replacementComponent = "jetEngine";
-                break;
-            case 2:
-                replacementComponent = "aireon";
-                break;
-            case 3: 
-                replacementComponent = "fuelTank";
-                break;
-            case 4:
-                replacementComponent = "boostGulp";
-                break;
-            default:
-                replacementComponent = "empty";
-                break;
+            case 0: replacementComponent = ComponentName.lightFrame; break;
+            case 1: replacementComponent = ComponentName.mediumFrame; break;
+            case 2: replacementComponent = ComponentName.heavyFrame; break;
+            default: replacementComponent = ComponentName.empty; break;
         }
 
         return replacementComponent;
     }
 
-    void UpdateComponent(ComponentSlotType slotType, string replacementComponent)
+    ComponentName GetComponentName(int val)
+    {
+
+
+        ComponentName replacementComponent = ComponentName.empty;
+
+        switch (val)
+        {
+            case 0: replacementComponent = ComponentName.engine; break;
+            case 1: replacementComponent = ComponentName.jetEngine; break;
+            case 2: replacementComponent = ComponentName.aireon; break;
+            case 3: replacementComponent = ComponentName.fuelTank; break;
+            case 4: replacementComponent = ComponentName.boostGulp; break;
+            default: replacementComponent = ComponentName.empty; break;
+        }
+
+        return replacementComponent;
+    }
+
+ 
+
+    void UpdateComponent(ComponentSlotType slotType, ComponentName replacementComponent)
     {
         if (componentSlots.TryGetValue(slotType, out var slotPosition))
         {
@@ -187,68 +177,82 @@ public class SceneStartup : MonoBehaviour
 
                 SetComponentSlot(slotType, replacementComponent);
                 DisplayComponentMeshes();
+
+                if(slotType == ComponentSlotType.Frame)
+                {
+                    TestFrameType();
+                }
             }
         }
+
+    }
+
+    public void UpdateComponentSlot_FRAME(int val)
+    {
+        ComponentName replacementComponent = GetFrameType(val);
+        Debug.Log("Frame selection changed to: " + replacementComponent); // <—
+        UpdateComponent(ComponentSlotType.Frame, replacementComponent);
+        
     }
     public void UpdateComponentSlot_FL(int val)
     {
-        string replacementComponent = GetComponentName(val);
+        ComponentName replacementComponent = GetComponentName(val);
 
         UpdateComponent(ComponentSlotType.FrontLeft, replacementComponent);
     }
 
     public void UpdateComponentSlot_FR(int val)
     {
-        string replacementComponent = GetComponentName(val);
+        ComponentName replacementComponent = GetComponentName(val);
 
         UpdateComponent(ComponentSlotType.FrontRight, replacementComponent);
     }
 
     public void UpdateComponentSlot_BL(int val)
     {
-        string replacementComponent = GetComponentName(val);
+        ComponentName replacementComponent = GetComponentName(val);
 
         UpdateComponent(ComponentSlotType.BackLeft, replacementComponent);
     }
 
     public void UpdateComponentSlot_BR(int val)
     {
-        string replacementComponent = GetComponentName(val);
+        ComponentName replacementComponent = GetComponentName(val);
 
         UpdateComponent(ComponentSlotType.BackRight, replacementComponent);
     }
 
     public void UpdateComponentSlot_BL1(int val)
     {
-        string replacementComponent = GetComponentName(val);
+        ComponentName replacementComponent = GetComponentName(val);
 
         UpdateComponent(ComponentSlotType.BackLeft1, replacementComponent);
     }
 
     public void UpdateComponentSlot_BR1(int val)
     {
-        string replacementComponent = GetComponentName(val);
+        ComponentName replacementComponent = GetComponentName(val);
 
         UpdateComponent(ComponentSlotType.BackRight1, replacementComponent);
     }
 
     public void UpdateComponentSlot_ExtraFront(int val)
     {
-        string replacementComponent = GetComponentName(val);
+        ComponentName replacementComponent = GetComponentName(val);
 
         UpdateComponent(ComponentSlotType.ExtraFront, replacementComponent);
     }
 
     public void UpdateComponentSlot_ExtraLeft(int val)
     {
-        string replacementComponent = GetComponentName(val);
+        ComponentName replacementComponent = GetComponentName(val);
 
         UpdateComponent(ComponentSlotType.ExtraLeft, replacementComponent);
     }
 
     public void UpdateComponentSlot_ExtraRight(int val)
     {
-        string replacementComponent = GetComponentName(val);
+        ComponentName replacementComponent = GetComponentName(val);
 
         UpdateComponent(ComponentSlotType.ExtraRight, replacementComponent);
     }
@@ -259,12 +263,12 @@ public class SceneStartup : MonoBehaviour
         {
             label = frameText,
             position = framePosition,
-            components = new Dictionary<string, GameObject>
+            components = new Dictionary<ComponentName, GameObject>
             {
-                { "light", lightFrame },
-                { "medium", mediumFrame },
-                { "heavy" , heavyFrame },
-                { "empty", aireon }
+                { ComponentName.lightFrame, lightFrame },
+                { ComponentName.mediumFrame, mediumFrame },
+                { ComponentName.heavyFrame , heavyFrame },
+                { ComponentName.empty , null }
             }
         };
 
@@ -272,12 +276,12 @@ public class SceneStartup : MonoBehaviour
         {
             label = fLText,
             position = fLPosition,
-            components = new Dictionary<string, GameObject>
+            components = new Dictionary<ComponentName, GameObject>
             {
-                { "engine", engine },
-                { "jetEngine", jetEngine },
-                { "aireon" , aireon },
-                { "empty", aireon }
+                { ComponentName.engine, engine },
+                { ComponentName.jetEngine, jetEngine },
+                { ComponentName.aireon , aireon },
+                { ComponentName.empty , null }
             }
         };
 
@@ -285,12 +289,12 @@ public class SceneStartup : MonoBehaviour
         {
             label = fRText,
             position = fRPosition,
-            components = new Dictionary<string, GameObject>
+            components = new Dictionary<ComponentName, GameObject>
             {
-                { "engine", engine },
-                { "jetEngine", jetEngine },
-                { "aireon" , aireon },
-                { "empty", aireon }
+                { ComponentName.engine, engine },
+                { ComponentName.jetEngine, jetEngine },
+                { ComponentName.aireon , aireon },
+                { ComponentName.empty , null }
             }
         };
 
@@ -298,12 +302,12 @@ public class SceneStartup : MonoBehaviour
         {
             label = bLText,
             position = bLPosition,
-            components = new Dictionary<string, GameObject>
+            components = new Dictionary<ComponentName, GameObject>
             {
-                { "engine", engine },
-                { "jetEngine", jetEngine },
-                { "aireon" , aireon },
-                { "empty", aireon }
+                { ComponentName.engine, engine },
+                { ComponentName.jetEngine, jetEngine },
+                { ComponentName.aireon , aireon },
+                { ComponentName.empty , null }
             }
         };
 
@@ -311,12 +315,12 @@ public class SceneStartup : MonoBehaviour
         {
             label = bRText,
             position = bRPosition,
-            components = new Dictionary<string, GameObject>
+            components = new Dictionary<ComponentName, GameObject>
             {
-                { "engine", engine },
-                { "jetEngine", jetEngine },
-                { "aireon" , aireon },
-                { "empty", aireon }
+                { ComponentName.engine, engine },
+                { ComponentName.jetEngine, jetEngine },
+                { ComponentName.aireon , aireon },
+                { ComponentName.empty , null }
             }
         };
 
@@ -324,12 +328,12 @@ public class SceneStartup : MonoBehaviour
         {
             label = bL1Text,
             position = bL1Position,
-            components = new Dictionary<string, GameObject>
+            components = new Dictionary<ComponentName, GameObject>
             {
-                { "engine", engine },
-                { "jetEngine", jetEngine },
-                { "aireon" , aireon },
-                { "empty", aireon }
+                { ComponentName.engine, engine },
+                { ComponentName.jetEngine, jetEngine },
+                { ComponentName.aireon , aireon },
+                { ComponentName.empty , null }
             }
         };
 
@@ -337,12 +341,12 @@ public class SceneStartup : MonoBehaviour
         {
             label = bR1Text,
             position = bR1Position,
-            components = new Dictionary<string, GameObject>
+            components = new Dictionary<ComponentName, GameObject>
             {
-                { "engine", engine },
-                { "jetEngine", jetEngine },
-                { "aireon" , aireon },
-                { "empty", aireon }
+                { ComponentName.engine, engine },
+                { ComponentName.jetEngine, jetEngine },
+                { ComponentName.aireon , aireon },
+                { ComponentName.empty , null }
             }
         };
 
@@ -350,12 +354,11 @@ public class SceneStartup : MonoBehaviour
         {
             label = extraFrontText,
             position = extraFrontPosition,
-            components = new Dictionary<string, GameObject>
+            components = new Dictionary<ComponentName, GameObject>
             {
-                { "fuelTank", fuelTank },
-                { "boostGulp", boostGulp },
-                
-                { "empty", aireon }
+                { ComponentName.fuelTank, fuelTank },
+                { ComponentName.boostGulp, boostGulp },
+                { ComponentName.empty , null }
             }
         };
 
@@ -363,12 +366,13 @@ public class SceneStartup : MonoBehaviour
         {
             label = extraLeftText,
             position = extraLeftPosition,
-            components = new Dictionary<string, GameObject>
+            components = new Dictionary<ComponentName, GameObject>
             {
-                { "fuelTank", fuelTank },
-                { "engine", engine },
-                { "jetEngine", jetEngine },
-                { "empty", aireon }
+                { ComponentName.engine, engine },
+                { ComponentName.jetEngine, jetEngine },
+                { ComponentName.aireon , aireon },
+                { ComponentName.fuelTank, fuelTank },
+                { ComponentName.empty , null }
             }
         };
 
@@ -376,12 +380,13 @@ public class SceneStartup : MonoBehaviour
         {
             label = extraRightText,
             position = extraRightPosition,
-            components = new Dictionary<string, GameObject>
+            components = new Dictionary<ComponentName, GameObject>
             {
-                { "fuelTank", fuelTank },
-                { "engine", engine },
-                { "jetEngine", jetEngine },
-                { "empty", aireon }
+                { ComponentName.engine, engine },
+                { ComponentName.jetEngine, jetEngine },
+                { ComponentName.aireon , aireon },
+                { ComponentName.fuelTank, fuelTank },
+                { ComponentName.empty , null }
             }
         };
 
@@ -390,24 +395,30 @@ public class SceneStartup : MonoBehaviour
 
 
 
-    void SetComponentSlot(ComponentSlotType slot, string componentKey)
+    void SetComponentSlot(ComponentSlotType slot, ComponentName componentKey)
     {
         if (!componentSlots.TryGetValue(slot, out var slotData)) return;
 
-        slotData.label.text = componentKey;
+        if (slotData.label != null)
+            slotData.label.text = componentKey.ToString();
         slotData.selectedComponentKey = componentKey;
 
         foreach (var kvp in slotData.components)
         {
-            kvp.Value.SetActive(kvp.Key == componentKey);
+            if (kvp.Value != null)
+            {
+                kvp.Value.SetActive(kvp.Key == componentKey);
+            }
         }
 
     }
 
+    
+
 
     public void SetShipLoadout()
     {
-        var shipLoadout = new Dictionary<ComponentSlotType, string>();
+        var shipLoadout = new Dictionary<ComponentSlotType, ComponentName>();
 
         foreach (var pair in componentSlots)
         {
@@ -419,6 +430,51 @@ public class SceneStartup : MonoBehaviour
         
     }
 
+    public void TestFrameType()
+    {
+        bool isHeavyFrame = false;
+        foreach (var pair in componentSlots)
+        {
+            if (pair.Key == ComponentSlotType.Frame)
+            {
+                if (pair.Value.selectedComponentKey == ComponentName.heavyFrame)
+                {
+                    isHeavyFrame = true;
+                    break;
+                }
+            }
+        }
+
+        if (!isHeavyFrame)
+        {
+            DisableOptionsForExtraSlots();
+        }
+        else
+        {
+            EnableOptionsForExtraSlots();
+        }
+    }
 
 
+    void DisableOptionsForExtraSlots()
+    {
+        Debug.Log("Disabling extras. backLeft1Option is " + backLeft1Option);
+        backLeft1Option.gameObject.SetActive(false);
+        backLeft1Label.gameObject.SetActive(false);
+        bL1Text.gameObject.SetActive(false);
+        bR1Text.gameObject.SetActive(false);
+        backRight1Option.gameObject.SetActive(false);
+        backRight1Label.gameObject.SetActive(false);
+    }
+
+    void EnableOptionsForExtraSlots()
+    {
+        Debug.Log("Enabling extras. backLeft1Option is " + backLeft1Option);
+        backLeft1Option.gameObject.SetActive(true);
+        backLeft1Label.gameObject.SetActive(true);
+        bL1Text.gameObject.SetActive(true);
+        bR1Text.gameObject.SetActive(true);
+        backRight1Option.gameObject.SetActive(true);
+        backRight1Label.gameObject.SetActive(true);
+    }
 }

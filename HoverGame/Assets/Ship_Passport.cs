@@ -10,7 +10,7 @@ using static Ship_Passport;
 public class Ship_Passport : MonoBehaviour
 {
     public static Ship_Passport Instance {  get; private set; }
-    public Dictionary<ComponentSlotType, string> componentSlots { get; private set; } = new();
+    public Dictionary<ComponentSlotType, ComponentName> componentSlots { get; private set; } = new();
     public bool receivedShipLoadout = false;   
 
 
@@ -39,7 +39,7 @@ public class Ship_Passport : MonoBehaviour
         
     }
 
-    public void ReceiveShipLoadout(Dictionary<ComponentSlotType, string> shipLoadout )
+    public void ReceiveShipLoadout(Dictionary<ComponentSlotType, ComponentName> shipLoadout )
     {
         receivedShipLoadout = true;
 
@@ -56,17 +56,37 @@ public class Ship_Passport : MonoBehaviour
         
     }
 
-    public Dictionary<ComponentSlotType, string> GetShipLoadout()
+    public Dictionary<ComponentSlotType, ComponentName> GetShipLoadout()
     {
-        var result = new Dictionary<ComponentSlotType, string>();
+        var result = new Dictionary<ComponentSlotType, ComponentName>();
+        bool hasExtraSlots = false;
 
         foreach (var pair in componentSlots)
         {
-            result[pair.Key] = pair.Value;
+            if (pair.Key == ComponentSlotType.Frame)
+            {
+                if (pair.Value == ComponentName.heavyFrame)
+                {
+                    hasExtraSlots = true;
+                }
+            }
+
+            if (pair.Key == ComponentSlotType.BackLeft1 || pair.Key == ComponentSlotType.BackRight1)
+            {
+                if (hasExtraSlots)
+                {
+                    result[pair.Key] = pair.Value;
+                }
+            }
+            else
+            {
+                result[pair.Key] = pair.Value;
+            }
+
+            
 
 
         }
-
 
 
         return result;

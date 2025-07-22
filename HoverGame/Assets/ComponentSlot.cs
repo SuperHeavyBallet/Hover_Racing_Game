@@ -4,11 +4,39 @@ using TMPro;
 using UnityEngine;
 
 [System.Serializable]
+
+public enum ComponentSlotType
+{
+    Frame,
+    FrontLeft,
+    FrontRight,
+    BackLeft,
+    BackRight,
+    BackLeft1,
+    BackRight1,
+    ExtraFront,
+    ExtraLeft,
+    ExtraRight
+}
+
+public enum ComponentName
+{
+    empty,
+    lightFrame,
+    mediumFrame,
+    heavyFrame,
+    engine,
+    jetEngine,
+    aireon,
+    fuelTank,
+    boostGulp,
+
+}
 public class ComponentSlot 
 {
     public TextMeshProUGUI label;
     public Transform position;
-    public Dictionary<string, GameObject> components; // "engine" => prefab
+    public Dictionary<ComponentName, GameObject> components; // "engine" => prefab
 
-    public string selectedComponentKey;  // <-- You need this
+    public ComponentName selectedComponentKey;
 }

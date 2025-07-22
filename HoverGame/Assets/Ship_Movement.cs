@@ -88,10 +88,13 @@ public class Ship_Movement : MonoBehaviour
     float BASE_TopSpeed;
     float BASE_MovementForce;
     float BASE_RotationSpeed;
+    float BASE_BoostConsumptionRate;
+  
 
     public float CURRENT_TopSpeed;
     public float CURRENT_MovementForce;
     public float CURRENT_RotationSpeed;
+    public float CURRENT_BoostConsumptionRate;
 
     int STAT_ManualBoostAmount;
     float STAT_RotationSpeed;
@@ -102,7 +105,7 @@ public class Ship_Movement : MonoBehaviour
 
     Ship_Constructor shipConstructor;
 
-    List<string> componentList= new List<string>();
+    List<ComponentName> componentList= new List<ComponentName>();
 
     public TextMeshProUGUI topSpeedText;
     public TextMeshProUGUI topPowerText;
@@ -145,7 +148,7 @@ public class Ship_Movement : MonoBehaviour
         shipPassport = Ship_Passport.Instance;
         
 
-        CalculateWeight(componentList);
+        CalculatePerformance(componentList);
         CheckBoostGulp();
 
         engineIdle = true;
@@ -158,7 +161,7 @@ public class Ship_Movement : MonoBehaviour
     {
         foreach(var component in componentList)
         {
-            if(component == "boostGulp")
+            if(component == ComponentName.boostGulp)
             {
                 hasBoostGulp = true;
             }
@@ -166,25 +169,32 @@ public class Ship_Movement : MonoBehaviour
 
     }
 
-    void CalculateWeight(List<string> components)
+    void CalculatePerformance(List<ComponentName> components)
     {
         int rawSpeed = 0;
         int rawPower = 0;
         int totalWeight = 0;
         int fuel = 100;
+        float boostConsumptionRate = 0;
+
+        float engineCount = 0;
+        float jetEngineCount = 0;
+        float fuelTankCount = 0;
+        float aireonCount = 0;
 
         foreach (var c in components)
         {
             switch (c)
             {
-                case "light": totalWeight += 50; fuel += 30; break;
-                case "medium": totalWeight += 70; fuel += 10; break;
-                case "heavy": totalWeight += 100; break;
+                case ComponentName.lightFrame: totalWeight += 50; fuel += 30; break;
+                case ComponentName.mediumFrame: totalWeight += 70; fuel += 10; break;
+                case ComponentName.heavyFrame: totalWeight += 100; break;
 
-                case "engine": totalWeight += 100; rawPower += 15; rawSpeed += 30; break;
-                case "jetEngine": totalWeight += 70; rawPower += 20; rawSpeed += 25; break;
+                case ComponentName.engine: totalWeight += 100; rawPower += 15; rawSpeed += 30; engineCount += 1; break;
+                case ComponentName.jetEngine: totalWeight += 70; rawPower += 20; rawSpeed += 25; jetEngineCount += 1; break;
 
-                case "fuelTank": totalWeight += 10; fuel += 50; break;
+                case ComponentName.fuelTank: totalWeight += 10; fuel += 50; fuelTankCount += 1; break;
+                case ComponentName.aireon: totalWeight -= 10; rawSpeed += 10; boostConsumptionRate -= 0.1f; aireonCount += 1; break;
                 default: break;
             }
         }
@@ -193,7 +203,11 @@ public class Ship_Movement : MonoBehaviour
 
         BASE_TopSpeed = rawSpeed - weightFactor * 0.1f;
         BASE_MovementForce = rawPower - weightFactor * 0.05f;
-        BASE_RotationSpeed = weightFactor / 4;
+        float minWeight = 100f;
+        float maxWeight = 1000f;
+        float t = Mathf.InverseLerp(maxWeight, minWeight, weightFactor); // Note the reverse
+        BASE_RotationSpeed = Mathf.Lerp(30f, 150f, t); // Heavy = 30, Light = 150
+        BASE_BoostConsumptionRate = 0.25f + boostConsumptionRate;
 
         maxBoostFuel = fuel;
         currentBoostFuel = fuel;
@@ -202,6 +216,12 @@ public class Ship_Movement : MonoBehaviour
         topSpeedText.text = $"Top Speed: {BASE_TopSpeed:F1}";
         topPowerText.text = $"Top Power: {BASE_MovementForce:F1}";
         topWeightText.text = $"Weight: {totalWeight}";
+
+        Debug.Log("COUNTS: ");
+        Debug.Log("ENGINES: " + engineCount);
+        Debug.Log("JET ENGINES: " + jetEngineCount);
+        Debug.Log("AIREONS: " + aireonCount);
+        Debug.Log("FUEL TANKS: " + fuelTankCount);
 
         /*
          * We need: 
@@ -292,6 +312,7 @@ public class Ship_Movement : MonoBehaviour
         CURRENT_TopSpeed = CalculateCurrentTopSpeed(boostActivated, trackBoostActivated, limitActivated);
         CURRENT_MovementForce = CalculateCurrentMovementForce(boostActivated, trackBoostActivated, limitActivated);
         CURRENT_RotationSpeed = CalculateCurrentRotationSpeed(boostActivated, trackBoostActivated, limitActivated);
+        CURRENT_BoostConsumptionRate = BASE_BoostConsumptionRate;
 
         CheckBoostFiring();
 
@@ -337,7 +358,7 @@ public class Ship_Movement : MonoBehaviour
 
             }
 
-            currentBoostFuel -= 0.25f;
+            currentBoostFuel -= CURRENT_BoostConsumptionRate;
 
          
         }

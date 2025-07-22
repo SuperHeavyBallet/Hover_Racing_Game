@@ -12,8 +12,8 @@ public class Ship_Constructor : MonoBehaviour
     SceneStartup sceneStartup;
     Ship_Passport shipPassport;
 
-    Dictionary<ComponentSlotType, string> componentSlots = new();
-    Dictionary<ComponentSlotType, string> BACKUP_componentSlots = new();
+    Dictionary<ComponentSlotType, ComponentName> componentSlots = new();
+    Dictionary<ComponentSlotType, ComponentName> BACKUP_componentSlots = new();
 
     public Transform framePosition;
 
@@ -67,30 +67,52 @@ public class Ship_Constructor : MonoBehaviour
         }
     }
 
-    Dictionary<ComponentSlotType, string> CreateDefaultLoadout()
+    Dictionary<ComponentSlotType, ComponentName> CreateDefaultLoadout()
     {
-        return new Dictionary<ComponentSlotType, string>
+        return new Dictionary<ComponentSlotType, ComponentName>
     {
-        { ComponentSlotType.Frame, "medium" },
-        { ComponentSlotType.FrontLeft, "engine" },
-        { ComponentSlotType.FrontRight, "engine" },
-        { ComponentSlotType.BackLeft, "engine" },
-        { ComponentSlotType.BackRight, "engine" },
-        { ComponentSlotType.BackLeft1, "empty" },
-        { ComponentSlotType.BackRight1, "empty" },
-        { ComponentSlotType.ExtraFront, "boostGulp" },
-        { ComponentSlotType.ExtraLeft, "fuelTank" },
-        { ComponentSlotType.ExtraRight, "fuelTank" }
+        { ComponentSlotType.Frame, ComponentName.mediumFrame },
+        { ComponentSlotType.FrontLeft, ComponentName.engine },
+        { ComponentSlotType.FrontRight, ComponentName.engine },
+        { ComponentSlotType.BackLeft, ComponentName.engine },
+        { ComponentSlotType.BackRight,ComponentName.engine },
+        { ComponentSlotType.BackLeft1, ComponentName.empty },
+        { ComponentSlotType.BackRight1, ComponentName.empty },
+        { ComponentSlotType.ExtraFront, ComponentName.boostGulp },
+        { ComponentSlotType.ExtraLeft, ComponentName.fuelTank },
+        { ComponentSlotType.ExtraRight, ComponentName.fuelTank }
     };
     }
 
-    public List<string> GetShipLoadout()
+    public List<ComponentName> GetShipLoadout()
     {
-        List<string> componentList = new List<string>();
+        bool hasExtraSlots = false;
+
+        List<ComponentName> componentList = new List<ComponentName>();
 
         foreach (var pair in componentSlots)
         {
-            componentList.Add(pair.Value);
+            if (pair.Key == ComponentSlotType.Frame)
+            {
+                if (pair.Value == ComponentName.heavyFrame)
+                {
+                    hasExtraSlots = true;
+                }
+            }
+
+            
+            if (pair.Key == ComponentSlotType.BackLeft1 || pair.Key == ComponentSlotType.BackRight1)
+            {
+                if(hasExtraSlots)
+                {
+                    componentList.Add(pair.Value);
+                }
+            }
+            else
+            {
+                componentList.Add(pair.Value);
+            }
+
         }
         return componentList;
     }
@@ -109,11 +131,11 @@ public class Ship_Constructor : MonoBehaviour
 
                 switch (pair.Value)
                 {
-                    case "light":
+                    case ComponentName.lightFrame:
                         newComponent = lightFramePrefab;  break;
-                    case "medium":
+                    case ComponentName.mediumFrame:
                         newComponent = mediumFramePrefab; break;
-                    case "heavy": 
+                    case ComponentName.heavyFrame: 
                         newComponent = heavyFramePrefab; break;
                     default:
                         Debug.LogWarning("No Frame Type Assigned");
@@ -179,15 +201,15 @@ public class Ship_Constructor : MonoBehaviour
             
             switch (pair.Value)
             {
-                case "engine":
+                case ComponentName.engine:
                     newComponent = enginePrefab; break;
-                case "jetEngine":
+                case ComponentName.jetEngine:
                     newComponent = jetEnginePrefab; break;
-                case "aireon":
+                case ComponentName.aireon:
                     newComponent = aireonPrefab; break;
-                case "fuelTank":
+                case ComponentName.fuelTank:
                     newComponent = fuelTankPrefab; break;
-                case "boostGulp":
+                case ComponentName.boostGulp:
                     newComponent = boostGulpPrefab; break;
                 default:
                     Debug.LogWarning("No Component Value Assigned");
