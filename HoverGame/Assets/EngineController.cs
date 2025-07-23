@@ -9,6 +9,16 @@ public class EngineController : MonoBehaviour, IEngineFireListener
     public GameObject ship;
     public Ship_Movement shipMovement;
 
+    public GameObject nozzle;
+    public Transform nozzlePivot;
+
+    float minYaw = -20f;
+    float maxYaw = 20f;
+    private float currentYaw = 0f;
+    float returnSpeed = 150f;
+
+    bool isReceivingInput = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -18,29 +28,24 @@ public class EngineController : MonoBehaviour, IEngineFireListener
     // Update is called once per frame
     void Update()
     {
-        /*
-        if(shipMovement.isFiring)
-
+        
+        if(nozzle != null)
         {
-            exhaustFlame.SetActive(true);
+            if (!isReceivingInput)
+            {
+                currentYaw = Mathf.MoveTowards(currentYaw, 0f, returnSpeed * Time.deltaTime);
+                nozzle.transform.localRotation = Quaternion.Euler(0f, currentYaw, 0f);
+            }
+
+            // Reset flag each frame
+            isReceivingInput = false;
         }
-        else
-        {
-            exhaustFlame.SetActive(false);
-        }*/
-    }
-
-    void HandleMovementChanged(bool isMoving)
-    {
-
+        
 
 
     }
 
-    void OnDestroy()
-    {
-       
-    }
+  
 
     public void OnShipEngineFiring(bool isFiring)
     {
@@ -66,5 +71,15 @@ public class EngineController : MonoBehaviour, IEngineFireListener
         {
             boostFlame.SetActive(false);
         }
+    }
+
+    
+    public void OnShipRotateNozzle(float turnAmount)
+    {
+        isReceivingInput = true;
+        currentYaw = Mathf.Clamp(currentYaw + turnAmount, minYaw, maxYaw);
+
+        // Set rotation relative to initial rotation
+        nozzle.transform.localRotation = Quaternion.Euler(0f, currentYaw, 0f);
     }
 }

@@ -1,6 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// This Script is where the ship components are decided upon in the main menu
@@ -9,12 +11,6 @@ using UnityEngine;
 public class SceneStartup : MonoBehaviour
 {
 
-    [SerializeField]
-    //private string selectedVehicleClass = "light";
-    //public Vector3 spawnPosition;
-    //public float gameDifficulty;
-
-    //public ShipClass shipClass;
 
     public TextMeshProUGUI frameText;
     public TextMeshProUGUI fLText;
@@ -190,7 +186,7 @@ public class SceneStartup : MonoBehaviour
     public void UpdateComponentSlot_FRAME(int val)
     {
         ComponentName replacementComponent = GetFrameType(val);
-        Debug.Log("Frame selection changed to: " + replacementComponent); // <—
+       // Debug.Log("Frame selection changed to: " + replacementComponent); // <—
         UpdateComponent(ComponentSlotType.Frame, replacementComponent);
         
     }
@@ -424,6 +420,8 @@ public class SceneStartup : MonoBehaviour
         {
             shipLoadout[pair.Key] = pair.Value.selectedComponentKey;
         }
+        Debug.Log("SET LOADOUT:");
+        Debug.Log(shipLoadout.Count);
 
         shipPassport.ReceiveShipLoadout(shipLoadout);
 
@@ -458,7 +456,7 @@ public class SceneStartup : MonoBehaviour
 
     void DisableOptionsForExtraSlots()
     {
-        Debug.Log("Disabling extras. backLeft1Option is " + backLeft1Option);
+        //Debug.Log("Disabling extras. backLeft1Option is " + backLeft1Option);
         backLeft1Option.gameObject.SetActive(false);
         backLeft1Label.gameObject.SetActive(false);
         bL1Text.gameObject.SetActive(false);
@@ -469,12 +467,24 @@ public class SceneStartup : MonoBehaviour
 
     void EnableOptionsForExtraSlots()
     {
-        Debug.Log("Enabling extras. backLeft1Option is " + backLeft1Option);
+        //Debug.Log("Enabling extras. backLeft1Option is " + backLeft1Option);
         backLeft1Option.gameObject.SetActive(true);
         backLeft1Label.gameObject.SetActive(true);
         bL1Text.gameObject.SetActive(true);
         bR1Text.gameObject.SetActive(true);
         backRight1Option.gameObject.SetActive(true);
         backRight1Label.gameObject.SetActive(true);
+    }
+
+    public void LoadScene(string sceneName)
+    {
+        SetShipLoadout();
+        StartCoroutine(LoadSceneDelayed(sceneName));
+    }
+
+    private IEnumerator LoadSceneDelayed(string sceneName)
+    {
+        yield return 0.1f; // one frame delay
+        SceneManager.LoadScene(sceneName);
     }
 }

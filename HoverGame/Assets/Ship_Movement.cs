@@ -22,10 +22,9 @@ public class Ship_Movement : MonoBehaviour
 
     public Camera worldCamera;
     public Camera playerCamera;
-    
 
 
-    
+    public bool isGrounded;
 
     
 
@@ -127,6 +126,8 @@ public class Ship_Movement : MonoBehaviour
 
     Ship_Passport shipPassport;
 
+    public float shipWeight;
+
     /// </summary>
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -209,6 +210,8 @@ public class Ship_Movement : MonoBehaviour
         BASE_RotationSpeed = Mathf.Lerp(30f, 150f, t); // Heavy = 30, Light = 150
         BASE_BoostConsumptionRate = 0.25f + boostConsumptionRate;
 
+        shipWeight = totalWeight;
+
         maxBoostFuel = fuel;
         currentBoostFuel = fuel;
         STAT_ManualBoostAmount = rawPower;
@@ -217,6 +220,7 @@ public class Ship_Movement : MonoBehaviour
         topPowerText.text = $"Top Power: {BASE_MovementForce:F1}";
         topWeightText.text = $"Weight: {totalWeight}";
 
+        /*
         Debug.Log("COUNTS: ");
         Debug.Log("ENGINES: " + engineCount);
         Debug.Log("JET ENGINES: " + jetEngineCount);
@@ -344,7 +348,7 @@ public class Ship_Movement : MonoBehaviour
 
     void CheckBoostFiring()
     {
-        if (boostActivated && forwardSpeed > 2 && currentBoostFuel > 0)
+        if (boostActivated && forwardSpeed > 2 && currentBoostFuel > 0 &&isFiring)
         {
 
             boostersActive = true;
@@ -565,6 +569,7 @@ public class Ship_Movement : MonoBehaviour
                 if(listener != null)
                 {
                     listener.OnShipEngineFiring(true);
+                    
                 }
                 
             }
@@ -606,6 +611,7 @@ public class Ship_Movement : MonoBehaviour
     void CastHoverZone()
     {
         
+        atLeastOneGrounded = false;
 
         foreach(Transform point in hoverPoints)
         {
@@ -622,7 +628,7 @@ public class Ship_Movement : MonoBehaviour
 
                 rigidBody.AddForceAtPosition(Vector3.up * (upwardForce - dampingForce), point.position, ForceMode.Force);
                 atLeastOneGrounded = true;
-
+     
             }
             else
             {
@@ -630,6 +636,15 @@ public class Ship_Movement : MonoBehaviour
                 Vector3 downwardPull = Vector3.down * (reGroundForce * 0.2f);
                 rigidBody.AddForceAtPosition(downwardPull, point.position, ForceMode.Force);
             }
+        }
+
+        if(atLeastOneGrounded)
+        {
+            isGrounded = true;
+        }
+        else
+        {
+            isGrounded= false;
         }
 
     }
@@ -661,12 +676,28 @@ public class Ship_Movement : MonoBehaviour
             rigidBody.linearVelocity = clampedVelocity;
         }
 
+        float downwardPull = shipWeight / 1000;
+
+        
+      
+            rigidBody.linearVelocity = new Vector3(rigidBody.linearVelocity.x, rigidBody.linearVelocity.y - downwardPull, rigidBody.linearVelocity.z);
+        
+
 
         
 
         // Rotation (Y axis only)
         float turnAmount = recievedMoveInput.x * CURRENT_RotationSpeed * Time.deltaTime;
         transform.RotateAround(pivotPoint.position, Vector3.up, turnAmount);
+
+        // MAYBE gate with 'isFiring'
+
+            foreach (var listener in engineFireListeners)
+            {
+                listener.OnShipRotateNozzle(turnAmount * -1);
+            }
+        
+      
 
        
 

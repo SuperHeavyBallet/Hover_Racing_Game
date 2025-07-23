@@ -55,7 +55,17 @@ public class Ship_Constructor : MonoBehaviour
 
         if (shipPassport != null)
         {
+            Debug.Log("SHIP PASSPORT VALID");
             componentSlots = shipPassport.GetShipLoadout();
+
+            Debug.Log(componentSlots);
+
+            foreach (var item in componentSlots)
+            {
+                Debug.Log(item.Key);
+                Debug.Log(item.Value);
+            }
+            
         }
         else
         {
@@ -125,6 +135,9 @@ public class Ship_Constructor : MonoBehaviour
 
         foreach (var pair in componentSlots)
         {
+
+            
+
             if(pair.Key == ComponentSlotType.Frame)
             {
                 position = framePosition;
@@ -226,11 +239,13 @@ public class Ship_Constructor : MonoBehaviour
                 {
                     SCRIPT_ShipMovement.RegisterEngineFireListener(engineController);
                 }
+
+                
             }
             else
-{
-    Debug.LogWarning($"Component {pair.Value} not placed. Position is {(position == null ? "null" : "OK")}");
-}
+            {
+                Debug.LogWarning($"Component {pair.Value} not placed. Position is {(position == null ? "null" : "OK")}");
+            }
         }
     }
 

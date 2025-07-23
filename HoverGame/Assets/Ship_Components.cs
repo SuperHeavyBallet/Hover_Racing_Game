@@ -5,7 +5,7 @@ public class Ship_Components : MonoBehaviour
 {
 
     // POTENTIALLY REMOVE THIS ENTIRE SCRIPT
-
+    /*
     private GameObject COMPONENT_ShipFrame;
     private GameObject COMPONENT_FrameEngine;
 
@@ -55,14 +55,18 @@ public class Ship_Components : MonoBehaviour
 
         EngineController ecf = newFrameEngine.GetComponent<EngineController>();
 
-        if (ecf == null)
+        if(ecf != null )
         {
-            Debug.LogWarning("EngineController missing on LIGHT engine!");
-        }
-        else
-        {
-            Debug.Log("Engine Controller is valid");
             SCRIPT_shipMovement.RegisterEngineFireListener(ecf);
+        }
+
+     
+
+        ObjectCounterPivot objectCounterPivot = newFrameEngine.GetComponent<ObjectCounterPivot>();
+
+        if (objectCounterPivot != null)
+        {
+            SCRIPT_shipMovement.RegisterObjectCounterRotators(objectCounterPivot);
         }
         
        
@@ -79,8 +83,18 @@ public class Ship_Components : MonoBehaviour
         GameObject newComponent = Instantiate(component, position);
 
         EngineController ec = newComponent.GetComponent<EngineController>();
-        SCRIPT_shipMovement.RegisterEngineFireListener(ec);
-        Debug.Log("Spawning component: " + component.name + " at " + position.name);
+        ObjectCounterPivot objectCounterPivot = newComponent.GetComponent<ObjectCounterPivot>();
+
+        if (ec != null)
+        {
+            SCRIPT_shipMovement.RegisterEngineFireListener(ec);
+        }
+
+        if(objectCounterPivot != null)
+        {
+            SCRIPT_shipMovement.RegisterObjectCounterRotators(objectCounterPivot);
+        }
+        
 
 
         string componentWeight = newComponent.GetComponent<ComponentController>().GetComponentWeight();
@@ -102,5 +116,5 @@ public class Ship_Components : MonoBehaviour
         }
 
 
-    }
+    }*/
 }

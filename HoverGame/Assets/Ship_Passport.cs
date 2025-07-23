@@ -47,12 +47,6 @@ public class Ship_Passport : MonoBehaviour
 
         componentSlots = shipLoadout;
 
-        Debug.Log("SHIP PASSPORT");
-
-        foreach(var slot in componentSlots)
-        {
-            Debug.Log("PASSPORT: " + slot);
-        }
         
     }
 
@@ -60,6 +54,8 @@ public class Ship_Passport : MonoBehaviour
     {
         var result = new Dictionary<ComponentSlotType, ComponentName>();
         bool hasExtraSlots = false;
+
+     
 
         foreach (var pair in componentSlots)
         {
