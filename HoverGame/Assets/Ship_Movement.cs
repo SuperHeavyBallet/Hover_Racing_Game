@@ -53,7 +53,7 @@ public class Ship_Movement : MonoBehaviour
     public Transform pivotPoint;
 
     public GameObject[] engines;
-    public bool isFiring;
+    //public bool isFiring;
 
     public SceneStartup sceneStartup;
     public string VehicleClass_Received;
@@ -304,7 +304,7 @@ public class Ship_Movement : MonoBehaviour
 
         if (isLimiting)
         {
-            workingMovementForce = -60;
+            workingMovementForce = Mathf.Max(0, workingMovementForce - 60);
         }
 
         return BASE_MovementForce + workingMovementForce;
@@ -350,7 +350,10 @@ public class Ship_Movement : MonoBehaviour
 
     void CheckBoostFiring()
     {
-        if (boostActivated && forwardSpeed > 2 && currentBoostFuel > 0 &&isFiring)
+
+       
+
+        if (boostActivated  && currentBoostFuel > 0)
         {
 
             boostersActive = true;
@@ -374,15 +377,12 @@ public class Ship_Movement : MonoBehaviour
             audioManager.StopPlayerSound();
             audioManager.PlayPlayerSound_OneShot(AUDIO_boostOFF);
         }
-        else if(boostActivated && forwardSpeed <= 2)
-        {
-            boostActivated = false;
-            audioManager.StopPlayerSound();
-            audioManager.PlayPlayerSound_OneShot(AUDIO_boostOFF);
-        }
+        
         else
         {
-            boostActivated = false;
+            
+            audioManager.StopPlayerSound();
+            audioManager.PlayPlayerSound_OneShot(AUDIO_boostOFF);
             boostText.text = "--";
             boostersActive = false;
             foreach (var listener in engineFireListeners)
@@ -403,6 +403,7 @@ public class Ship_Movement : MonoBehaviour
 
         }
 
+        
         if (hasBoostGulp && forwardSpeed > (CURRENT_TopSpeed / 4) && currentBoostFuel < maxBoostFuel)
         {
             boostGulpText.SetActive(true);
@@ -419,11 +420,7 @@ public class Ship_Movement : MonoBehaviour
     }
 
     void DisplaySpeed()
-    {/*
-        Debug.Log("RECORD SPEED");
-        Debug.Log(forwardSpeed);
-        Debug.Log(rigidBody.linearVelocity.magnitude);*/
-
+    {
         if (forwardSpeed > 0)
         {
             speedDisplay.text = Mathf.RoundToInt(forwardSpeed).ToString();
@@ -431,7 +428,7 @@ public class Ship_Movement : MonoBehaviour
         else
         {
             speedDisplay.text = "00";
-            boostActivated = false;
+            //boostActivated = false;
         }
     }
 
@@ -521,7 +518,7 @@ public class Ship_Movement : MonoBehaviour
     {
         boostActivated = isBoosting;
 
-        if (isBoosting == true && forwardSpeed > 2 && currentBoostFuel > 0)
+        if (isBoosting == true && currentBoostFuel > 0)
         {
            // innerCameraController.TriggerShake();
 
@@ -565,7 +562,7 @@ public class Ship_Movement : MonoBehaviour
 
         if(recievedMoveInput.y > 0)
         {
-            isFiring = true;
+            //isFiring = true;
             foreach (var listener in engineFireListeners)
             {
                 if(listener != null)
@@ -580,7 +577,7 @@ public class Ship_Movement : MonoBehaviour
         }
         else
         {
-            isFiring = false; 
+            //isFiring = false; 
             foreach (var listener in engineFireListeners)
             {
                 if(listener != null)
