@@ -15,6 +15,7 @@ public class Ship_Constructor : MonoBehaviour
     Dictionary<ComponentSlotType, ComponentName> componentSlots = new();
     Dictionary<ComponentSlotType, ComponentName> BACKUP_componentSlots = new();
 
+    public GameObject chosenFrame;
     public Transform framePosition;
 
     Transform frontLeftPosition;
@@ -127,6 +128,16 @@ public class Ship_Constructor : MonoBehaviour
         return componentList;
     }
 
+    public GameObject GetFrameReference()
+    {
+        return chosenFrame;
+    }
+
+    void SetFrameReference(GameObject frame)
+    {
+        chosenFrame = frame;
+    }
+
 
     void PlaceFrame()
     {
@@ -174,6 +185,8 @@ public class Ship_Constructor : MonoBehaviour
                         extraLeftPosition = frameLayout.GetExtraLeftPosition();
                         extraRightPosition = frameLayout.GetExtraRightPosition();
                     }
+
+                    SetFrameReference(chosenComponent);
                 }
                 break;
             }

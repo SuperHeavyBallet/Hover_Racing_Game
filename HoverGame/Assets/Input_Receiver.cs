@@ -21,12 +21,24 @@ public class Input_Receiver : MonoBehaviour
         
     }
 
+    public void Thrust(InputAction.CallbackContext ctx)
+    {
+        if(ctx.performed)
+        {
+            SCRIPT_Ship_Movement.UpdateThrust(true);
+        }
+        else if (ctx.canceled)
+        {
+            SCRIPT_Ship_Movement.UpdateThrust(false);
+        }
+    }
+
 
     public void Move(InputAction.CallbackContext ctx)
     {
         moveInput = ctx.ReadValue<Vector2>();
 
-        SCRIPT_Ship_Movement.UpdateMovement(moveInput);
+        SCRIPT_Ship_Movement.UpdateSteering(moveInput);
 
     }
 
@@ -52,5 +64,31 @@ public class Input_Receiver : MonoBehaviour
         {
             SCRIPT_Ship_Movement.ActivateLimit(false);
         }
+    }
+
+    public void BoostRight(InputAction.CallbackContext ctx)
+    {
+        if(ctx.performed)
+        {
+            SCRIPT_Ship_Movement.AddSideBoost_Right(true);
+        }
+        else if(ctx.canceled)
+        {
+            SCRIPT_Ship_Movement.AddSideBoost_Right(false);
+        }
+       
+    }
+
+    public void BoostLeftt(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+        {
+            SCRIPT_Ship_Movement.AddSideBoost_Left(true);
+        }
+        else if (ctx.canceled)
+        {
+            SCRIPT_Ship_Movement.AddSideBoost_Left(false);
+        }
+
     }
 }

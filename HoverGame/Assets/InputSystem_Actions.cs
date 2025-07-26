@@ -116,6 +116,33 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Thrust"",
+                    ""type"": ""Button"",
+                    ""id"": ""1950ac4b-9aa4-4bc2-ae24-9db5ede6f637"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BoostRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""c515da16-2035-4c1f-ba58-16224e8e13f3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BoostLeft"",
+                    ""type"": ""Button"",
+                    ""id"": ""b8f1847f-20f1-4e58-bd27-c8d159b8b981"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -243,7 +270,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""3ea4d645-4504-4529-b061-ab81934c3752"",
-                    ""path"": ""<Joystick>/stick"",
+                    ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Joystick"",
@@ -386,7 +413,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""8cbb2f4b-a784-49cc-8d5e-c010b8c7f4e6"",
-                    ""path"": ""<Gamepad>/leftStickPress"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
@@ -517,12 +544,78 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""ffcab02c-2ddc-4350-8aae-b4d117ac7592"",
-                    ""path"": """",
+                    ""id"": ""a3de677e-4231-4e2a-82eb-3f17a458d5b1"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Limit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9f57f8b7-0c65-4515-8e61-6926bf210f1e"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Thrust"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c4193c35-ad86-476d-b8e0-7226462f8bc1"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Thrust"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""14e37b1f-7629-476b-bf50-ad24c9ae94c7"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BoostRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f642136c-4730-44c3-b783-6bec3acfd46a"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BoostRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fdfd83ea-9730-43a2-a4c7-e0da6925e6f3"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BoostLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3c91c02e-9210-4739-ab38-b3a243329ed0"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BoostLeft"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1120,6 +1213,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Next = m_Player.FindAction("Next", throwIfNotFound: true);
         m_Player_Boost = m_Player.FindAction("Boost", throwIfNotFound: true);
         m_Player_Limit = m_Player.FindAction("Limit", throwIfNotFound: true);
+        m_Player_Thrust = m_Player.FindAction("Thrust", throwIfNotFound: true);
+        m_Player_BoostRight = m_Player.FindAction("BoostRight", throwIfNotFound: true);
+        m_Player_BoostLeft = m_Player.FindAction("BoostLeft", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1209,6 +1305,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Next;
     private readonly InputAction m_Player_Boost;
     private readonly InputAction m_Player_Limit;
+    private readonly InputAction m_Player_Thrust;
+    private readonly InputAction m_Player_BoostRight;
+    private readonly InputAction m_Player_BoostLeft;
     public struct PlayerActions
     {
         private @InputSystem_Actions m_Wrapper;
@@ -1223,6 +1322,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         public InputAction @Next => m_Wrapper.m_Player_Next;
         public InputAction @Boost => m_Wrapper.m_Player_Boost;
         public InputAction @Limit => m_Wrapper.m_Player_Limit;
+        public InputAction @Thrust => m_Wrapper.m_Player_Thrust;
+        public InputAction @BoostRight => m_Wrapper.m_Player_BoostRight;
+        public InputAction @BoostLeft => m_Wrapper.m_Player_BoostLeft;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1262,6 +1364,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Limit.started += instance.OnLimit;
             @Limit.performed += instance.OnLimit;
             @Limit.canceled += instance.OnLimit;
+            @Thrust.started += instance.OnThrust;
+            @Thrust.performed += instance.OnThrust;
+            @Thrust.canceled += instance.OnThrust;
+            @BoostRight.started += instance.OnBoostRight;
+            @BoostRight.performed += instance.OnBoostRight;
+            @BoostRight.canceled += instance.OnBoostRight;
+            @BoostLeft.started += instance.OnBoostLeft;
+            @BoostLeft.performed += instance.OnBoostLeft;
+            @BoostLeft.canceled += instance.OnBoostLeft;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1296,6 +1407,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Limit.started -= instance.OnLimit;
             @Limit.performed -= instance.OnLimit;
             @Limit.canceled -= instance.OnLimit;
+            @Thrust.started -= instance.OnThrust;
+            @Thrust.performed -= instance.OnThrust;
+            @Thrust.canceled -= instance.OnThrust;
+            @BoostRight.started -= instance.OnBoostRight;
+            @BoostRight.performed -= instance.OnBoostRight;
+            @BoostRight.canceled -= instance.OnBoostRight;
+            @BoostLeft.started -= instance.OnBoostLeft;
+            @BoostLeft.performed -= instance.OnBoostLeft;
+            @BoostLeft.canceled -= instance.OnBoostLeft;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1488,6 +1608,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         void OnNext(InputAction.CallbackContext context);
         void OnBoost(InputAction.CallbackContext context);
         void OnLimit(InputAction.CallbackContext context);
+        void OnThrust(InputAction.CallbackContext context);
+        void OnBoostRight(InputAction.CallbackContext context);
+        void OnBoostLeft(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

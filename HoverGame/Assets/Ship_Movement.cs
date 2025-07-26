@@ -94,6 +94,7 @@ public class Ship_Movement : MonoBehaviour
     public float CURRENT_MovementForce;
     public float CURRENT_RotationSpeed;
     public float CURRENT_BoostConsumptionRate;
+    public float CURRENT_SideBoostAmount;
 
     int STAT_ManualBoostAmount;
     float STAT_RotationSpeed;
@@ -128,6 +129,20 @@ public class Ship_Movement : MonoBehaviour
 
     public float shipWeight;
 
+    public bool isHoldingThrust;
+    public float receivedThrust;
+    public float receivedSteering;
+    public float receivedSideBoost;
+    public bool isSideBoosting;
+    float sideBoostAmount = 10f;
+    
+    Coroutine TurnOffSideBoost;
+
+    GameObject chosenFrame;
+
+    List<SideBoosterController> sideBoostControllersRight = new List<SideBoosterController>();
+    List<SideBoosterController> sideBoostControllersLeft = new List<SideBoosterController>();
+
     /// </summary>
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -154,8 +169,37 @@ public class Ship_Movement : MonoBehaviour
 
         engineIdle = true;
         audioManager.PlayEngineIdleSound(AUDIO_engineIdle);
+        
+        AssignSideBoosters();
+       
 
 
+    }
+
+    void AssignSideBoosters()
+    {
+        if (shipConstructor != null)
+        {
+            chosenFrame = shipConstructor.GetFrameReference();
+        }
+
+        Frame_Layout frame_Layout = chosenFrame.GetComponent<Frame_Layout>();
+
+
+
+        if (frame_Layout != null)
+        {
+
+            sideBoostControllersLeft = frame_Layout.GetBoosters_Left();
+            sideBoostControllersRight = frame_Layout.GetBoosters_Right();
+
+            Debug.Log(sideBoostControllersLeft.Count);
+            Debug.Log(sideBoostControllersRight.Count);
+        }
+        else
+        {
+            Debug.Log("NO FRAME FOUND....");
+        }
     }
 
     void CheckBoostGulp()
@@ -202,15 +246,17 @@ public class Ship_Movement : MonoBehaviour
 
         float weightFactor = Mathf.Max(totalWeight, 1);
 
-        BASE_TopSpeed = rawSpeed - weightFactor * 0.1f;
-        BASE_MovementForce = rawPower - weightFactor * 0.05f;
+        BASE_TopSpeed = Mathf.Max(10f, rawSpeed - weightFactor * 0.1f);
+        BASE_MovementForce = Mathf.Max(10f, rawPower - weightFactor * 0.05f);
+
         float minWeight = 100f;
         float maxWeight = 1000f;
         float t = Mathf.InverseLerp(maxWeight, minWeight, weightFactor); // Note the reverse
         BASE_RotationSpeed = Mathf.Lerp(30f, 150f, t); // Heavy = 30, Light = 150
+
         BASE_BoostConsumptionRate = 0.25f + boostConsumptionRate;
 
-        shipWeight = totalWeight;
+        shipWeight = Mathf.Max(0, totalWeight);
 
         maxBoostFuel = fuel;
         currentBoostFuel = fuel;
@@ -220,20 +266,7 @@ public class Ship_Movement : MonoBehaviour
         topPowerText.text = $"Top Power: {BASE_MovementForce:F1}";
         topWeightText.text = $"Weight: {totalWeight}";
 
-        /*
-        Debug.Log("COUNTS: ");
-        Debug.Log("ENGINES: " + engineCount);
-        Debug.Log("JET ENGINES: " + jetEngineCount);
-        Debug.Log("AIREONS: " + aireonCount);
-        Debug.Log("FUEL TANKS: " + fuelTankCount);
-
-        /*
-         * We need: 
-         * Top Base Speed (How fast the ship can reach)
-         * Top Base Power (How fast the ship can reach Top Speed)
-         * Top Boost Speed (How much added to Base speed)
-         * Top Boost Power (How much added to Base Power)
-         */
+    
     }
 
 
@@ -271,7 +304,7 @@ public class Ship_Movement : MonoBehaviour
 
         if (isLimiting)
         {
-            workingTopSpeed = -60;
+            workingTopSpeed -= 50;
         }
         
 
@@ -304,21 +337,36 @@ public class Ship_Movement : MonoBehaviour
 
         if (isLimiting)
         {
-            workingMovementForce = Mathf.Max(0, workingMovementForce - 60);
+             workingMovementForce -= 50;
         }
 
         return BASE_MovementForce + workingMovementForce;
     }
 
+    float CalculateCurrentSideBoostAmount()
+    {
+        float weightFactor = Mathf.Clamp01(shipWeight / 500f);
+        float agilityFactor = 1f - weightFactor;
+
+        float topSpeed = CURRENT_TopSpeed;
+        if (topSpeed <= 0.01f) topSpeed = 0.01f; // Prevent division by zero
+
+        float speedLerp = Mathf.Lerp(sideBoostAmount, sideBoostAmount * 4f, forwardSpeed / topSpeed);
+        float weightedBoost = speedLerp * Mathf.Lerp(0.5f, 1.5f, agilityFactor);
+
+        return weightedBoost;
+
+    }
+
     // Update is called once per frame
     void Update()
     {
-
         
         CURRENT_TopSpeed = CalculateCurrentTopSpeed(boostActivated, trackBoostActivated, limitActivated);
         CURRENT_MovementForce = CalculateCurrentMovementForce(boostActivated, trackBoostActivated, limitActivated);
         CURRENT_RotationSpeed = CalculateCurrentRotationSpeed(boostActivated, trackBoostActivated, limitActivated);
         CURRENT_BoostConsumptionRate = BASE_BoostConsumptionRate;
+        CURRENT_SideBoostAmount = CalculateCurrentSideBoostAmount();
 
         CheckBoostFiring();
 
@@ -485,8 +533,14 @@ public class Ship_Movement : MonoBehaviour
 
     void UpdateVisualTilt()
     {
+        float sideBoostTilt = 1;
+
+        if(isSideBoosting)
+        {
+            sideBoostTilt = 1.5f;
+        }
         // Assume input X is turn direction: -1 (left) to +1 (right)
-        float targetTilt = -recievedMoveInput.x * maxTiltAngle;
+        float targetTilt = -receivedSteering * maxTiltAngle * sideBoostTilt;
 
         // Smoothly interpolate tilt
         currentTilt = Mathf.Lerp(currentTilt, targetTilt, Time.deltaTime * tiltSpeed);
@@ -536,18 +590,91 @@ public class Ship_Movement : MonoBehaviour
         
     }
 
-    
+    public void AddSideBoost_Right(bool addSideBoost_Right)
+    {
+        if(addSideBoost_Right == true)
+        {
+            receivedSideBoost = 1;
+            isSideBoosting = true;
+        }
+        else
+        {
+            receivedSideBoost = 0;
+            isSideBoosting = false;
+        }
+      
+       
+
+        foreach (SideBoosterController controller in sideBoostControllersRight)
+        {
+
+           
+            controller.ActivateFire(isSideBoosting);
+        }
+    }
+
+    public void AddSideBoost_Left(bool addSideBoost_Left)
+    {
+        if(addSideBoost_Left == true)
+        {
+            receivedSideBoost = -1;
+            isSideBoosting = true;
+        }
+        else
+        {
+            receivedSideBoost = 0;
+            isSideBoosting = false;
+        }
+
+      
+
+        foreach (SideBoosterController controller in sideBoostControllersLeft)
+        {
+
+            
+            controller.ActivateFire(isSideBoosting);
+        }
+    }
+
+   
 
     public void ActivateLimit(bool isLimiting)
     {
         limitActivated = isLimiting;
     }
 
-    public void UpdateMovement(Vector2 movementValue)
+    public void UpdateThrust(bool holdingThrust)
     {
-        recievedMoveInput = movementValue;
+        isHoldingThrust = holdingThrust;
 
+        if (isHoldingThrust)
+        {
+            receivedThrust = 1;
+        }
+        else
+        {
+            receivedThrust = 0;
+        }
+
+        UpdateEngineListeners();
+        UpdateBounceAmount();
+
+    }
+    public void UpdateSteering(Vector2 movementValue)
+    {
+
+        
+
+
+        // Get current rotation
         Vector3 euler = transform.rotation.eulerAngles;
+
+
+        //recievedMoveInput = movementValue;
+
+        receivedSteering = movementValue.x;
+
+        
 
         // Convert to -180 to +180 range
         if (euler.x > 180) euler.x -= 360;
@@ -560,36 +687,146 @@ public class Ship_Movement : MonoBehaviour
         // Preserve yaw (Y)
         transform.rotation = Quaternion.Euler(euler);
 
-        if(recievedMoveInput.y > 0)
+        
+
+     
+
+    }
+
+    void ApplyMovement()
+    {
+
+        Vector3 flatVelocity = rigidBody.linearVelocity;
+        flatVelocity.y = 0f; // Only consider horizontal movement
+        forwardSpeed = Vector3.Dot(flatVelocity, transform.forward);
+
+        if (forwardSpeed < CURRENT_TopSpeed)
+        {
+            Vector3 forwardForce = transform.forward * receivedThrust * CURRENT_MovementForce;
+            rigidBody.AddForce(forwardForce, ForceMode.Acceleration);
+        }
+
+        // Apply side boost impulse
+        if (isSideBoosting)
+        {
+            Vector3 sideForce = transform.right * receivedSideBoost * CURRENT_SideBoostAmount;
+            rigidBody.AddForce(sideForce, ForceMode.VelocityChange);
+
+            if (TurnOffSideBoost == null)
+            {
+                TurnOffSideBoost = StartCoroutine(TurnOffSideBoostAfterTime(0.1f));
+            }
+            else
+            {
+                receivedSideBoost = 0;
+                StopCoroutine(TurnOffSideBoost);
+            }
+        }
+
+        // Clamp only forward component
+        Vector3 currentVelocity = rigidBody.linearVelocity;
+        Vector3 forwardComponent = Vector3.Project(currentVelocity, transform.forward);
+        Vector3 lateralAndVertical = currentVelocity - forwardComponent;
+
+        if (forwardComponent.magnitude > CURRENT_TopSpeed)
+        {
+            forwardComponent = forwardComponent.normalized * CURRENT_TopSpeed;
+            rigidBody.linearVelocity = forwardComponent + lateralAndVertical;
+        }
+
+        // Apply downward drag from ship weight
+        float downwardPull = shipWeight / 1000f;
+        rigidBody.linearVelocity -= new Vector3(0f, downwardPull, 0f);
+
+
+
+
+
+        UpdateRotation();
+        
+
+    }
+
+    void UpdateRotation()
+    {
+        // Rotation (Y axis only)
+        float turnAmount = receivedSteering * CURRENT_RotationSpeed * Time.deltaTime;
+        transform.RotateAround(pivotPoint.position, Vector3.up, turnAmount);
+
+        UpdateEngineNozzleRotations(turnAmount);
+    }
+
+    void UpdateEngineNozzleRotations(float turnAmount)
+    {
+        foreach (var listener in engineFireListeners)
+        {
+            listener.OnShipRotateNozzle(turnAmount * -1);
+        }
+    }
+
+    IEnumerator TurnOffSideBoostAfterTime(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        receivedSideBoost = 0;
+        isSideBoosting = false;
+        TurnOffSideBoost = null;
+
+        Vector3 velocity = rigidBody.linearVelocity;
+        Vector3 forward = transform.forward;
+        Vector3 vertical = Vector3.up;
+
+        Vector3 forwardComponent = Vector3.Project(velocity, forward);
+        Vector3 verticalComponent = Vector3.Project(velocity, vertical);
+
+        rigidBody.linearVelocity = forwardComponent + verticalComponent;
+    }
+
+    void UpdateEngineListeners()
+    {
+        if (receivedThrust > 0)
         {
             //isFiring = true;
             foreach (var listener in engineFireListeners)
             {
-                if(listener != null)
+                if (listener != null)
                 {
                     listener.OnShipEngineFiring(true);
-                    
+
                 }
-                
+
             }
             bounceSpeed = movingBounceSpeed;
             bounceAmplitude = movingBounceAmplitude;
         }
         else
         {
-            //isFiring = false; 
+   
             foreach (var listener in engineFireListeners)
             {
-                if(listener != null)
+                if (listener != null)
                 {
                     listener.OnShipEngineFiring(false);
                 }
-                
+
             }
             bounceSpeed = idleBounceSpeed;
             bounceAmplitude = idleBounceAmplitude;
         }
+    }
 
+    void UpdateBounceAmount()
+    {
+        if (receivedThrust > 0)
+        {
+            
+            bounceSpeed = movingBounceSpeed;
+            bounceAmplitude = movingBounceAmplitude;
+        }
+        else
+        {
+            bounceSpeed = idleBounceSpeed;
+            bounceAmplitude = idleBounceAmplitude;
+        }
     }
 
     void SendEngineSignal()
@@ -648,59 +885,6 @@ public class Ship_Movement : MonoBehaviour
 
     }
 
-    void ApplyMovement()
-    {
-
-        // Get current forward velocity component
-        Vector3 flatVelocity = rigidBody.linearVelocity;
-        flatVelocity.y = 0f; // Only consider horizontal movement
-        forwardSpeed = Vector3.Dot(flatVelocity, transform.forward);
-
-        if (forwardSpeed < CURRENT_TopSpeed)
-        {
-            // Apply acceleration forward
-            Vector3 forwardForce = transform.forward * recievedMoveInput.y * CURRENT_MovementForce;
-            rigidBody.AddForce(forwardForce, ForceMode.Acceleration);
-        }
-        else
-        {
-            // Clamp velocity to top speed in forward direction
-            Vector3 clampedVelocity = transform.forward * CURRENT_TopSpeed;
-
-            // Keep vertical + sideways velocity (no full overwrite)
-            Vector3 currentVelocity = rigidBody.linearVelocity;
-            Vector3 lateralVelocity = currentVelocity - Vector3.Project(currentVelocity, transform.forward);
-            clampedVelocity += lateralVelocity;
-
-            rigidBody.linearVelocity = clampedVelocity;
-        }
-
-        float downwardPull = shipWeight / 1000;
-
-        
-      
-            rigidBody.linearVelocity = new Vector3(rigidBody.linearVelocity.x, rigidBody.linearVelocity.y - downwardPull, rigidBody.linearVelocity.z);
-        
-
-
-        
-
-        // Rotation (Y axis only)
-        float turnAmount = recievedMoveInput.x * CURRENT_RotationSpeed * Time.deltaTime;
-        transform.RotateAround(pivotPoint.position, Vector3.up, turnAmount);
-
-        // MAYBE gate with 'isFiring'
-
-            foreach (var listener in engineFireListeners)
-            {
-                listener.OnShipRotateNozzle(turnAmount * -1);
-            }
-        
-      
-
-       
-
-
-    }
+    
 
 }

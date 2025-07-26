@@ -6,7 +6,7 @@ public class Frame_Layout : MonoBehaviour
 
     public Transform frameEnginePosition;
     public Transform frontLeftPosition;
-   
+
     public Transform frontRightPosition;
     public Transform backRightPosition;
     public Transform backLeftPosition;
@@ -20,6 +20,31 @@ public class Frame_Layout : MonoBehaviour
 
 
     public FrameSize frameSize = FrameSize.medium;
+
+    public GameObject[] leftBoosters;
+    public GameObject[] rightBoosters;
+
+    List<SideBoosterController> sideBoosterControllers_Right = new List<SideBoosterController>();
+    List<SideBoosterController> sideBoosterControllers_Left = new List<SideBoosterController>();
+
+
+    private void Awake()
+    {
+       AssignBoosterControllers(leftBoosters, sideBoosterControllers_Left);
+        AssignBoosterControllers(rightBoosters, sideBoosterControllers_Right);
+    }
+
+    void AssignBoosterControllers(GameObject[] boostersArray, List<SideBoosterController> sideBoosterList)
+    {
+        foreach (GameObject booster in boostersArray)
+        {
+            SideBoosterController controller = booster.GetComponent<SideBoosterController>();
+            if (controller != null)
+            {
+                sideBoosterList.Add(controller);
+            }
+        }
+    }
 
     public enum FrameSize
     {
@@ -90,5 +115,31 @@ public class Frame_Layout : MonoBehaviour
         
 
         return newFramePositions;
+    }
+
+    public void FireBoosters_Left(bool shouldFire)
+    {
+        foreach(SideBoosterController boosterController in sideBoosterControllers_Left)
+        {
+            boosterController.ActivateFire(shouldFire);
+        }
+    }
+
+    public void FireBoosters_Right(bool shouldFire)
+    {
+        foreach (SideBoosterController boosterController in sideBoosterControllers_Right)
+        {
+            boosterController.ActivateFire(shouldFire);
+        }
+    }
+
+    public List<SideBoosterController> GetBoosters_Right()
+    {
+        return sideBoosterControllers_Right;
+    }
+
+    public List<SideBoosterController> GetBoosters_Left()
+    {
+        return sideBoosterControllers_Left;
     }
 }
