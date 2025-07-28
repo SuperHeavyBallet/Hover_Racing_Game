@@ -11,9 +11,10 @@ using System.Drawing;
 public class Ship_Movement : MonoBehaviour
 {
 
+    public UI_Controller UI_Controller;
 
-    public TextMeshProUGUI boostText;
-    public TextMeshProUGUI speedDisplay;
+    //public TextMeshProUGUI boostText; /////////////////////////////////////////////
+    //public TextMeshProUGUI speedDisplay;
 
     public ShipMeshSelector shipMeshSelector;
 
@@ -78,12 +79,11 @@ public class Ship_Movement : MonoBehaviour
 
     public float currentBoostFuel = 100f;
     public float maxBoostFuel = 100f;
-    public TextMeshProUGUI currentBoostFuelText;
+    //public TextMeshProUGUI currentBoostFuelText;
     public bool enteredBoostZone;
     private Coroutine extraBoost;
-    public TextMeshProUGUI megaBoostText;
+    //public TextMeshProUGUI megaBoostText;
 
-    /// <summary>
 
     float BASE_TopSpeed;
     float BASE_MovementForce;
@@ -108,9 +108,9 @@ public class Ship_Movement : MonoBehaviour
 
     List<ComponentName> componentList = new List<ComponentName>();
 
-    public TextMeshProUGUI topSpeedText;
-    public TextMeshProUGUI topPowerText;
-    public TextMeshProUGUI topWeightText;
+    //public TextMeshProUGUI topSpeedText;
+    //public TextMeshProUGUI topPowerText;
+   // public TextMeshProUGUI topWeightText;
 
     Audio_Manager audioManager;
     public AudioClip AUDIO_boostTrigger;
@@ -188,12 +188,14 @@ public class Ship_Movement : MonoBehaviour
     {
         if (forwardSpeed > 0)
         {
-            speedDisplay.text = Mathf.RoundToInt(forwardSpeed).ToString();
+            string newSpeed = Mathf.RoundToInt(forwardSpeed).ToString();
+            UI_Controller.UpdateSpeedDisplay(newSpeed);
+           
         }
         else
         {
-            speedDisplay.text = "00";
-            //boostActivated = false;
+            UI_Controller.UpdateSpeedDisplay("00");
+         
         }
     }
     void UpdateVisualTilt()
@@ -242,7 +244,7 @@ public class Ship_Movement : MonoBehaviour
     {
         audioManager = GameObject.Find("AudioManager").GetComponent<Audio_Manager>();
 
-        megaBoostText.gameObject.SetActive(false);
+        UI_Controller.HideMegaBoostText();
 
         rigidBody = GetComponent<Rigidbody>();
 
@@ -280,7 +282,9 @@ public class Ship_Movement : MonoBehaviour
         {
 
             boostersActive = true;
-            boostText.text = "BOOST";
+
+            UI_Controller.ShowBoostText();
+          
             foreach (var listener in engineFireListeners)
             {
                 if (listener != null)
@@ -306,7 +310,7 @@ public class Ship_Movement : MonoBehaviour
 
             audioManager.StopPlayerSound();
             audioManager.PlayPlayerSound_OneShot(AUDIO_boostOFF);
-            boostText.text = "--";
+            UI_Controller.HideBoostText();
             boostersActive = false;
             foreach (var listener in engineFireListeners)
             {
@@ -339,7 +343,9 @@ public class Ship_Movement : MonoBehaviour
 
         currentBoostFuel = Mathf.Clamp(currentBoostFuel, 0f, maxBoostFuel);
 
-        currentBoostFuelText.text = currentBoostFuel.ToString();
+        string currentBoostFuelAmount = currentBoostFuel.ToString();
+        UI_Controller.UpdateBoostFuelDisplay(currentBoostFuelAmount);
+        
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -347,7 +353,9 @@ public class Ship_Movement : MonoBehaviour
         if (other.gameObject.CompareTag("BoostZone") && !enteredBoostZone)
         {
             enteredBoostZone = true;
-            megaBoostText.gameObject.SetActive(true);
+
+            UI_Controller.ShowMegaBoostText();
+            
 
             trackBoostActivated = true;
 
@@ -629,9 +637,14 @@ public class Ship_Movement : MonoBehaviour
         currentBoostFuel = fuel;
         STAT_ManualBoostAmount = rawPower;
 
-        topSpeedText.text = $"Top Speed: {BASE_TopSpeed:F1}";
-        topPowerText.text = $"Top Power: {BASE_MovementForce:F1}";
-        topWeightText.text = $"Weight: {totalWeight}";
+        string calculatedTopSpeed = $"Top Speed: {BASE_TopSpeed:F1}";
+        UI_Controller.DEBUG_UpdateTopSpeedDisplay(calculatedTopSpeed);
+
+        string calculatedTopPower = $"Top Power: {BASE_MovementForce:F1}";
+        UI_Controller.DEBUG_UpdateTopPowerDisplay(calculatedTopPower);
+
+        string calculatedTopWeight = $"Weight: {totalWeight}";
+        UI_Controller.DEBUG_UpdateTopWeightDisplay(calculatedTopWeight);
 
 
     }
@@ -661,7 +674,7 @@ public class Ship_Movement : MonoBehaviour
     private IEnumerator ResetSpeed()
     {
         yield return new WaitForSeconds(5);
-        megaBoostText.gameObject.SetActive(false);
+        UI_Controller.HideMegaBoostText();
         trackBoostActivated = false;
         extraBoost = null;
     }
