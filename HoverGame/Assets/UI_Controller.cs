@@ -5,10 +5,18 @@ public class UI_Controller : MonoBehaviour
 {
     public GameObject boostText;
     public GameObject megaBoostText;
+    public GameObject boostGulpText;
 
     public TextMeshProUGUI speedDisplay;
 
     public TextMeshProUGUI currentBoostFuelDisplay;
+
+    public TextMeshProUGUI FPSDisplay;
+
+
+    public TextMeshProUGUI currentFuelDisplay;
+
+    
 
 
     // Debugging UI
@@ -24,10 +32,15 @@ public class UI_Controller : MonoBehaviour
     public void ShowMegaBoostText() => megaBoostText.SetActive(true);
     public void HideMegaBoostText() => megaBoostText.SetActive(false);
 
+    public void ShowBoostGulpText() => boostGulpText.SetActive(true);
+    public void HideBoostGulpText() => boostGulpText.SetActive(false);
+
 
     public void UpdateSpeedDisplay(string newSpeed) => speedDisplay.text = newSpeed;
 
     public void UpdateBoostFuelDisplay(string newBoostFuelAmount) => currentBoostFuelDisplay.text = newBoostFuelAmount;
+
+    public void UpdateFuelDisplay(int newFuelAmount) => currentFuelDisplay.text = newFuelAmount.ToString();
 
     // Debugging UI Functions
 

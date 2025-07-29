@@ -47,9 +47,9 @@ GameObject:
   - component: {fileID: 2214005424337713005}
   - component: {fileID: 1234081885415787064}
   - component: {fileID: 6974015787357174147}
-  - component: {fileID: 929803857572719104}
   - component: {fileID: 321633176551810375}
   - component: {fileID: 3645008872160852217}
+  - component: {fileID: 7385743262289847348}
   m_Layer: 7
   m_Name: Ship
   m_TagString: Player
@@ -295,8 +295,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a678440a8b63ac64ab557350c664d596, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boostText: {fileID: 0}
-  speedDisplay: {fileID: 0}
   shipMeshSelector: {fileID: 0}
   hoverCastPosition: {fileID: 5003198189514884325}
   worldCamera: {fileID: 993692164554754823}
@@ -320,17 +318,12 @@ MonoBehaviour:
   limitActivated: 0
   currentBoostFuel: 100
   maxBoostFuel: 100
-  currentBoostFuelText: {fileID: 0}
   enteredBoostZone: 0
-  megaBoostText: {fileID: 0}
   CURRENT_TopSpeed: 0
   CURRENT_MovementForce: 0
   CURRENT_RotationSpeed: 0
   CURRENT_BoostConsumptionRate: 0
   CURRENT_SideBoostAmount: 0
-  topSpeedText: {fileID: 0}
-  topPowerText: {fileID: 0}
-  topWeightText: {fileID: 0}
   AUDIO_boostTrigger: {fileID: 8300000, guid: 627493d11324993478bae445f231ead6, type: 3}
   AUDIO_boostOFF: {fileID: 8300000, guid: 2893673c80da65049bd0692c5d8da6ce, type: 3}
   AUDIO_boostFlow: {fileID: 8300000, guid: 1fb1aa2b2754e7e47a66492a64223d60, type: 3}
@@ -338,7 +331,6 @@ MonoBehaviour:
   boostersActive: 0
   engineIdle: 0
   hasBoostGulp: 0
-  boostGulpText: {fileID: 0}
   innerCameraController: {fileID: 2798429772900183642}
   shipWeight: 0
   isHoldingThrust: 0
@@ -417,19 +409,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currencyCountText: {fileID: 0}
   currencyCount: 0
---- !u!114 &929803857572719104
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 397305542273415922}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c688b7bdc31e1ce48b0d840c92104bcd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fpsText: {fileID: 0}
 --- !u!114 &321633176551810375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -442,7 +421,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce0d8bad1fa6b544d851308674855be8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chosenFrame: {fileID: 0}
   framePosition: {fileID: 6189902117371033566}
   lightFramePrefab: {fileID: 6362674939771482359, guid: 83b7b2eb7cd6db24ebc7d96f3f8aa581, type: 3}
   mediumFramePrefab: {fileID: 6362674939771482359, guid: 7ae94c4aeb0df714d8496e6965f5aea2, type: 3}
@@ -466,6 +444,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 397305542273415922}
   spawnPosition: {fileID: 0}
+--- !u!114 &7385743262289847348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397305542273415922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df54ce7d39942fd4c810caefdabdf3b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &642483198589229411
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,16 +4,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>
-/// This Script is now defunct, pointless
-/// </summary>
-/// 
-public class SceneStartup : MonoBehaviour
+public class MenuConstructorController : MonoBehaviour
 {
-
-
-    //public TextMeshProUGUI frameText;
-    /*
+    public TextMeshProUGUI frameText;
     public TextMeshProUGUI fLText;
     public TextMeshProUGUI fRText;
     public TextMeshProUGUI bLText;
@@ -33,7 +26,6 @@ public class SceneStartup : MonoBehaviour
     public GameObject fuelTank;
     public GameObject boostGulp;
 
-
     public Transform framePosition;
     public Transform fLPosition;
     public Transform fRPosition;
@@ -50,31 +42,69 @@ public class SceneStartup : MonoBehaviour
     public GameObject backLeft1Option;
     public GameObject backRight1Option;
     public GameObject backLeft1Label;
-    public GameObject backRight1Label;*/
+    public GameObject backRight1Label;
 
+    public Dictionary<ComponentSlotType, ComponentSlot> componentSlots = new();
+    public Dictionary<ComponentSlotType, ComponentName> persistentShipLoadout = new();
 
-
-
-
-
-   // public Dictionary<ComponentSlotType, ComponentSlot> componentSlots = new();
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        /*
-        InitializeComponentSlots();
+        shipPassport = GameObject.Find("ShipPassport").GetComponent<Ship_Passport>();
 
-        GenerateShip();
+        persistentShipLoadout = shipPassport.GetShipLoadout();
 
-        DisplayComponentMeshes();*/
+        if( persistentShipLoadout != null )
+        {
+            Debug.Log("Caught a live one!");
+            GenerateExistingShip();
+            DisplayComponentMeshes();
+        }
+        else
+        {
+            InitializeComponentSlots();
+
+            GenerateShip();
+
+            DisplayComponentMeshes();
+        }
+
+
+       
     }
 
     private void Start()
     {
-        //shipPassport = GameObject.Find("ShipPassport").GetComponent<Ship_Passport>();
+       
     }
-    /*
+
+    public void GenerateExistingShip()
+    {
+        Debug.Log(persistentShipLoadout);
+        InitializeComponentSlots(); // Make sure the prefabs are available
+
+        foreach (var component in persistentShipLoadout)
+        {
+            if(component.Key == ComponentSlotType.Frame)
+            {
+                Debug.Log("SHOULD SET FRAME");
+                UpdateComponent_Frame(component.Value);
+            }
+            else
+            {
+                Debug.Log("SHOULD SET OTHER COMPONENT");
+                UpdateComponent(component.Key, component.Value);
+            }
+        }
+    }
+
+    void DisplayExistingComponentMeshes()
+    {
+        foreach(var component in persistentShipLoadout)
+        {
+            
+        }
+    }
+
     public void GenerateShip()
     {
         SetComponentSlot(ComponentSlotType.Frame, ComponentName.mediumFrame);
@@ -88,8 +118,10 @@ public class SceneStartup : MonoBehaviour
         SetComponentSlot(ComponentSlotType.ExtraFront, ComponentName.boostGulp);
         SetComponentSlot(ComponentSlotType.ExtraLeft, ComponentName.fuelTank);
         SetComponentSlot(ComponentSlotType.ExtraRight, ComponentName.fuelTank);
-    }*/
-    /*
+    }
+
+    
+
     void DisplayComponentMeshes()
     {
         foreach (var pair in componentSlots)
@@ -104,67 +136,8 @@ public class SceneStartup : MonoBehaviour
                 newComponent.gameObject.SetActive(true);
             }
         }
-    }*/
+    }
 
-    /*
-    public void UpdateComponent_Frame(ComponentName newComponentName)
-    {
-        if (componentSlots.TryGetValue(ComponentSlotType.Frame, out var frameSlot))
-        {
-            if (frameSlot.selectedComponentKey != newComponentName)
-            {
-                foreach (Transform child in frameSlot.position)
-                {
-                    Destroy(child.gameObject);
-                }
-
-                SetComponentSlot(ComponentSlotType.Frame, newComponentName);
-
-                DisplayComponentMeshes();
-            }
-        }
-
-        TestFrameType();
-    }*/
-
-    /*
-
-    ComponentName GetFrameType(int val)
-    {
-        ComponentName replacementComponent = ComponentName.empty;
-
-        switch (val)
-        {
-            case 0: replacementComponent = ComponentName.lightFrame; break;
-            case 1: replacementComponent = ComponentName.mediumFrame; break;
-            case 2: replacementComponent = ComponentName.heavyFrame; break;
-            default: replacementComponent = ComponentName.empty; break;
-        }
-
-        return replacementComponent;
-    }*/
-    /*
-    ComponentName GetComponentName(int val)
-    {
-
-
-        ComponentName replacementComponent = ComponentName.empty;
-
-        switch (val)
-        {
-            case 0: replacementComponent = ComponentName.engine; break;
-            case 1: replacementComponent = ComponentName.jetEngine; break;
-            case 2: replacementComponent = ComponentName.aireon; break;
-            case 3: replacementComponent = ComponentName.fuelTank; break;
-            case 4: replacementComponent = ComponentName.boostGulp; break;
-            default: replacementComponent = ComponentName.empty; break;
-        }
-
-        return replacementComponent;
-    }*/
-
-
-    /*
     void UpdateComponent(ComponentSlotType slotType, ComponentName replacementComponent)
     {
         if (componentSlots.TryGetValue(slotType, out var slotPosition))
@@ -186,18 +159,114 @@ public class SceneStartup : MonoBehaviour
             }
         }
 
-    }*/
+    }
 
-   /*
+    public void TestFrameType()
+    {
+        bool isHeavyFrame = false;
+        foreach (var pair in componentSlots)
+        {
+            if (pair.Key == ComponentSlotType.Frame)
+            {
+                if (pair.Value.selectedComponentKey == ComponentName.heavyFrame)
+                {
+                    isHeavyFrame = true;
+                    break;
+                }
+            }
+        }
+
+        if (!isHeavyFrame)
+        {
+            SetOptionsForExtraSlots(false);
+          
+        }
+        else
+        {
+            SetOptionsForExtraSlots(true);
+        }
+    }
+
+    ComponentName GetComponentName(int val)
+    {
+
+
+        ComponentName replacementComponent = ComponentName.empty;
+
+        switch (val)
+        {
+            case 0: replacementComponent = ComponentName.engine; break;
+            case 1: replacementComponent = ComponentName.jetEngine; break;
+            case 2: replacementComponent = ComponentName.aireon; break;
+            case 3: replacementComponent = ComponentName.fuelTank; break;
+            case 4: replacementComponent = ComponentName.boostGulp; break;
+            default: replacementComponent = ComponentName.empty; break;
+        }
+
+        return replacementComponent;
+    }
+
+    void SetComponentSlot(ComponentSlotType slot, ComponentName componentKey)
+    {
+        if (!componentSlots.TryGetValue(slot, out var slotData)) return;
+
+        if (slotData.label != null)
+            slotData.label.text = componentKey.ToString();
+        slotData.selectedComponentKey = componentKey;
+
+        foreach (var kvp in slotData.components)
+        {
+            if (kvp.Value != null)
+            {
+                kvp.Value.SetActive(kvp.Key == componentKey);
+            }
+        }
+
+    }
+
+    public void UpdateComponent_Frame(ComponentName newComponentName)
+    {
+        if (componentSlots.TryGetValue(ComponentSlotType.Frame, out var frameSlot))
+        {
+            if (frameSlot.selectedComponentKey != newComponentName)
+            {
+                foreach (Transform child in frameSlot.position)
+                {
+                    Destroy(child.gameObject);
+                }
+
+                SetComponentSlot(ComponentSlotType.Frame, newComponentName);
+
+                DisplayComponentMeshes();
+            }
+        }
+
+        TestFrameType();
+    }
+
+    ComponentName GetFrameType(int val)
+    {
+        ComponentName replacementComponent = ComponentName.empty;
+
+        switch (val)
+        {
+            case 0: replacementComponent = ComponentName.lightFrame; break;
+            case 1: replacementComponent = ComponentName.mediumFrame; break;
+            case 2: replacementComponent = ComponentName.heavyFrame; break;
+            default: replacementComponent = ComponentName.empty; break;
+        }
+
+        return replacementComponent;
+    }
+
     public void UpdateComponentSlot_FRAME(int val)
     {
         ComponentName replacementComponent = GetFrameType(val);
         // Debug.Log("Frame selection changed to: " + replacementComponent); // <—
         UpdateComponent(ComponentSlotType.Frame, replacementComponent);
 
-    }*/
+    }
 
-    /*
     public void UpdateComponentSlot_FL(int val)
     {
         ComponentName replacementComponent = GetComponentName(val);
@@ -260,9 +329,8 @@ public class SceneStartup : MonoBehaviour
 
         UpdateComponent(ComponentSlotType.ExtraRight, replacementComponent);
     }
-    #endregion*/
 
-    /*
+
     void InitializeComponentSlots()
     {
         componentSlots[ComponentSlotType.Frame] = new ComponentSlot
@@ -396,32 +464,19 @@ public class SceneStartup : MonoBehaviour
             }
         };
 
-    }*/
+    }
 
-
-/*
-
-    void SetComponentSlot(ComponentSlotType slot, ComponentName componentKey)
+    void SetOptionsForExtraSlots(bool value)
     {
-        if (!componentSlots.TryGetValue(slot, out var slotData)) return;
-
-        if (slotData.label != null)
-            slotData.label.text = componentKey.ToString();
-        slotData.selectedComponentKey = componentKey;
-
-        foreach (var kvp in slotData.components)
-        {
-            if (kvp.Value != null)
-            {
-                kvp.Value.SetActive(kvp.Key == componentKey);
-            }
-        }
-
-    }*/
+        backLeft1Option.gameObject.SetActive(value);
+        backLeft1Label.gameObject.SetActive(value);
+        bL1Text.gameObject.SetActive(value);
+        bR1Text.gameObject.SetActive(value);
+        backRight1Option.gameObject.SetActive(value);
+        backRight1Label.gameObject.SetActive(value);
+    }
 
 
-
-    /*
     public void SetShipLoadout()
     {
         var shipLoadout = new Dictionary<ComponentSlotType, ComponentName>();
@@ -436,54 +491,22 @@ public class SceneStartup : MonoBehaviour
         shipPassport.ReceiveShipLoadout(shipLoadout);
 
 
-    }*/
-    /*
-    public void TestFrameType()
-    {
-        bool isHeavyFrame = false;
-        foreach (var pair in componentSlots)
-        {
-            if (pair.Key == ComponentSlotType.Frame)
-            {
-                if (pair.Value.selectedComponentKey == ComponentName.heavyFrame)
-                {
-                    isHeavyFrame = true;
-                    break;
-                }
-            }
-        }
-
-        if (!isHeavyFrame)
-        {
-            DisableOptionsForExtraSlots();
-        }
-        else
-        {
-            EnableOptionsForExtraSlots();
-        }
-    }*/
-    /*
-
-    void DisableOptionsForExtraSlots()
-    {
-        //Debug.Log("Disabling extras. backLeft1Option is " + backLeft1Option);
-        backLeft1Option.gameObject.SetActive(false);
-        backLeft1Label.gameObject.SetActive(false);
-        bL1Text.gameObject.SetActive(false);
-        bR1Text.gameObject.SetActive(false);
-        backRight1Option.gameObject.SetActive(false);
-        backRight1Label.gameObject.SetActive(false);
     }
 
-    void EnableOptionsForExtraSlots()
+
+    public void LoadScene(string sceneName)
     {
-        //Debug.Log("Enabling extras. backLeft1Option is " + backLeft1Option);
-        backLeft1Option.gameObject.SetActive(true);
-        backLeft1Label.gameObject.SetActive(true);
-        bL1Text.gameObject.SetActive(true);
-        bR1Text.gameObject.SetActive(true);
-        backRight1Option.gameObject.SetActive(true);
-        backRight1Label.gameObject.SetActive(true);
+        SetShipLoadout();
+        StartCoroutine(LoadSceneDelayed(sceneName));
     }
-    */
+
+    private IEnumerator LoadSceneDelayed(string sceneName)
+    {
+        yield return 0.1f; // one frame delay
+        SceneManager.LoadScene(sceneName);
+    }
+
+
+
+
 }

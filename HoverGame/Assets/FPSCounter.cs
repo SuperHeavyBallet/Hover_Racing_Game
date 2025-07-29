@@ -4,11 +4,16 @@ using TMPro;
 public class FPSCounter : MonoBehaviour
 {
     
-    public TextMeshProUGUI fpsText;
+    TextMeshProUGUI fpsText;
 
     private float timer;
     private int frames;
     private float refreshRate = 0.5f; // Update FPS display every 0.5 seconds
+
+    private void Awake()
+    {
+        fpsText = this.GetComponent<TextMeshProUGUI>();
+    }
 
     void Update()
     {

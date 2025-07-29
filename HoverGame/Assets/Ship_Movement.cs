@@ -11,7 +11,7 @@ using System.Drawing;
 public class Ship_Movement : MonoBehaviour
 {
 
-    public UI_Controller UI_Controller;
+    UI_Controller UI_Router;
 
     //public TextMeshProUGUI boostText; /////////////////////////////////////////////
     //public TextMeshProUGUI speedDisplay;
@@ -122,7 +122,7 @@ public class Ship_Movement : MonoBehaviour
 
     public bool engineIdle = false;
     public bool hasBoostGulp = false;
-    public GameObject boostGulpText;
+    //public GameObject boostGulpText;
 
     public Inner_CameraController innerCameraController;
 
@@ -145,11 +145,16 @@ public class Ship_Movement : MonoBehaviour
     List<SideBoosterController> sideBoostControllersLeft = new List<SideBoosterController>();
 
 
-
+    private void Awake()
+    {
+        
+        InitialiseReferences();
+    }
 
     void Start()
     {
-        InitialiseReferences();
+        SetupStartComponents();
+
     }
 
     void Update()
@@ -189,12 +194,12 @@ public class Ship_Movement : MonoBehaviour
         if (forwardSpeed > 0)
         {
             string newSpeed = Mathf.RoundToInt(forwardSpeed).ToString();
-            UI_Controller.UpdateSpeedDisplay(newSpeed);
+            UI_Router.UpdateSpeedDisplay(newSpeed);
            
         }
         else
         {
-            UI_Controller.UpdateSpeedDisplay("00");
+            UI_Router.UpdateSpeedDisplay("00");
          
         }
     }
@@ -244,16 +249,25 @@ public class Ship_Movement : MonoBehaviour
     {
         audioManager = GameObject.Find("AudioManager").GetComponent<Audio_Manager>();
 
-        UI_Controller.HideMegaBoostText();
+        UI_Router = GameObject.Find("PLAYER_UI").GetComponent<UI_Controller>();
+
+        UI_Router.HideMegaBoostText();
 
         rigidBody = GetComponent<Rigidbody>();
 
-        visualBasePosition = shipVisual.localPosition;
+        
 
         shipConstructor = GetComponent<Ship_Constructor>();
+        
+
+        
+    }
+
+    void SetupStartComponents()
+    {
+        visualBasePosition = shipVisual.localPosition;
         componentList = shipConstructor.GetShipLoadout();
         shipPassport = Ship_Passport.Instance;
-
         CalculatePerformance(componentList);
         CheckBoostGulp();
 
@@ -261,6 +275,7 @@ public class Ship_Movement : MonoBehaviour
         audioManager.PlayEngineIdleSound(AUDIO_engineIdle);
 
         AssignSideBoosters();
+
     }
     void CheckBoostGulp()
     {
@@ -283,7 +298,7 @@ public class Ship_Movement : MonoBehaviour
 
             boostersActive = true;
 
-            UI_Controller.ShowBoostText();
+            UI_Router.ShowBoostText();
           
             foreach (var listener in engineFireListeners)
             {
@@ -310,7 +325,7 @@ public class Ship_Movement : MonoBehaviour
 
             audioManager.StopPlayerSound();
             audioManager.PlayPlayerSound_OneShot(AUDIO_boostOFF);
-            UI_Controller.HideBoostText();
+            UI_Router.HideBoostText();
             boostersActive = false;
             foreach (var listener in engineFireListeners)
             {
@@ -333,18 +348,18 @@ public class Ship_Movement : MonoBehaviour
 
         if (hasBoostGulp && forwardSpeed > (CURRENT_TopSpeed / 4) && currentBoostFuel < maxBoostFuel)
         {
-            boostGulpText.SetActive(true);
+            UI_Router.ShowBoostGulpText();
             currentBoostFuel += forwardSpeed / 500;
         }
         else
         {
-            boostGulpText.SetActive(false);
+            UI_Router.HideBoostGulpText();
         }
 
         currentBoostFuel = Mathf.Clamp(currentBoostFuel, 0f, maxBoostFuel);
 
         string currentBoostFuelAmount = currentBoostFuel.ToString();
-        UI_Controller.UpdateBoostFuelDisplay(currentBoostFuelAmount);
+        UI_Router.UpdateBoostFuelDisplay(currentBoostFuelAmount);
         
     }
     private void OnTriggerEnter(Collider other)
@@ -354,7 +369,7 @@ public class Ship_Movement : MonoBehaviour
         {
             enteredBoostZone = true;
 
-            UI_Controller.ShowMegaBoostText();
+            UI_Router.ShowMegaBoostText();
             
 
             trackBoostActivated = true;
@@ -518,16 +533,19 @@ public class Ship_Movement : MonoBehaviour
     {
         if (shipConstructor != null)
         {
+            /*
             chosenFrame = shipConstructor.GetFrameReference();
+
+            Frame_Layout frame_Layout = chosenFrame.GetComponent<Frame_Layout>();
+
+            if (frame_Layout != null)
+            {
+                sideBoostControllersLeft = frame_Layout.GetBoosters_Left();
+                sideBoostControllersRight = frame_Layout.GetBoosters_Right();
+            }*/
         }
 
-        Frame_Layout frame_Layout = chosenFrame.GetComponent<Frame_Layout>();
-
-        if (frame_Layout != null)
-        {
-            sideBoostControllersLeft = frame_Layout.GetBoosters_Left();
-            sideBoostControllersRight = frame_Layout.GetBoosters_Right();
-        }
+       
     }
     #endregion 
 
@@ -638,13 +656,13 @@ public class Ship_Movement : MonoBehaviour
         STAT_ManualBoostAmount = rawPower;
 
         string calculatedTopSpeed = $"Top Speed: {BASE_TopSpeed:F1}";
-        UI_Controller.DEBUG_UpdateTopSpeedDisplay(calculatedTopSpeed);
+        UI_Router.DEBUG_UpdateTopSpeedDisplay(calculatedTopSpeed);
 
         string calculatedTopPower = $"Top Power: {BASE_MovementForce:F1}";
-        UI_Controller.DEBUG_UpdateTopPowerDisplay(calculatedTopPower);
+        UI_Router.DEBUG_UpdateTopPowerDisplay(calculatedTopPower);
 
         string calculatedTopWeight = $"Weight: {totalWeight}";
-        UI_Controller.DEBUG_UpdateTopWeightDisplay(calculatedTopWeight);
+        UI_Router.DEBUG_UpdateTopWeightDisplay(calculatedTopWeight);
 
 
     }
@@ -674,7 +692,7 @@ public class Ship_Movement : MonoBehaviour
     private IEnumerator ResetSpeed()
     {
         yield return new WaitForSeconds(5);
-        UI_Controller.HideMegaBoostText();
+        UI_Router.HideMegaBoostText();
         trackBoostActivated = false;
         extraBoost = null;
     }

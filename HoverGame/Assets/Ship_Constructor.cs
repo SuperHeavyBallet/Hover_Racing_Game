@@ -4,7 +4,7 @@ using UnityEngine;
 using static SceneStartup;
 
 /// <summary>
-/// This Script takes the components set in the Main Menu and builds the ship from that list
+/// This Script takes the components set in the Main Menu and builds the ship from that list, or falls back to default build on direct scene loading
 /// </summary>
 
 public class Ship_Constructor : MonoBehaviour
@@ -15,7 +15,7 @@ public class Ship_Constructor : MonoBehaviour
     Dictionary<ComponentSlotType, ComponentName> componentSlots = new();
     Dictionary<ComponentSlotType, ComponentName> BACKUP_componentSlots = new();
 
-    public GameObject chosenFrame;
+    GameObject chosenFrame;
     public Transform framePosition;
 
     Transform frontLeftPosition;
@@ -43,6 +43,11 @@ public class Ship_Constructor : MonoBehaviour
     void Awake()
     {
         SCRIPT_ShipMovement = this.GetComponent<Ship_Movement>();
+        
+    }
+
+    private void Start()
+    {
         CheckInstance();
         PlaceFrame();
         PlaceComponent();
@@ -51,22 +56,25 @@ public class Ship_Constructor : MonoBehaviour
 
     void CheckInstance()
     {
-        //sceneStartup = SceneStartup.Instance;
+
         shipPassport = Ship_Passport.Instance;
+ 
 
         if (shipPassport != null)
         {
-            Debug.Log("SHIP PASSPORT VALID");
-            componentSlots = shipPassport.GetShipLoadout();
 
-            Debug.Log(componentSlots);
-
-            foreach (var item in componentSlots)
+            if(shipPassport.GetShipLoadout() != null)
             {
-                Debug.Log(item.Key);
-                Debug.Log(item.Value);
+                componentSlots = shipPassport.GetShipLoadout();
+
+               
+
             }
-            
+            else
+            {
+                componentSlots = CreateDefaultLoadout();
+            }
+
         }
         else
         {
@@ -130,27 +138,32 @@ public class Ship_Constructor : MonoBehaviour
 
     public GameObject GetFrameReference()
     {
-        return chosenFrame;
+        if (chosenFrame != null) return chosenFrame;
+        else return null;
+        
     }
 
     void SetFrameReference(GameObject frame)
     {
+        Debug.Log("Frame Reference Set");
         chosenFrame = frame;
     }
 
 
     void PlaceFrame()
     {
+        
         Transform position = null;
         GameObject newComponent = null;
 
         foreach (var pair in componentSlots)
         {
 
-            
+           
 
-            if(pair.Key == ComponentSlotType.Frame)
+            if (pair.Key == ComponentSlotType.Frame)
             {
+                
                 position = framePosition;
 
                 switch (pair.Value)
@@ -186,6 +199,7 @@ public class Ship_Constructor : MonoBehaviour
                         extraRightPosition = frameLayout.GetExtraRightPosition();
                     }
 
+                   
                     SetFrameReference(chosenComponent);
                 }
                 break;
