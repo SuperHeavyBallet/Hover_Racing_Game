@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class MenuConstructorController : MonoBehaviour
 {
+
+    [Header("Text UI")]
     public TextMeshProUGUI frameText;
     public TextMeshProUGUI fLText;
     public TextMeshProUGUI fRText;
@@ -17,15 +19,8 @@ public class MenuConstructorController : MonoBehaviour
     public TextMeshProUGUI extraLeftText;
     public TextMeshProUGUI extraRightText;
 
-    public GameObject engine;
-    public GameObject jetEngine;
-    public GameObject aireon;
-    public GameObject lightFrame;
-    public GameObject mediumFrame;
-    public GameObject heavyFrame;
-    public GameObject fuelTank;
-    public GameObject boostGulp;
 
+    [Header("Object Positions")]
     public Transform framePosition;
     public Transform fLPosition;
     public Transform fRPosition;
@@ -37,12 +32,15 @@ public class MenuConstructorController : MonoBehaviour
     public Transform extraLeftPosition;
     public Transform extraRightPosition;
 
-    Ship_Passport shipPassport;
+    
 
-    public GameObject backLeft1Option;
-    public GameObject backRight1Option;
+    [Header("Dropdown Menus to Enable/Disable for Heavy Frames")]
+    public GameObject backLeft1_Dropdown;
+    public GameObject backRight1_Dropdown;
     public GameObject backLeft1Label;
     public GameObject backRight1Label;
+
+    Ship_Passport shipPassport;
 
     public Dictionary<ComponentSlotType, ComponentSlot> componentSlots = new();
     public Dictionary<ComponentSlotType, ComponentName> persistentShipLoadout = new();
@@ -50,65 +48,62 @@ public class MenuConstructorController : MonoBehaviour
     void Awake()
     {
         shipPassport = GameObject.Find("ShipPassport").GetComponent<Ship_Passport>();
+        CheckExistingShip();
+    }
 
+    public void CheckExistingShip()
+    {
         persistentShipLoadout = shipPassport.GetShipLoadout();
 
-        if( persistentShipLoadout != null )
+        if (persistentShipLoadout != null)
         {
-            Debug.Log("Caught a live one!");
             GenerateExistingShip();
-            DisplayComponentMeshes();
         }
         else
         {
             InitializeComponentSlots();
-
-            GenerateShip();
-
-            DisplayComponentMeshes();
+            GenerateNewShip();
         }
 
-
-       
+        DisplayComponentMeshes();
     }
 
-    private void Start()
+    
+
+    void InitializeComponentSlots()
     {
-       
+        SetComponentSlots(ComponentSlotType.Frame, frameText, framePosition);
+        SetComponentSlots(ComponentSlotType.FrontLeft, fLText, fLPosition);
+        SetComponentSlots(ComponentSlotType.FrontRight, fRText, fRPosition);
+        SetComponentSlots(ComponentSlotType.BackLeft, bLText, bLPosition);
+        SetComponentSlots(ComponentSlotType.BackRight, bRText, bRPosition);
+        SetComponentSlots(ComponentSlotType.BackLeft1, bL1Text, bL1Position);
+        SetComponentSlots(ComponentSlotType.BackRight1, bR1Text, bR1Position);
+        SetComponentSlots(ComponentSlotType.ExtraFront, extraFrontText, extraFrontPosition);
+        SetComponentSlots(ComponentSlotType.ExtraLeft, extraLeftText, extraLeftPosition);
+        SetComponentSlots(ComponentSlotType.ExtraRight, extraRightText, extraRightPosition);
     }
 
     public void GenerateExistingShip()
     {
-        Debug.Log(persistentShipLoadout);
-        InitializeComponentSlots(); // Make sure the prefabs are available
+        InitializeComponentSlots();
 
         foreach (var component in persistentShipLoadout)
         {
-            if(component.Key == ComponentSlotType.Frame)
+            if (component.Key == ComponentSlotType.Frame)
             {
-                Debug.Log("SHOULD SET FRAME");
                 UpdateComponent_Frame(component.Value);
             }
             else
             {
-                Debug.Log("SHOULD SET OTHER COMPONENT");
                 UpdateComponent(component.Key, component.Value);
             }
         }
     }
 
-    void DisplayExistingComponentMeshes()
-    {
-        foreach(var component in persistentShipLoadout)
-        {
-            
-        }
-    }
-
-    public void GenerateShip()
+    public void GenerateNewShip()
     {
         SetComponentSlot(ComponentSlotType.Frame, ComponentName.mediumFrame);
-        TestFrameType();
         SetComponentSlot(ComponentSlotType.FrontLeft, ComponentName.engine);
         SetComponentSlot(ComponentSlotType.FrontRight, ComponentName.engine);
         SetComponentSlot(ComponentSlotType.BackLeft, ComponentName.engine);
@@ -120,50 +115,33 @@ public class MenuConstructorController : MonoBehaviour
         SetComponentSlot(ComponentSlotType.ExtraRight, ComponentName.fuelTank);
     }
 
-    
-
     void DisplayComponentMeshes()
     {
         foreach (var pair in componentSlots)
         {
-            var selectedKey = pair.Value.selectedComponentKey;
-
-            if (selectedKey == ComponentName.empty) continue;
-
-            if (pair.Value.components.TryGetValue(selectedKey, out GameObject prefab))
-            {
-                GameObject newComponent = Instantiate(prefab, pair.Value.position);
-                newComponent.gameObject.SetActive(true);
-            }
+            CleanupExcessMeshes(pair.Value.position);
+            InstantiateSelectedComponent(pair.Value);
         }
     }
 
-    void UpdateComponent(ComponentSlotType slotType, ComponentName replacementComponent)
+    void InstantiateSelectedComponent(ComponentSlot slot)
     {
-        if (componentSlots.TryGetValue(slotType, out var slotPosition))
+        var selectedKey = slot.selectedComponentKey;
+        if (selectedKey == ComponentName.empty) return;
+
+        if (slot.components.TryGetValue(selectedKey, out var prefab))
         {
-            if (slotPosition.selectedComponentKey != replacementComponent)
-            {
-                foreach (Transform child in slotPosition.position)
-                {
-                    Destroy(child.gameObject);
-                }
-
-                SetComponentSlot(slotType, replacementComponent);
-                DisplayComponentMeshes();
-
-                if (slotType == ComponentSlotType.Frame)
-                {
-                    TestFrameType();
-                }
-            }
+            GameObject newComp = Instantiate(prefab, slot.position);
+            newComp.SetActive(true);
         }
-
     }
 
-    public void TestFrameType()
+   
+
+    public void CheckHeavyFrame()
     {
         bool isHeavyFrame = false;
+
         foreach (var pair in componentSlots)
         {
             if (pair.Key == ComponentSlotType.Frame)
@@ -176,21 +154,11 @@ public class MenuConstructorController : MonoBehaviour
             }
         }
 
-        if (!isHeavyFrame)
-        {
-            SetOptionsForExtraSlots(false);
-          
-        }
-        else
-        {
-            SetOptionsForExtraSlots(true);
-        }
+        SetOptionsForExtraSlots(isHeavyFrame);
     }
 
     ComponentName GetComponentName(int val)
     {
-
-
         ComponentName replacementComponent = ComponentName.empty;
 
         switch (val)
@@ -200,6 +168,8 @@ public class MenuConstructorController : MonoBehaviour
             case 2: replacementComponent = ComponentName.aireon; break;
             case 3: replacementComponent = ComponentName.fuelTank; break;
             case 4: replacementComponent = ComponentName.boostGulp; break;
+            case 5: replacementComponent = ComponentName.machineGun; break;
+            case 6: replacementComponent = ComponentName.missile; break;
             default: replacementComponent = ComponentName.empty; break;
         }
 
@@ -224,16 +194,13 @@ public class MenuConstructorController : MonoBehaviour
 
     }
 
-    public void UpdateComponent_Frame(ComponentName newComponentName)
+    void UpdateComponent_Frame(ComponentName newComponentName)
     {
         if (componentSlots.TryGetValue(ComponentSlotType.Frame, out var frameSlot))
         {
             if (frameSlot.selectedComponentKey != newComponentName)
             {
-                foreach (Transform child in frameSlot.position)
-                {
-                    Destroy(child.gameObject);
-                }
+                CleanupExcessMeshes(frameSlot.position);
 
                 SetComponentSlot(ComponentSlotType.Frame, newComponentName);
 
@@ -241,7 +208,7 @@ public class MenuConstructorController : MonoBehaviour
             }
         }
 
-        TestFrameType();
+        CheckHeavyFrame();
     }
 
     ComponentName GetFrameType(int val)
@@ -259,10 +226,41 @@ public class MenuConstructorController : MonoBehaviour
         return replacementComponent;
     }
 
+    void UpdateComponent(ComponentSlotType slotType, ComponentName replacementComponent)
+    {
+        if (componentSlots.TryGetValue(slotType, out var slotPosition))
+        {
+            if (slotPosition.selectedComponentKey != replacementComponent)
+            {
+
+                CleanupExcessMeshes(slotPosition.position);
+
+                
+
+                SetComponentSlot(slotType, replacementComponent);
+                DisplayComponentMeshes();
+
+                if (slotType == ComponentSlotType.Frame)
+                {
+                    CheckHeavyFrame();
+                }
+            }
+        }
+
+    }
+
+    void CleanupExcessMeshes(Transform slotPosition)
+    {
+        foreach (Transform child in slotPosition)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+    // Currently these need to be explicit and repeated for dropdow access in unity, will probably be changed later, so might not be worth trying to fix atm
+    #region
     public void UpdateComponentSlot_FRAME(int val)
     {
         ComponentName replacementComponent = GetFrameType(val);
-        // Debug.Log("Frame selection changed to: " + replacementComponent); // <—
         UpdateComponent(ComponentSlotType.Frame, replacementComponent);
 
     }
@@ -329,150 +327,46 @@ public class MenuConstructorController : MonoBehaviour
 
         UpdateComponent(ComponentSlotType.ExtraRight, replacementComponent);
     }
+    #endregion
 
 
-    void InitializeComponentSlots()
+  
+
+    void SetComponentSlots(ComponentSlotType slotType, TextMeshProUGUI slotLabel, Transform slotPosition)
     {
-        componentSlots[ComponentSlotType.Frame] = new ComponentSlot
+        componentSlots[slotType] = new ComponentSlot
         {
-            label = frameText,
-            position = framePosition,
+            label = slotLabel,
+            position = slotPosition,
             components = new Dictionary<ComponentName, GameObject>
             {
-                { ComponentName.lightFrame, lightFrame },
-                { ComponentName.mediumFrame, mediumFrame },
-                { ComponentName.heavyFrame , heavyFrame },
+                { ComponentName.lightFrame, shipPassport.GetPrefab(ComponentName.lightFrame) },
+                { ComponentName.mediumFrame, shipPassport.GetPrefab(ComponentName.mediumFrame) },
+                { ComponentName.heavyFrame , shipPassport.GetPrefab(ComponentName.heavyFrame) },
+                 { ComponentName.engine, shipPassport.GetPrefab(ComponentName.engine) },
+                { ComponentName.jetEngine,  shipPassport.GetPrefab(ComponentName.jetEngine) },
+                { ComponentName.aireon , shipPassport.GetPrefab(ComponentName.aireon)},
+                { ComponentName.fuelTank, shipPassport.GetPrefab(ComponentName.fuelTank) },
+                { ComponentName.boostGulp, shipPassport.GetPrefab(ComponentName.boostGulp)  },
+                { ComponentName.machineGun, shipPassport.GetPrefab(ComponentName.machineGun)  },
+                { ComponentName.missile, shipPassport.GetPrefab(ComponentName.missile)  },
                 { ComponentName.empty , null }
             }
         };
 
-        componentSlots[ComponentSlotType.FrontLeft] = new ComponentSlot
+        if(slotType == ComponentSlotType.Frame )
         {
-            label = fLText,
-            position = fLPosition,
-            components = new Dictionary<ComponentName, GameObject>
-            {
-                { ComponentName.engine, engine },
-                { ComponentName.jetEngine, jetEngine },
-                { ComponentName.aireon , aireon },
-                { ComponentName.empty , null }
-            }
-        };
-
-        componentSlots[ComponentSlotType.FrontRight] = new ComponentSlot
-        {
-            label = fRText,
-            position = fRPosition,
-            components = new Dictionary<ComponentName, GameObject>
-            {
-                { ComponentName.engine, engine },
-                { ComponentName.jetEngine, jetEngine },
-                { ComponentName.aireon , aireon },
-                { ComponentName.empty , null }
-            }
-        };
-
-        componentSlots[ComponentSlotType.BackLeft] = new ComponentSlot
-        {
-            label = bLText,
-            position = bLPosition,
-            components = new Dictionary<ComponentName, GameObject>
-            {
-                { ComponentName.engine, engine },
-                { ComponentName.jetEngine, jetEngine },
-                { ComponentName.aireon , aireon },
-                { ComponentName.empty , null }
-            }
-        };
-
-        componentSlots[ComponentSlotType.BackRight] = new ComponentSlot
-        {
-            label = bRText,
-            position = bRPosition,
-            components = new Dictionary<ComponentName, GameObject>
-            {
-                { ComponentName.engine, engine },
-                { ComponentName.jetEngine, jetEngine },
-                { ComponentName.aireon , aireon },
-                { ComponentName.empty , null }
-            }
-        };
-
-        componentSlots[ComponentSlotType.BackLeft1] = new ComponentSlot
-        {
-            label = bL1Text,
-            position = bL1Position,
-            components = new Dictionary<ComponentName, GameObject>
-            {
-                { ComponentName.engine, engine },
-                { ComponentName.jetEngine, jetEngine },
-                { ComponentName.aireon , aireon },
-                { ComponentName.empty , null }
-            }
-        };
-
-        componentSlots[ComponentSlotType.BackRight1] = new ComponentSlot
-        {
-            label = bR1Text,
-            position = bR1Position,
-            components = new Dictionary<ComponentName, GameObject>
-            {
-                { ComponentName.engine, engine },
-                { ComponentName.jetEngine, jetEngine },
-                { ComponentName.aireon , aireon },
-                { ComponentName.empty , null }
-            }
-        };
-
-        componentSlots[ComponentSlotType.ExtraFront] = new ComponentSlot
-        {
-            label = extraFrontText,
-            position = extraFrontPosition,
-            components = new Dictionary<ComponentName, GameObject>
-            {
-                { ComponentName.fuelTank, fuelTank },
-                { ComponentName.boostGulp, boostGulp },
-                { ComponentName.empty , null }
-            }
-        };
-
-        componentSlots[ComponentSlotType.ExtraLeft] = new ComponentSlot
-        {
-            label = extraLeftText,
-            position = extraLeftPosition,
-            components = new Dictionary<ComponentName, GameObject>
-            {
-                { ComponentName.engine, engine },
-                { ComponentName.jetEngine, jetEngine },
-                { ComponentName.aireon , aireon },
-                { ComponentName.fuelTank, fuelTank },
-                { ComponentName.empty , null }
-            }
-        };
-
-        componentSlots[ComponentSlotType.ExtraRight] = new ComponentSlot
-        {
-            label = extraRightText,
-            position = extraRightPosition,
-            components = new Dictionary<ComponentName, GameObject>
-            {
-                { ComponentName.engine, engine },
-                { ComponentName.jetEngine, jetEngine },
-                { ComponentName.aireon , aireon },
-                { ComponentName.fuelTank, fuelTank },
-                { ComponentName.empty , null }
-            }
-        };
-
+            CheckHeavyFrame();
+        }
     }
 
     void SetOptionsForExtraSlots(bool value)
     {
-        backLeft1Option.gameObject.SetActive(value);
+        backLeft1_Dropdown.gameObject.SetActive(value);
         backLeft1Label.gameObject.SetActive(value);
         bL1Text.gameObject.SetActive(value);
         bR1Text.gameObject.SetActive(value);
-        backRight1Option.gameObject.SetActive(value);
+        backRight1_Dropdown.gameObject.SetActive(value);
         backRight1Label.gameObject.SetActive(value);
     }
 
@@ -485,26 +379,12 @@ public class MenuConstructorController : MonoBehaviour
         {
             shipLoadout[pair.Key] = pair.Value.selectedComponentKey;
         }
-        Debug.Log("SET LOADOUT:");
-        Debug.Log(shipLoadout.Count);
 
         shipPassport.ReceiveShipLoadout(shipLoadout);
-
-
     }
 
 
-    public void LoadScene(string sceneName)
-    {
-        SetShipLoadout();
-        StartCoroutine(LoadSceneDelayed(sceneName));
-    }
-
-    private IEnumerator LoadSceneDelayed(string sceneName)
-    {
-        yield return 0.1f; // one frame delay
-        SceneManager.LoadScene(sceneName);
-    }
+   
 
 
 

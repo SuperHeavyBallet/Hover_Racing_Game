@@ -28,17 +28,23 @@ public class FuelController : MonoBehaviour
     public void SubtractFuelCount(int newFuelCount)
     {
         currentFuelAmount -= newFuelCount;
-        UpdateFuelCountDisplay();
+       // UpdateFuelCountDisplay();
     }
 
     public void AddFuelCount(int newFuelCount)
     {
         currentFuelAmount += newFuelCount;
-        UpdateFuelCountDisplay();
+        //UpdateFuelCountDisplay();
     }
 
-    void UpdateFuelCountDisplay()
+    public void UpdateFuelCountDisplay(float newFuelAmount)
     {
-        UI_Router.UpdateFuelDisplay(currentFuelAmount);
+        int convertedAmount = Mathf.RoundToInt(newFuelAmount);
+        UI_Router.UpdateFuelDisplay(convertedAmount);
+    }
+
+    public void SetTotalFuelCapacity(int newTotalFuelCapacity)
+    {
+        totalFuelCapacity = newTotalFuelCapacity;
     }
 }

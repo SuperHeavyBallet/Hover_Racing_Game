@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3126630491397618856
+--- !u!1 &3118090878106991817
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 9028029534411743353}
-  - component: {fileID: 7429051261297932085}
+  - component: {fileID: 5624804288785740182}
+  - component: {fileID: 8831679330137719713}
   m_Layer: 0
-  m_Name: ShipPassport
+  m_Name: ShipPassport 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &9028029534411743353
+--- !u!4 &5624804288785740182
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3126630491397618856}
+  m_GameObject: {fileID: 3118090878106991817}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.11, y: 0.848, z: 40.538002}
@@ -32,20 +32,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7429051261297932085
+--- !u!114 &8831679330137719713
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3126630491397618856}
+  m_GameObject: {fileID: 3118090878106991817}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8698c5d878f8c9448bfe5ac8f276d412, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   receivedShipLoadout: 0
-  engine: {fileID: 3423024166324285631, guid: 16e3ce4818264eb4297d20796ed1f92c, type: 3}
+  engine: {fileID: 3423024166324285631, guid: 19d040c4aa7442b45b857af379eac50d, type: 3}
   jetEngine: {fileID: 7090124252742436075, guid: 00b938534f0c3544d81a3682a530172c, type: 3}
   aireon: {fileID: 3423024166324285631, guid: 996fa32454078704896c69f754c358a0, type: 3}
   lightFrame: {fileID: 6362674939771482359, guid: 83b7b2eb7cd6db24ebc7d96f3f8aa581, type: 3}

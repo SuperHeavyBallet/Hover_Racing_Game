@@ -6,6 +6,7 @@ public class UI_Controller : MonoBehaviour
     public GameObject boostText;
     public GameObject megaBoostText;
     public GameObject boostGulpText;
+    public GameObject pitStopText;
 
     public TextMeshProUGUI speedDisplay;
 
@@ -16,6 +17,7 @@ public class UI_Controller : MonoBehaviour
 
     public TextMeshProUGUI currentFuelDisplay;
 
+   
     
 
 
@@ -34,6 +36,9 @@ public class UI_Controller : MonoBehaviour
 
     public void ShowBoostGulpText() => boostGulpText.SetActive(true);
     public void HideBoostGulpText() => boostGulpText.SetActive(false);
+
+    public void ShowPitStopText() => pitStopText.SetActive(true);
+    public void HidePitStopText() => pitStopText?.SetActive(false);
 
 
     public void UpdateSpeedDisplay(string newSpeed) => speedDisplay.text = newSpeed;

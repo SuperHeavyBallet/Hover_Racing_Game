@@ -9,12 +9,12 @@ using static SceneStartup;
 
 public class Ship_Constructor : MonoBehaviour
 {
-    SceneStartup sceneStartup;
+
     Ship_Passport shipPassport;
+    Ship_Movement SCRIPT_ShipMovement;
 
     Dictionary<ComponentSlotType, ComponentName> componentSlots = new();
-    Dictionary<ComponentSlotType, ComponentName> BACKUP_componentSlots = new();
-
+    
     GameObject chosenFrame;
     public Transform framePosition;
 
@@ -29,16 +29,9 @@ public class Ship_Constructor : MonoBehaviour
     Transform backLeft1Position;
     Transform backRight1Position;
 
-    Ship_Movement SCRIPT_ShipMovement;
+   
 
-    public GameObject lightFramePrefab;
-    public GameObject mediumFramePrefab;
-    public GameObject heavyFramePrefab;
-    public GameObject enginePrefab;
-    public GameObject jetEnginePrefab;
-    public GameObject aireonPrefab;
-    public GameObject fuelTankPrefab;
-    public GameObject boostGulpPrefab;
+   
 
     void Awake()
     {
@@ -56,33 +49,23 @@ public class Ship_Constructor : MonoBehaviour
 
     void CheckInstance()
     {
-
         shipPassport = Ship_Passport.Instance;
  
-
         if (shipPassport != null)
         {
-
-            if(shipPassport.GetShipLoadout() != null)
+            if (shipPassport.GetShipLoadout() != null)
             {
                 componentSlots = shipPassport.GetShipLoadout();
-
-               
-
             }
             else
             {
                 componentSlots = CreateDefaultLoadout();
             }
-
         }
         else
         {
             Debug.LogWarning("Ship Passport not found or loadout not received. Using default backup loadout.");
-
             componentSlots = CreateDefaultLoadout();
-
-        
         }
     }
 
@@ -97,7 +80,7 @@ public class Ship_Constructor : MonoBehaviour
         { ComponentSlotType.BackRight,ComponentName.engine },
         { ComponentSlotType.BackLeft1, ComponentName.empty },
         { ComponentSlotType.BackRight1, ComponentName.empty },
-        { ComponentSlotType.ExtraFront, ComponentName.boostGulp },
+        { ComponentSlotType.ExtraFront, ComponentName.missile },
         { ComponentSlotType.ExtraLeft, ComponentName.fuelTank },
         { ComponentSlotType.ExtraRight, ComponentName.fuelTank }
     };
@@ -119,7 +102,6 @@ public class Ship_Constructor : MonoBehaviour
                 }
             }
 
-            
             if (pair.Key == ComponentSlotType.BackLeft1 || pair.Key == ComponentSlotType.BackRight1)
             {
                 if(hasExtraSlots)
@@ -131,7 +113,6 @@ public class Ship_Constructor : MonoBehaviour
             {
                 componentList.Add(pair.Value);
             }
-
         }
         return componentList;
     }
@@ -140,40 +121,32 @@ public class Ship_Constructor : MonoBehaviour
     {
         if (chosenFrame != null) return chosenFrame;
         else return null;
-        
     }
 
     void SetFrameReference(GameObject frame)
     {
-        Debug.Log("Frame Reference Set");
         chosenFrame = frame;
     }
 
-
     void PlaceFrame()
     {
-        
         Transform position = null;
         GameObject newComponent = null;
 
         foreach (var pair in componentSlots)
         {
-
-           
-
             if (pair.Key == ComponentSlotType.Frame)
-            {
-                
+            {  
                 position = framePosition;
 
                 switch (pair.Value)
                 {
                     case ComponentName.lightFrame:
-                        newComponent = lightFramePrefab;  break;
+                        newComponent = shipPassport.lightFrame;  break;
                     case ComponentName.mediumFrame:
-                        newComponent = mediumFramePrefab; break;
+                        newComponent = shipPassport.mediumFrame; break;
                     case ComponentName.heavyFrame: 
-                        newComponent = heavyFramePrefab; break;
+                        newComponent = shipPassport.heavyFrame; break;
                     default:
                         Debug.LogWarning("No Frame Type Assigned");
                         break;
@@ -199,9 +172,9 @@ public class Ship_Constructor : MonoBehaviour
                         extraRightPosition = frameLayout.GetExtraRightPosition();
                     }
 
-                   
                     SetFrameReference(chosenComponent);
                 }
+
                 break;
             }
         }
@@ -238,23 +211,30 @@ public class Ship_Constructor : MonoBehaviour
                     Debug.LogWarning("No Slot Assigned");
                     break;
             }
+
+            newComponent = shipPassport.GetPrefab(pair.Value);
             
+            /*
             switch (pair.Value)
             {
                 case ComponentName.engine:
-                    newComponent = enginePrefab; break;
+                    newComponent = shipPassport.engine; break;
                 case ComponentName.jetEngine:
-                    newComponent = jetEnginePrefab; break;
+                    newComponent = shipPassport.jetEngine; break;
                 case ComponentName.aireon:
-                    newComponent = aireonPrefab; break;
+                    newComponent = shipPassport.aireon; break;
                 case ComponentName.fuelTank:
-                    newComponent = fuelTankPrefab; break;
+                    newComponent = shipPassport.fuelTank; break;
                 case ComponentName.boostGulp:
-                    newComponent = boostGulpPrefab; break;
+                    newComponent = shipPassport.boostGulp; break;
+                case ComponentName.machineGun:
+                    newComponent = shipPassport.machineGun; break;
+                case ComponentName.missile:
+                    newComponent = shipPassport.missile; break;
                 default:
                     Debug.LogWarning("No Component Value Assigned");
                     break;
-            }
+            }*/
 
             if (newComponent != null && position != null)
             {
@@ -266,8 +246,6 @@ public class Ship_Constructor : MonoBehaviour
                 {
                     SCRIPT_ShipMovement.RegisterEngineFireListener(engineController);
                 }
-
-                
             }
             else
             {

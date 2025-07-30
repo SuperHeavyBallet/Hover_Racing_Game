@@ -14,17 +14,21 @@ public class Ship_Passport : MonoBehaviour
     public Dictionary<ComponentSlotType, ComponentName> componentSlots  = new();
     public bool receivedShipLoadout = false;
 
+    public Dictionary<ComponentName, GameObject> componentPrefabs;
 
-    public enum AllPosibleComponents 
-    {
-        engine,
-        jetEngine,
-        aireon,
-        fuelTank,
-        boostGulp
-    }
 
-    public Dictionary<AllPosibleComponents, bool> playerUnlockedComponents = new();
+    public GameObject engine;
+    public GameObject jetEngine;
+    public GameObject aireon;
+    public GameObject lightFrame;
+    public GameObject mediumFrame;
+    public GameObject heavyFrame;
+    public GameObject fuelTank;
+    public GameObject boostGulp;
+    public GameObject machineGun;
+    public GameObject missile;
+
+
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -39,72 +43,47 @@ public class Ship_Passport : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        InitialiseUnlockedComponents();
-        CheckUnlockedComponents();
-        playerUnlockedComponents[AllPosibleComponents.boostGulp] = true;
-        ReCheckUnlocks();
+        componentPrefabs = new Dictionary<ComponentName, GameObject>();
+        InitialisePrefabReferences();
     }
 
-    void CheckUnlockedComponents()
+    void InitialisePrefabReferences()
     {
-        foreach(var component in playerUnlockedComponents)
-        {
-         
+        componentPrefabs.Add(ComponentName.lightFrame, lightFrame);
+        componentPrefabs.Add(ComponentName.mediumFrame, mediumFrame);
+        componentPrefabs.Add(ComponentName.heavyFrame, heavyFrame);
+        componentPrefabs.Add(ComponentName.engine, engine);
+        componentPrefabs.Add(ComponentName.jetEngine, jetEngine);
+        componentPrefabs.Add(ComponentName.aireon, aireon);
+        componentPrefabs.Add(ComponentName.fuelTank, fuelTank);
+        componentPrefabs.Add(ComponentName.boostGulp, boostGulp);
+        componentPrefabs.Add(ComponentName.machineGun, machineGun);
+        componentPrefabs.Add(ComponentName.missile, missile);
+    }
 
-            if(component.Value == true)
-            {
-                Debug.Log(component.Key + " is unlocked");
-            }
-            else
-            {
-                Debug.Log(component.Key + " is locked");
-                
-            }
+    public GameObject GetPrefab(ComponentName componentName)
+    {
+        if (componentPrefabs.TryGetValue(componentName, out var prefab))
+        {
+            return prefab;
         }
-
-        
-
-
-    }
-
-    void ReCheckUnlocks()
-    {
-        foreach (var component in playerUnlockedComponents)
+        else
         {
-            if (component.Value == true)
-            {
-                Debug.Log(component.Key + " is unlocked");
-            }
-            else
-            {
-                Debug.Log(component.Key + " is locked");
-            }
+            Debug.LogWarning($"No prefab found for component: {componentName}");
+            return null;
         }
     }
 
-    void InitialiseUnlockedComponents()
-    {
-        playerUnlockedComponents.Add(AllPosibleComponents.engine, true);
-        playerUnlockedComponents.Add(AllPosibleComponents.jetEngine, true);
-        playerUnlockedComponents.Add(AllPosibleComponents.aireon, true);
-        playerUnlockedComponents.Add(AllPosibleComponents.fuelTank, true);
-        playerUnlockedComponents.Add(AllPosibleComponents.boostGulp, false);
-    }
+
+    
 
     private void Start()
     {
         if (!receivedShipLoadout)
         {
             Debug.Log("NO LOADOUT RECEIVED!");
-
         }
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void ReceiveShipLoadout(Dictionary<ComponentSlotType, ComponentName> shipLoadout )
@@ -180,7 +159,7 @@ public class Ship_Passport : MonoBehaviour
         { ComponentSlotType.BackRight, ComponentName.engine },
         { ComponentSlotType.BackLeft1, ComponentName.empty },
         { ComponentSlotType.BackRight1, ComponentName.empty },
-        { ComponentSlotType.ExtraFront, ComponentName.boostGulp },
+        { ComponentSlotType.ExtraFront, ComponentName.missile },
         { ComponentSlotType.ExtraLeft, ComponentName.fuelTank },
         { ComponentSlotType.ExtraRight, ComponentName.fuelTank }
     };
@@ -188,4 +167,19 @@ public class Ship_Passport : MonoBehaviour
         return defaultLoadout;
     }
 
+    public ComponentName GetWeaponType()
+    {
+        foreach (var slot in componentSlots)
+        {
+            if(slot.Key == ComponentSlotType.ExtraFront)
+            {
+           
+                return slot.Value;
+            }
+        }
+
+        return ComponentName.empty;
+    }
+
 }
+

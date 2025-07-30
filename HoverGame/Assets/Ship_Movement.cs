@@ -31,6 +31,7 @@ public class Ship_Movement : MonoBehaviour
 
 
     Vector2 recievedMoveInput = Vector2.zero;
+    bool isRecievingMoveInput;
 
 
 
@@ -77,6 +78,8 @@ public class Ship_Movement : MonoBehaviour
     private Vector3 visualBasePosition;              // Starting point
     private float bounceTimer;                       // Internal time tracker
 
+    public float currentNormalFuel = 500f;
+    public float maxNormalFuel = 500f;
     public float currentBoostFuel = 100f;
     public float maxBoostFuel = 100f;
     //public TextMeshProUGUI currentBoostFuelText;
@@ -88,13 +91,15 @@ public class Ship_Movement : MonoBehaviour
     float BASE_TopSpeed;
     float BASE_MovementForce;
     float BASE_RotationSpeed;
-    float BASE_BoostConsumptionRate;
+    float BASE_NormaFuelConsumptionRate;
+    float BASE_BoostFuelConsumptionRate;
 
 
     public float CURRENT_TopSpeed;
     public float CURRENT_MovementForce;
     public float CURRENT_RotationSpeed;
-    public float CURRENT_BoostConsumptionRate;
+    public float CURRENT_NormalFuelConsumptionRate;
+    public float CURRENT_BoostFuelConsumptionRate;
     public float CURRENT_SideBoostAmount;
 
     int STAT_ManualBoostAmount;
@@ -144,6 +149,10 @@ public class Ship_Movement : MonoBehaviour
     List<SideBoosterController> sideBoostControllersRight = new List<SideBoosterController>();
     List<SideBoosterController> sideBoostControllersLeft = new List<SideBoosterController>();
 
+    FuelController fuelController;
+
+    bool inPitStop = false;
+    
 
     private void Awake()
     {
@@ -252,10 +261,11 @@ public class Ship_Movement : MonoBehaviour
         UI_Router = GameObject.Find("PLAYER_UI").GetComponent<UI_Controller>();
 
         UI_Router.HideMegaBoostText();
+        UI_Router.HidePitStopText();
 
         rigidBody = GetComponent<Rigidbody>();
 
-        
+        fuelController = GetComponent<FuelController>();
 
         shipConstructor = GetComponent<Ship_Constructor>();
         
@@ -309,7 +319,7 @@ public class Ship_Movement : MonoBehaviour
 
             }
 
-            currentBoostFuel -= CURRENT_BoostConsumptionRate;
+            currentBoostFuel -= CURRENT_BoostFuelConsumptionRate;
 
 
         }
@@ -381,18 +391,38 @@ public class Ship_Movement : MonoBehaviour
 
             extraBoost = StartCoroutine(ResetSpeed());
         }
-
-        if (other.gameObject.CompareTag("PickUp"))
+        else if(other.gameObject.CompareTag("PitStopZone") && !inPitStop)
+        {
+            Debug.Log("ENTERED PPIT STOP");
+            inPitStop = true;
+            UI_Router.ShowPitStopText();
+            Refuel();
+        }
+        else if (other.gameObject.CompareTag("PickUp"))
         {
             other.gameObject.SetActive(false);
         }
 
+    }
+
+    void Refuel()
+    {
+        currentNormalFuel = maxNormalFuel;
+        currentBoostFuel = maxBoostFuel;
+        UI_Router.UpdateFuelDisplay(Mathf.RoundToInt(currentNormalFuel));
+        UI_Router.UpdateBoostFuelDisplay(Mathf.RoundToInt(currentBoostFuel).ToString());
     }
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.CompareTag("BoostZone"))
         {
             enteredBoostZone = false;
+        }
+        else if (other.gameObject.CompareTag("PitStopZone") && inPitStop)
+        {
+            Debug.Log("EXIT PIT STOP");
+            inPitStop = false;
+            UI_Router.HidePitStopText();
         }
     }
     #endregion
@@ -531,18 +561,22 @@ public class Ship_Movement : MonoBehaviour
     }
     void AssignSideBoosters()
     {
+        
         if (shipConstructor != null)
         {
-            /*
+            
             chosenFrame = shipConstructor.GetFrameReference();
-
-            Frame_Layout frame_Layout = chosenFrame.GetComponent<Frame_Layout>();
-
-            if (frame_Layout != null)
+            if(chosenFrame != null)
             {
-                sideBoostControllersLeft = frame_Layout.GetBoosters_Left();
-                sideBoostControllersRight = frame_Layout.GetBoosters_Right();
-            }*/
+                Frame_Layout frame_Layout = chosenFrame.GetComponent<Frame_Layout>();
+
+                if (frame_Layout != null)
+                {
+                    sideBoostControllersLeft = frame_Layout.GetBoosters_Left();
+                    sideBoostControllersRight = frame_Layout.GetBoosters_Right();
+                }
+            }
+            
         }
 
        
@@ -555,7 +589,8 @@ public class Ship_Movement : MonoBehaviour
         CURRENT_TopSpeed = CalculateCurrentTopSpeed(boostActivated, trackBoostActivated, limitActivated);
         CURRENT_MovementForce = CalculateCurrentMovementForce(boostActivated, trackBoostActivated, limitActivated);
         CURRENT_RotationSpeed = CalculateCurrentRotationSpeed(boostActivated, trackBoostActivated, limitActivated);
-        CURRENT_BoostConsumptionRate = BASE_BoostConsumptionRate;
+        CURRENT_NormalFuelConsumptionRate = BASE_NormaFuelConsumptionRate;
+        CURRENT_BoostFuelConsumptionRate = BASE_BoostFuelConsumptionRate;
         CURRENT_SideBoostAmount = CalculateCurrentSideBoostAmount();
     }
     public void UpdateThrust(bool holdingThrust)
@@ -612,8 +647,10 @@ public class Ship_Movement : MonoBehaviour
         int rawSpeed = 0;
         int rawPower = 0;
         int totalWeight = 0;
-        int fuel = 100;
-        float boostConsumptionRate = 0;
+        int normalFuel = 500;
+        int boostFuel = 100;
+        float normalFuelConsumptionRate = 0;
+        float boostFuelConsumptionRate = 0;
 
         float engineCount = 0;
         float jetEngineCount = 0;
@@ -624,16 +661,48 @@ public class Ship_Movement : MonoBehaviour
         {
             switch (c)
             {
-                case ComponentName.lightFrame: totalWeight += 50; fuel += 30; break;
-                case ComponentName.mediumFrame: totalWeight += 70; fuel += 10; break;
-                case ComponentName.heavyFrame: totalWeight += 100; break;
+                case ComponentName.lightFrame: 
+                    totalWeight += 50; 
+                    boostFuel += 30;
+                    normalFuel += 200;
+                    break;
+                case ComponentName.mediumFrame: 
+                    totalWeight += 70; 
+                    boostFuel += 10;
+                    normalFuel += 100;
+                    break;
+                case ComponentName.heavyFrame: 
+                    totalWeight += 100; 
+                    break;
 
-                case ComponentName.engine: totalWeight += 100; rawPower += 15; rawSpeed += 30; engineCount += 1; break;
-                case ComponentName.jetEngine: totalWeight += 70; rawPower += 20; rawSpeed += 25; jetEngineCount += 1; break;
+                case ComponentName.engine: 
+                    totalWeight += 100; 
+                    rawPower += 15; 
+                    rawSpeed += 30; 
+                    engineCount += 1; 
+                    break;
+                case ComponentName.jetEngine: 
+                    totalWeight += 70; 
+                    rawPower += 20; 
+                    rawSpeed += 25; 
+                    jetEngineCount += 1; 
+                    break;
 
-                case ComponentName.fuelTank: totalWeight += 10; fuel += 50; fuelTankCount += 1; break;
-                case ComponentName.aireon: totalWeight -= 10; rawSpeed += 10; boostConsumptionRate -= 0.1f; aireonCount += 1; break;
-                default: break;
+                case ComponentName.fuelTank: 
+                    totalWeight += 10; 
+                    boostFuel += 50; 
+                    normalFuel += 200; 
+                    fuelTankCount += 1; 
+                    break;
+                case ComponentName.aireon: 
+                    totalWeight -= 10; 
+                    rawSpeed += 10; 
+                    boostFuelConsumptionRate -= 0.25f;
+                    normalFuelConsumptionRate -= 0.25f;
+                    aireonCount += 1; 
+                    break;
+                default: 
+                    break;
             }
         }
 
@@ -647,13 +716,18 @@ public class Ship_Movement : MonoBehaviour
         float t = Mathf.InverseLerp(maxWeight, minWeight, weightFactor); // Note the reverse
         BASE_RotationSpeed = Mathf.Lerp(30f, 150f, t); // Heavy = 30, Light = 150
 
-        BASE_BoostConsumptionRate = 0.25f + boostConsumptionRate;
+        BASE_BoostFuelConsumptionRate = 0.25f + boostFuelConsumptionRate;
+        BASE_NormaFuelConsumptionRate = 0.25f + normalFuelConsumptionRate;
 
         shipWeight = Mathf.Max(0, totalWeight);
 
-        maxBoostFuel = fuel;
-        currentBoostFuel = fuel;
+        maxBoostFuel = boostFuel;
+        currentBoostFuel = boostFuel;
+        maxNormalFuel = normalFuel;
+        currentNormalFuel = normalFuel;
         STAT_ManualBoostAmount = rawPower;
+
+        fuelController.SetTotalFuelCapacity(normalFuel);
 
         string calculatedTopSpeed = $"Top Speed: {BASE_TopSpeed:F1}";
         UI_Router.DEBUG_UpdateTopSpeedDisplay(calculatedTopSpeed);
@@ -749,6 +823,12 @@ public class Ship_Movement : MonoBehaviour
         Vector3 flatVelocity = rigidBody.linearVelocity;
         flatVelocity.y = 0f; // Only consider horizontal movement
         forwardSpeed = Vector3.Dot(flatVelocity, transform.forward);
+
+        if(isHoldingThrust)
+        {
+            currentNormalFuel -= CURRENT_NormalFuelConsumptionRate;
+            fuelController.UpdateFuelCountDisplay(currentNormalFuel);
+        }
 
         if (forwardSpeed < CURRENT_TopSpeed)
         {

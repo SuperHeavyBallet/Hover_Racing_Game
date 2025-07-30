@@ -6,6 +6,7 @@ public class Input_Receiver : MonoBehaviour
 {
 
     private Ship_Movement SCRIPT_Ship_Movement;
+    private ShipWeaponRouter SCRIPT_Ship_WeaponRouter;
 
     private Vector2 moveInput = Vector2.zero;
 
@@ -13,6 +14,7 @@ public class Input_Receiver : MonoBehaviour
     void Start()
     {
         SCRIPT_Ship_Movement = GetComponent<Ship_Movement>();
+        SCRIPT_Ship_WeaponRouter = GetComponent<ShipWeaponRouter>();
     }
 
     // Update is called once per frame
@@ -79,7 +81,7 @@ public class Input_Receiver : MonoBehaviour
        
     }
 
-    public void BoostLeftt(InputAction.CallbackContext ctx)
+    public void BoostLeft(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)
         {
@@ -90,5 +92,18 @@ public class Input_Receiver : MonoBehaviour
             SCRIPT_Ship_Movement.AddSideBoost_Left(false);
         }
 
+    }
+
+    public void Fire(InputAction.CallbackContext ctx)
+    {
+        if(ctx.performed)
+        {
+            SCRIPT_Ship_WeaponRouter.ShipFireWeapon();
+        }
+
+        else if(ctx.canceled)
+        {
+            SCRIPT_Ship_WeaponRouter.ShipCeaseFireWeapon();
+        }
     }
 }

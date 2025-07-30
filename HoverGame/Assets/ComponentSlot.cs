@@ -30,6 +30,8 @@ public enum ComponentName
     aireon,
     fuelTank,
     boostGulp,
+    machineGun,
+    missile
 
 }
 public class ComponentSlot 

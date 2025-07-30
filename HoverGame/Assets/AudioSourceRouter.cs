@@ -6,6 +6,7 @@ public class AudioSourceRouter : MonoBehaviour
     public AudioSource playerEngineAudioSourceA;
     public AudioSource playerEngineAudioSourceB;
     public AudioSource playerSwitchesAudioSource;
+    public AudioSource playerWeaponFireAudioSource;
 
     public AudioSource GetPlayerBoostAudioSource()
     {
@@ -22,8 +23,13 @@ public class AudioSourceRouter : MonoBehaviour
         return playerEngineAudioSourceB;
     }
 
-    public AudioSource PlayerSwitchesAudioSource()
+    public AudioSource GetPlayerSwitchesAudioSource()
     { 
         return playerSwitchesAudioSource;
+    }
+
+    public AudioSource GetPlayerWeaponFireAudioSource()
+    {
+        return playerWeaponFireAudioSource;
     }
 }

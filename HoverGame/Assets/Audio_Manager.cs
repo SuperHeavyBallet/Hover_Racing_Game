@@ -18,6 +18,7 @@ public class Audio_Manager : MonoBehaviour
 
 
     AudioSource playerSwitchesSource;
+    AudioSource playerWeaponFireSource;
 
     public float baseEnginePitch;
 
@@ -35,6 +36,7 @@ public class Audio_Manager : MonoBehaviour
             playerBoostSource = playerAudioSourceRouter.GetPlayerBoostAudioSource();
             playerEngineSourceA = playerAudioSourceRouter.GetPlayerEngineAudioSourceA();
             playerEngineSourceB = playerAudioSourceRouter.GetPlayerEngineAudioSourceB();
+            playerWeaponFireSource = playerAudioSourceRouter.GetPlayerWeaponFireAudioSource();
         }
 
 
@@ -167,5 +169,10 @@ public class Audio_Manager : MonoBehaviour
     public void SetMusicVolume(float volume)
     {
         AudioMixer.SetFloat("MusicVolume", Mathf.Log10(volume) * 20);
+    }
+
+    public void PlayOneBulletFire()
+    {
+        playerWeaponFireSource.PlayOneShot(playerWeaponFireSource.clip);
     }
 }
