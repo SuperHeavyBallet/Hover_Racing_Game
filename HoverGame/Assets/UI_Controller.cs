@@ -17,8 +17,13 @@ public class UI_Controller : MonoBehaviour
 
     public TextMeshProUGUI currentFuelDisplay;
 
-   
-    
+
+
+
+    private void Start()
+    {
+      
+    }
 
 
     // Debugging UI
@@ -28,24 +33,25 @@ public class UI_Controller : MonoBehaviour
     public TextMeshProUGUI topWeightText;
 
 
-    public void ShowBoostText() => boostText.SetActive(true);
-    public void HideBoostText() => boostText.SetActive(false);
-
-    public void ShowMegaBoostText() => megaBoostText.SetActive(true);
-    public void HideMegaBoostText() => megaBoostText.SetActive(false);
-
-    public void ShowBoostGulpText() => boostGulpText.SetActive(true);
-    public void HideBoostGulpText() => boostGulpText.SetActive(false);
-
-    public void ShowPitStopText() => pitStopText.SetActive(true);
-    public void HidePitStopText() => pitStopText?.SetActive(false);
+    public void ShowBoostText(bool conditional) => boostText.SetActive(conditional);
 
 
-    public void UpdateSpeedDisplay(string newSpeed) => speedDisplay.text = newSpeed;
+    public void ShowMegaBoostText(bool conditional) => megaBoostText.SetActive(conditional);
 
-    public void UpdateBoostFuelDisplay(string newBoostFuelAmount) => currentBoostFuelDisplay.text = newBoostFuelAmount;
+
+    public void ShowBoostGulpText(bool conditional) => boostGulpText.SetActive(conditional);
+
+
+    public void ShowPitStopText(bool conditional) => pitStopText.SetActive(conditional);
+
+
+
+    public void UpdateSpeedDisplay(int newSpeed) => speedDisplay.text = newSpeed.ToString();
+
+  
 
     public void UpdateFuelDisplay(int newFuelAmount) => currentFuelDisplay.text = newFuelAmount.ToString();
+    public void UpdateBoostFuelDisplay(int newBoostFuelAmount) => currentBoostFuelDisplay.text = newBoostFuelAmount.ToString();
 
     // Debugging UI Functions
 

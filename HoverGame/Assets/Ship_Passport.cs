@@ -47,6 +47,35 @@ public class Ship_Passport : MonoBehaviour
         InitialisePrefabReferences();
     }
 
+    public GameObject GetShipFrame()
+    {
+        foreach (var component in componentPrefabs)
+        {
+            GameObject frame;
+
+            switch (component.Key)
+            {
+                case ComponentName.lightFrame:
+                    frame = component.Value;
+                    break;
+                    case ComponentName.mediumFrame:
+                    frame = component.Value;
+                    break;
+                case ComponentName.heavyFrame:
+                    frame = component.Value;
+                    break;
+                    default:
+                    frame = null;
+
+                break;
+            }
+            return frame;
+        }
+
+        return null;
+
+    }
+
     void InitialisePrefabReferences()
     {
         componentPrefabs.Add(ComponentName.lightFrame, lightFrame);
@@ -81,12 +110,13 @@ public class Ship_Passport : MonoBehaviour
     {
         if (!receivedShipLoadout)
         {
+            GetShipLoadout();
             Debug.Log("NO LOADOUT RECEIVED!");
         }
 
     }
 
-    public void ReceiveShipLoadout(Dictionary<ComponentSlotType, ComponentName> shipLoadout )
+    public void SetShipLoadout(Dictionary<ComponentSlotType, ComponentName> shipLoadout )
     {
         receivedShipLoadout = true;
 
@@ -95,6 +125,20 @@ public class Ship_Passport : MonoBehaviour
         componentSlots = shipLoadout;
 
         
+    }
+
+  
+    public bool CheckBoostGulpPresent()
+    {
+        foreach(var component in componentSlots)
+        {
+            if(component.Value == ComponentName.boostGulp)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public Dictionary<ComponentSlotType, ComponentName> GetShipLoadout()
@@ -148,20 +192,20 @@ public class Ship_Passport : MonoBehaviour
 
     }
 
-    Dictionary<ComponentSlotType, ComponentName> CreateDefaultLoadout()
+    public Dictionary<ComponentSlotType, ComponentName> CreateDefaultLoadout()
     {
         var defaultLoadout = new Dictionary<ComponentSlotType, ComponentName>
     {
         { ComponentSlotType.Frame, ComponentName.mediumFrame },
-        { ComponentSlotType.FrontLeft, ComponentName.engine },
-        { ComponentSlotType.FrontRight, ComponentName.engine },
-        { ComponentSlotType.BackLeft, ComponentName.engine },
-        { ComponentSlotType.BackRight, ComponentName.engine },
+        { ComponentSlotType.FrontLeft, ComponentName.jetEngine },
+        { ComponentSlotType.FrontRight, ComponentName.jetEngine },
+        { ComponentSlotType.BackLeft, ComponentName.jetEngine },
+        { ComponentSlotType.BackRight, ComponentName.jetEngine },
         { ComponentSlotType.BackLeft1, ComponentName.empty },
         { ComponentSlotType.BackRight1, ComponentName.empty },
-        { ComponentSlotType.ExtraFront, ComponentName.missile },
-        { ComponentSlotType.ExtraLeft, ComponentName.fuelTank },
-        { ComponentSlotType.ExtraRight, ComponentName.fuelTank }
+        { ComponentSlotType.ExtraFront, ComponentName.boostGulp },
+        { ComponentSlotType.ExtraLeft, ComponentName.jetEngine },
+        { ComponentSlotType.ExtraRight, ComponentName.jetEngine }
     };
 
         return defaultLoadout;

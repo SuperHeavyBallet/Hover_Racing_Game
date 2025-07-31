@@ -51,6 +51,10 @@ GameObject:
   - component: {fileID: 3645008872160852217}
   - component: {fileID: 7385743262289847348}
   - component: {fileID: 2929881673810328193}
+  - component: {fileID: 1560000011721648802}
+  - component: {fileID: 2201430898321862845}
+  - component: {fileID: 8471041520952661957}
+  - component: {fileID: 1044712303292611008}
   m_Layer: 7
   m_Name: Ship
   m_TagString: Player
@@ -304,7 +308,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a678440a8b63ac64ab557350c664d596, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shipMeshSelector: {fileID: 0}
   hoverCastPosition: {fileID: 5003198189514884325}
   worldCamera: {fileID: 993692164554754823}
   playerCamera: {fileID: 8199512006628656876}
@@ -321,17 +324,15 @@ MonoBehaviour:
   shipVisual: {fileID: 823835665021228836}
   pivotPoint: {fileID: 463336169858917325}
   engines: []
-  sceneStartup: {fileID: 0}
-  VehicleClass_Received: 
   boostActivated: 0
   limitActivated: 0
+  currentNormalFuel: 500
   currentBoostFuel: 100
-  maxBoostFuel: 100
-  enteredBoostZone: 0
   CURRENT_TopSpeed: 0
   CURRENT_MovementForce: 0
   CURRENT_RotationSpeed: 0
-  CURRENT_BoostConsumptionRate: 0
+  CURRENT_NormalFuelConsumptionRate: 0
+  CURRENT_BoostFuelConsumptionRate: 0
   CURRENT_SideBoostAmount: 0
   AUDIO_boostTrigger: {fileID: 8300000, guid: 627493d11324993478bae445f231ead6, type: 3}
   AUDIO_boostOFF: {fileID: 8300000, guid: 2893673c80da65049bd0692c5d8da6ce, type: 3}
@@ -341,7 +342,6 @@ MonoBehaviour:
   engineIdle: 0
   hasBoostGulp: 0
   innerCameraController: {fileID: 2798429772900183642}
-  shipWeight: 0
   isHoldingThrust: 0
   receivedThrust: 0
   receivedSteering: 0
@@ -477,6 +477,75 @@ MonoBehaviour:
   hitLayers:
     serializedVersion: 2
     m_Bits: 87
+--- !u!114 &1560000011721648802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397305542273415922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f30c981d4c74cb42b28f837067b3306, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2201430898321862845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397305542273415922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88d6ffa49705e094a830f0147d4c353d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BASE_TopSpeed: 0
+  BASE_MovementForce: 0
+  BASE_RotationSpeed: 0
+  BASE_NormaFuelConsumptionRate: 0
+  BASE_BoostFuelConsumptionRate: 0
+  currentNormalFuel: 500
+  maxNormalFuel: 500
+  currentBoostFuel: 100
+  maxBoostFuel: 100
+  STAT_ManualBoostAmount: 0
+  STAT_RotationSpeed: 0
+  shipWeight: 0
+--- !u!114 &8471041520952661957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397305542273415922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 303f036f60f678349b6f59a6deccb387, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1044712303292611008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397305542273415922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1381fb11fc80731459d83e1260529267, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isGrounded: 0
+  hoverPoints:
+  - {fileID: 5003198189514884325}
+  - {fileID: 9127052387190677589}
+  - {fileID: 1890260646225602064}
+  - {fileID: 7958269353376908791}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 215
 --- !u!1 &642483198589229411
 GameObject:
   m_ObjectHideFlags: 0
@@ -5446,8 +5515,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -9000620470260541954, guid: 61a95a4be25206a49bfc590cc25ae87f, type: 2}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: e3ef9ef9010c4c14292d709c83e4223a, type: 3}
+  m_Resource: {fileID: 8300000, guid: e3ef9ef9010c4c14292d709c83e4223a, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

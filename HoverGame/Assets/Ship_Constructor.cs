@@ -43,12 +43,13 @@ public class Ship_Constructor : MonoBehaviour
     {
         CheckInstance();
         PlaceFrame();
-        PlaceComponent();
+       PlaceComponent();
     }
 
 
     void CheckInstance()
     {
+        
         shipPassport = Ship_Passport.Instance;
  
         if (shipPassport != null)
@@ -59,33 +60,34 @@ public class Ship_Constructor : MonoBehaviour
             }
             else
             {
-                componentSlots = CreateDefaultLoadout();
+                componentSlots = shipPassport.CreateDefaultLoadout();
             }
         }
         else
         {
             Debug.LogWarning("Ship Passport not found or loadout not received. Using default backup loadout.");
-            componentSlots = CreateDefaultLoadout();
+            componentSlots = shipPassport.CreateDefaultLoadout();
         }
     }
 
+    /*
     Dictionary<ComponentSlotType, ComponentName> CreateDefaultLoadout()
     {
         return new Dictionary<ComponentSlotType, ComponentName>
     {
         { ComponentSlotType.Frame, ComponentName.mediumFrame },
-        { ComponentSlotType.FrontLeft, ComponentName.engine },
-        { ComponentSlotType.FrontRight, ComponentName.engine },
-        { ComponentSlotType.BackLeft, ComponentName.engine },
-        { ComponentSlotType.BackRight,ComponentName.engine },
+        { ComponentSlotType.FrontLeft, ComponentName.jetEngine },
+        { ComponentSlotType.FrontRight, ComponentName.jetEngine },
+        { ComponentSlotType.BackLeft, ComponentName.jetEngine },
+        { ComponentSlotType.BackRight,ComponentName.jetEngine },
         { ComponentSlotType.BackLeft1, ComponentName.empty },
         { ComponentSlotType.BackRight1, ComponentName.empty },
-        { ComponentSlotType.ExtraFront, ComponentName.missile },
-        { ComponentSlotType.ExtraLeft, ComponentName.fuelTank },
-        { ComponentSlotType.ExtraRight, ComponentName.fuelTank }
+        { ComponentSlotType.ExtraFront, ComponentName.boostGulp },
+        { ComponentSlotType.ExtraLeft, ComponentName.jetEngine },
+        { ComponentSlotType.ExtraRight, ComponentName.jetEngine }
     };
-    }
-
+    }*/
+    /*
     public List<ComponentName> GetShipLoadout()
     {
         bool hasExtraSlots = false;
@@ -115,8 +117,8 @@ public class Ship_Constructor : MonoBehaviour
             }
         }
         return componentList;
-    }
-
+    }*/
+    /*
     public GameObject GetFrameReference()
     {
         if (chosenFrame != null) return chosenFrame;
@@ -126,8 +128,9 @@ public class Ship_Constructor : MonoBehaviour
     void SetFrameReference(GameObject frame)
     {
         chosenFrame = frame;
-    }
+    }*/
 
+    
     void PlaceFrame()
     {
         Transform position = null;
@@ -172,14 +175,14 @@ public class Ship_Constructor : MonoBehaviour
                         extraRightPosition = frameLayout.GetExtraRightPosition();
                     }
 
-                    SetFrameReference(chosenComponent);
+                    //SetFrameReference(chosenComponent);
                 }
 
                 break;
             }
         }
     }
-
+    
     void PlaceComponent()
     { 
         foreach(var pair in componentSlots)
@@ -214,28 +217,7 @@ public class Ship_Constructor : MonoBehaviour
 
             newComponent = shipPassport.GetPrefab(pair.Value);
             
-            /*
-            switch (pair.Value)
-            {
-                case ComponentName.engine:
-                    newComponent = shipPassport.engine; break;
-                case ComponentName.jetEngine:
-                    newComponent = shipPassport.jetEngine; break;
-                case ComponentName.aireon:
-                    newComponent = shipPassport.aireon; break;
-                case ComponentName.fuelTank:
-                    newComponent = shipPassport.fuelTank; break;
-                case ComponentName.boostGulp:
-                    newComponent = shipPassport.boostGulp; break;
-                case ComponentName.machineGun:
-                    newComponent = shipPassport.machineGun; break;
-                case ComponentName.missile:
-                    newComponent = shipPassport.missile; break;
-                default:
-                    Debug.LogWarning("No Component Value Assigned");
-                    break;
-            }*/
-
+    
             if (newComponent != null && position != null)
             {
                 GameObject chosenComponent = Instantiate(newComponent, position);

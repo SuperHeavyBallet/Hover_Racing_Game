@@ -256,81 +256,42 @@ public class MenuConstructorController : MonoBehaviour
             Destroy(child.gameObject);
         }
     }
+
+    public void UpdateComponentSlot(ComponentSlotType slotType, int val)
+    {
+        ComponentName replacementComponent = slotType switch
+        {
+            ComponentSlotType.Frame => GetFrameType(val),
+            _ => GetComponentName(val),
+        };
+
+        UpdateComponent(slotType, replacementComponent);
+    }
     // Currently these need to be explicit and repeated for dropdow access in unity, will probably be changed later, so might not be worth trying to fix atm
     #region
-    public void UpdateComponentSlot_FRAME(int val)
-    {
-        ComponentName replacementComponent = GetFrameType(val);
-        UpdateComponent(ComponentSlotType.Frame, replacementComponent);
+    public void UpdateComponentSlot_FRAME(int val) => UpdateComponentSlot(ComponentSlotType.Frame, val);
 
-    }
+    public void UpdateComponentSlot_FL(int val) => UpdateComponentSlot(ComponentSlotType.FrontLeft, val);
 
-    public void UpdateComponentSlot_FL(int val)
-    {
-        ComponentName replacementComponent = GetComponentName(val);
+    public void UpdateComponentSlot_FR(int val) => UpdateComponentSlot(ComponentSlotType.FrontRight, val);
 
-        UpdateComponent(ComponentSlotType.FrontLeft, replacementComponent);
-    }
+    public void UpdateComponentSlot_BL(int val) => UpdateComponentSlot(ComponentSlotType.BackLeft, val);
 
-    public void UpdateComponentSlot_FR(int val)
-    {
-        ComponentName replacementComponent = GetComponentName(val);
+    public void UpdateComponentSlot_BR(int val) => UpdateComponentSlot(ComponentSlotType.BackRight, val);
 
-        UpdateComponent(ComponentSlotType.FrontRight, replacementComponent);
-    }
+    public void UpdateComponentSlot_BL1(int val) => UpdateComponentSlot(ComponentSlotType.BackLeft1, val);
 
-    public void UpdateComponentSlot_BL(int val)
-    {
-        ComponentName replacementComponent = GetComponentName(val);
+    public void UpdateComponentSlot_BR1(int val) => UpdateComponentSlot(ComponentSlotType.BackRight1, val);
 
-        UpdateComponent(ComponentSlotType.BackLeft, replacementComponent);
-    }
+    public void UpdateComponentSlot_ExtraFront(int val) => UpdateComponentSlot(ComponentSlotType.ExtraFront, val);
 
-    public void UpdateComponentSlot_BR(int val)
-    {
-        ComponentName replacementComponent = GetComponentName(val);
+    public void UpdateComponentSlot_ExtraLeft(int val) => UpdateComponentSlot(ComponentSlotType.ExtraLeft, val);
 
-        UpdateComponent(ComponentSlotType.BackRight, replacementComponent);
-    }
-
-    public void UpdateComponentSlot_BL1(int val)
-    {
-        ComponentName replacementComponent = GetComponentName(val);
-
-        UpdateComponent(ComponentSlotType.BackLeft1, replacementComponent);
-    }
-
-    public void UpdateComponentSlot_BR1(int val)
-    {
-        ComponentName replacementComponent = GetComponentName(val);
-
-        UpdateComponent(ComponentSlotType.BackRight1, replacementComponent);
-    }
-
-    public void UpdateComponentSlot_ExtraFront(int val)
-    {
-        ComponentName replacementComponent = GetComponentName(val);
-
-        UpdateComponent(ComponentSlotType.ExtraFront, replacementComponent);
-    }
-
-    public void UpdateComponentSlot_ExtraLeft(int val)
-    {
-        ComponentName replacementComponent = GetComponentName(val);
-
-        UpdateComponent(ComponentSlotType.ExtraLeft, replacementComponent);
-    }
-
-    public void UpdateComponentSlot_ExtraRight(int val)
-    {
-        ComponentName replacementComponent = GetComponentName(val);
-
-        UpdateComponent(ComponentSlotType.ExtraRight, replacementComponent);
-    }
+    public void UpdateComponentSlot_ExtraRight(int val) => UpdateComponentSlot(ComponentSlotType.ExtraRight, val);
     #endregion
 
 
-  
+
 
     void SetComponentSlots(ComponentSlotType slotType, TextMeshProUGUI slotLabel, Transform slotPosition)
     {
@@ -380,7 +341,7 @@ public class MenuConstructorController : MonoBehaviour
             shipLoadout[pair.Key] = pair.Value.selectedComponentKey;
         }
 
-        shipPassport.ReceiveShipLoadout(shipLoadout);
+        shipPassport.SetShipLoadout(shipLoadout);
     }
 
 
