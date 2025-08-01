@@ -165,6 +165,8 @@ public class Ship_Movement : MonoBehaviour
         ApplyMovement();
         UpdateVisualTilt();
         UpdateVisualBounce();
+
+        Debug.Log(rigidBody.linearVelocity.magnitude);
     }
 
     #region // Sounds and Visuals /////////////////////////////////////////////////
@@ -221,8 +223,8 @@ public class Ship_Movement : MonoBehaviour
 
         Quaternion cameraRotation = Quaternion.Euler(0f, 0f, currentTilt / 1.5f);
 
-        worldCamera.transform.localRotation = cameraRotation;
-        playerCamera.transform.localRotation = cameraRotation;
+        //worldCamera.transform.localRotation = cameraRotation;
+        //playerCamera.transform.localRotation = cameraRotation;
     }
     void UpdateVisualBounce()
     {
@@ -238,7 +240,7 @@ public class Ship_Movement : MonoBehaviour
     }
     void UpdateCameraShake()
     {
-        innerCameraController.SetShakeAmount(forwardSpeed / 2000);
+        //innerCameraController.SetShakeAmount(forwardSpeed / 2000);
     }
     #endregion
 
@@ -253,6 +255,7 @@ public class Ship_Movement : MonoBehaviour
         UI_Router.ShowMegaBoostText(false);
 
         rigidBody = GetComponent<Rigidbody>();
+        rigidBody.interpolation = RigidbodyInterpolation.Interpolate;
 
         fuelController = GetComponent<FuelController>();
         boostFuelController = GetComponent<BoostFuelController>();
@@ -524,10 +527,12 @@ public class Ship_Movement : MonoBehaviour
     }
     public void UpdateSteering(Vector2 movementValue)
     {
-        Vector3 euler = transform.rotation.eulerAngles;
+        
 
         receivedSteering = movementValue.x;
 
+        /*
+        Vector3 euler = transform.rotation.eulerAngles;
         // Convert to -180 to +180 range
         if (euler.x > 180) euler.x -= 360;
         if (euler.z > 180) euler.z -= 360;
@@ -537,7 +542,12 @@ public class Ship_Movement : MonoBehaviour
         euler.z = Mathf.Clamp(euler.z, -2f, 2f);
 
         // Preserve yaw (Y)
-        transform.rotation = Quaternion.Euler(euler);
+        transform.rotation = Quaternion.Euler(euler);*/
+
+    }
+
+    public void AddHoverCastForce()
+    {
 
     }
 
@@ -571,6 +581,7 @@ public class Ship_Movement : MonoBehaviour
             rigidBody.AddForce(forwardForce, ForceMode.Acceleration);
         }
 
+        /* Hold off for now
         // Apply side boost impulse
         if (isSideBoosting)
         {
@@ -586,7 +597,7 @@ public class Ship_Movement : MonoBehaviour
                 receivedSideBoost = 0;
                 StopCoroutine(TurnOffSideBoost);
             }
-        }
+        }*/
 
         // Clamp only forward component
         Vector3 currentVelocity = rigidBody.linearVelocity;
@@ -595,21 +606,24 @@ public class Ship_Movement : MonoBehaviour
 
         if (forwardComponent.magnitude > CURRENT_TopSpeed)
         {
-            forwardComponent = forwardComponent.normalized * CURRENT_TopSpeed;
-            rigidBody.linearVelocity = forwardComponent + lateralAndVertical;
+            Vector3 excess = forwardComponent - (forwardComponent.normalized * CURRENT_TopSpeed);
+            rigidBody.AddForce(-excess, ForceMode.VelocityChange);
         }
 
+
+        /*
         // Apply downward drag from ship weight
         float downwardPull = shipMovementCalculator.shipWeight / 1000f;
-        rigidBody.linearVelocity -= new Vector3(0f, downwardPull, 0f);
+        rigidBody.linearVelocity -= new Vector3(0f, downwardPull, 0f);*/
 
         UpdateRotation();
     }
     void UpdateRotation()
     {
-        // Rotation (Y axis only)
-        float turnAmount = receivedSteering * CURRENT_RotationSpeed * Time.deltaTime;
-        transform.RotateAround(pivotPoint.position, Vector3.up, turnAmount);
+        float turnAmount = receivedSteering * CURRENT_RotationSpeed * Time.fixedDeltaTime;
+
+        Quaternion deltaRotation = Quaternion.Euler(0f, turnAmount, 0f);
+        rigidBody.MoveRotation(rigidBody.rotation * deltaRotation);
 
         UpdateEngineNozzleRotations(turnAmount);
     }

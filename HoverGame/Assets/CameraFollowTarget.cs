@@ -2,18 +2,23 @@ using UnityEngine;
 
 public class CameraFollowTarget : MonoBehaviour
 {
+    public Transform target;
+    public Rigidbody targetRigidbody;
 
-    public Transform target;                  // The object to follow (e.g. your ship)
-    Vector3 offset = new Vector3(0f, 1.5f, -3f); // Default position offset behind the target
-    float smoothSpeed = 50f;            // Lerp speed for position
-    float rotationSmoothSpeed = 50f;    // Lerp speed for rotation
+    Vector3 offset = new Vector3(0f, 1.5f, -3f);
+    public float smoothSpeed = 10f;
+    public float rotationSmoothSpeed = 5f;
 
-    public Rigidbody targetRigidbody;         // Optional: for speed-based zoom
-    float zoomMultiplier = 0.001f;      // How much camera moves back based on speed
-    float maxZoomOut = 0.25f;            // Max additional distance allowed from speed
+    float zoomMultiplier = 0.00025f;
+    float maxZoomOut = 0.25f;
+    float currentZoom = 0f;
+    float zoomLerpSpeed = 5f;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void FixedUpdate()
+    private void Start()
+    {
+       // offset = new Vector3(0f, 0f, 0f);
+    }
+    void LateUpdate()
     {
         FollowTarget();
     }
@@ -22,21 +27,30 @@ public class CameraFollowTarget : MonoBehaviour
     {
         if (target == null) return;
 
-        // Calculate dynamic zoom based on target speed
-        float speed = targetRigidbody != null ? targetRigidbody.linearVelocity.magnitude : 0f;
-        float zoomOutDistance = Mathf.Clamp(speed * zoomMultiplier, 0f, maxZoomOut);
+        // float speed = targetRigidbody != null ? targetRigidbody.linearVelocity.magnitude : 0f;
 
-        // Adjust offset dynamically
-        Vector3 dynamicOffset = offset - (target.forward * zoomOutDistance);
 
-        // Desired camera position based on target position + offset
-        Vector3 desiredPosition = target.position + target.rotation * dynamicOffset;
+        // float targetZoom = Mathf.Clamp(speed * zoomMultiplier, 0f, maxZoomOut);
+        // currentZoom = Mathf.Lerp(currentZoom, targetZoom, Time.deltaTime * zoomLerpSpeed);
 
-        // Smoothly move camera to desired position
-        transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+        // Vector3 dynamicOffset = offset - (target.forward * currentZoom);
+        // Vector3 desiredPosition = target.position + target.rotation * dynamicOffset;
 
-        // Smoothly rotate camera to look in the same direction as the target
+        //transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * smoothSpeed);
+
+        //Quaternion desiredRotation = Quaternion.LookRotation(target.forward, Vector3.up);
+        //transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, Time.deltaTime * rotationSmoothSpeed);
+
+        // Simple static offset
+        Vector3 desiredPosition = target.position + target.rotation * offset;
+        transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * smoothSpeed);
+
+        // Smooth rotation to follow target direction
         Quaternion desiredRotation = Quaternion.LookRotation(target.forward, Vector3.up);
-        transform.rotation = Quaternion.Lerp(transform.rotation, desiredRotation, rotationSmoothSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, Time.deltaTime * rotationSmoothSpeed);
+    
+
+    
     }
+
 }
