@@ -162,11 +162,12 @@ public class Ship_Movement : MonoBehaviour
 
     void FixedUpdate()
     {
+        AddHoverForces();
         ApplyMovement();
         UpdateVisualTilt();
         UpdateVisualBounce();
+        LimitAngularVelocity();
 
-        Debug.Log(rigidBody.linearVelocity.magnitude);
     }
 
     #region // Sounds and Visuals /////////////////////////////////////////////////
@@ -223,7 +224,7 @@ public class Ship_Movement : MonoBehaviour
 
         Quaternion cameraRotation = Quaternion.Euler(0f, 0f, currentTilt / 1.5f);
 
-        //worldCamera.transform.localRotation = cameraRotation;
+        worldCamera.transform.localRotation = cameraRotation;
         //playerCamera.transform.localRotation = cameraRotation;
     }
     void UpdateVisualBounce()
@@ -525,6 +526,15 @@ public class Ship_Movement : MonoBehaviour
         UpdateBounceAmount();
 
     }
+
+    public void LimitAngularVelocity()
+    {
+        Vector3 angularVel = rigidBody.angularVelocity;
+        angularVel.y = Mathf.Clamp(angularVel.y, -1f, 1f); // allow mild yaw
+        angularVel.x = 0f;
+        angularVel.z = 0f;
+        rigidBody.angularVelocity = angularVel;
+    }
     public void UpdateSteering(Vector2 movementValue)
     {
         
@@ -546,10 +556,6 @@ public class Ship_Movement : MonoBehaviour
 
     }
 
-    public void AddHoverCastForce()
-    {
-
-    }
 
 
     private IEnumerator ResetSpeed()
@@ -648,6 +654,13 @@ public class Ship_Movement : MonoBehaviour
         }
     }
     #endregion
+
+
+    void AddHoverForces()
+    {
+        HoverPillowCastController hoverForceCalculator = GetComponent<HoverPillowCastController>();
+        hoverForceCalculator.CastHoverZone();
+    }
 
  
     

@@ -5,9 +5,9 @@ public class CameraFollowTarget : MonoBehaviour
     public Transform target;
     public Rigidbody targetRigidbody;
 
-    Vector3 offset = new Vector3(0f, 1.5f, -3f);
-    public float smoothSpeed = 10f;
-    public float rotationSmoothSpeed = 5f;
+    public Vector3 offset = new Vector3(0f, 0.1f, 0.7f);
+    float smoothSpeed = 100f;
+    public float rotationSmoothSpeed = 40f;
 
     float zoomMultiplier = 0.00025f;
     float maxZoomOut = 0.25f;
@@ -16,7 +16,7 @@ public class CameraFollowTarget : MonoBehaviour
 
     private void Start()
     {
-       // offset = new Vector3(0f, 0f, 0f);
+       // offset = this.transform.position;
     }
     void LateUpdate()
     {

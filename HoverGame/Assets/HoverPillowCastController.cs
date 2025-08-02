@@ -24,14 +24,9 @@ public class HoverPillowCastController : MonoBehaviour
         neutralRotation = transform.rotation;
         rigidBody = GetComponent<Rigidbody>();
     }
-    private void FixedUpdate()
-    {
-        CastHoverZone();
+ 
 
-      
-    }
-
-    void CastHoverZone()
+    public void CastHoverZone()
     {
 
         atLeastOneGrounded = false;
@@ -46,9 +41,23 @@ public class HoverPillowCastController : MonoBehaviour
         else
         {
             Vector3 downwardPull = Vector3.down * (reGroundForce * 2f);
-            rigidBody.AddForceAtPosition(downwardPull, this.transform.position, ForceMode.Force);
+           rigidBody.AddForceAtPosition(downwardPull, this.transform.position, ForceMode.Force);
         }
 
+        if(isGrounded)
+        {
+            // This prevents any steering, probably remove
+            //AlignWithTerrainNormal();
+            Vector3 torque = Vector3.Cross(transform.up, Vector3.up) * 10f;
+            rigidBody.AddTorque(torque, ForceMode.Acceleration);
+        }
+        else
+        {
+            // This ends up preventing steering when not grounded, probably remove it
+            Quaternion currentRotation = transform.rotation;
+            Quaternion targetRotation = Quaternion.Euler(0f, currentRotation.eulerAngles.y, 0f); // upright but keep yaw
+           //transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, Time.fixedDeltaTime * 2f);
+        }
     }
 
     void CheckIfGrounded()
@@ -80,6 +89,35 @@ public class HoverPillowCastController : MonoBehaviour
                 Vector3 downwardPull = Vector3.down * (reGroundForce * 0.2f);
                 rigidBody.AddForceAtPosition(downwardPull, point.position, ForceMode.Force);
             }
+        }
+    }
+
+    void AlignWithTerrainNormal()
+    {
+        Vector3 averageNormal = Vector3.zero;
+        int hitCount = 0;
+
+        foreach (Transform point in hoverPoints)
+        {
+            if (Physics.Raycast(point.position, Vector3.down, out RaycastHit hit, hoverHeight + 0.5f, groundMask))
+            {
+                averageNormal += hit.normal;
+                hitCount++;
+            }
+        }
+
+        if (hitCount > 0)
+        {
+            averageNormal.Normalize();
+
+            // Get current yaw (heading) from rotation
+            Vector3 currentForward = transform.forward;
+            Vector3 projectedForward = Vector3.ProjectOnPlane(currentForward, averageNormal).normalized;
+
+            if (projectedForward.sqrMagnitude < 0.01f) projectedForward = transform.forward;
+
+            Quaternion targetRotation = Quaternion.LookRotation(projectedForward, averageNormal);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.fixedDeltaTime * 5f);
         }
     }
 }
