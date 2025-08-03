@@ -27,7 +27,9 @@ Material:
   m_ValidKeywords:
   - _EMISSION
   - _RECEIVE_SHADOWS_OFF
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _FLIPBOOKBLENDING_OFF
+  - _MAPPING_LATITUDE_LONGITUDE_LAYOUT
   m_LightmapFlags: 3
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 1
@@ -53,6 +55,7 @@ Material:
     - _Cull: 0
     - _ReceiveShadows: 0
     - _Smoothness: 0.5
+    - _SrcBlend: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
