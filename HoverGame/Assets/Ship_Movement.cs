@@ -115,6 +115,9 @@ public class Ship_Movement : MonoBehaviour
 
     ShipMovementCalculator shipMovementCalculator;
 
+    public float boostImpulseAmount { get; private set; } = 40f;
+    public float boostZoneImpulseAmount { get; private set; } = 50f;
+
     private void Awake()
     {
         InitialiseReferences();
@@ -147,6 +150,10 @@ public class Ship_Movement : MonoBehaviour
         extraBoost = StartCoroutine(ResetSpeed());
     }
 
+    public void AddBoostStartImpulse(float amount)
+    {
+        rigidBody.AddForce(this.transform.forward * amount, ForceMode.Impulse);
+    }
     public void ExitedBoostZone()
     {
         enteredBoostZone = false;
@@ -281,6 +288,9 @@ public class Ship_Movement : MonoBehaviour
 
         AssignSideBoosters();
 
+        boostImpulseAmount = shipMovementCalculator.BASE_TopSpeed;
+        boostZoneImpulseAmount = shipMovementCalculator.BASE_TopSpeed * 2;
+
     }
 
     void FireBoostEngines(bool firing)
@@ -365,7 +375,7 @@ public class Ship_Movement : MonoBehaviour
         {
             audioManager.PlayPlayerSound_OneShot(AUDIO_boostTrigger);
             audioManager.PlayBoostSound();
-
+            AddBoostStartImpulse(boostImpulseAmount);
         }
 
         else if (isBoosting == false && boostersActive)

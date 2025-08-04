@@ -23,6 +23,7 @@ public class TriggerZoneController : MonoBehaviour
         {
 
             ship_Movement.ActivateBoostZone(true);
+            ship_Movement.AddBoostStartImpulse(ship_Movement.boostZoneImpulseAmount);
 
             
         }

@@ -21,8 +21,8 @@ MonoBehaviour:
   m_ShowMode: 0
   m_Title: Game
   m_RootView: {fileID: 6}
-  m_MinSize: {x: 50, y: 78}
-  m_MaxSize: {x: 4000, y: 4028}
+  m_MinSize: {x: 50, y: 76}
+  m_MaxSize: {x: 4000, y: 4026}
   m_Maximized: 1
 --- !u!114 &2
 MonoBehaviour:
@@ -67,8 +67,8 @@ MonoBehaviour:
     y: 0
     width: 1214
     height: 648
-  m_MinSize: {x: 50, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 52, y: 76}
+  m_MaxSize: {x: 4002, y: 4026}
   m_ActualView: {fileID: 17}
   m_Panes:
   - {fileID: 17}
@@ -118,9 +118,9 @@ MonoBehaviour:
     x: 0
     y: 0
     width: 1858
-    height: 1056.6666
-  m_MinSize: {x: 50, y: 78}
-  m_MaxSize: {x: 4000, y: 4028}
+    height: 1057
+  m_MinSize: {x: 50, y: 76}
+  m_MaxSize: {x: 4000, y: 4026}
   m_ActualView: {fileID: 18}
   m_Panes:
   - {fileID: 18}
@@ -145,9 +145,9 @@ MonoBehaviour:
     x: 0
     y: 0
     width: 1858
-    height: 1056.6666
-  m_MinSize: {x: 50, y: 78}
-  m_MaxSize: {x: 4000, y: 4028}
+    height: 1057
+  m_MinSize: {x: 50, y: 76}
+  m_MaxSize: {x: 4000, y: 4026}
   vertical: 0
   controlID: 17
   draggingID: 0
@@ -629,8 +629,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Scene\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 350
-    y: 79
+    x: 351
+    y: 24
     width: 1212
     height: 622
   m_SerializedDataModeController:
@@ -1265,7 +1265,7 @@ MonoBehaviour:
   m_Rotation:
     m_Target: {x: -0.17397232, y: 0.7251684, z: -0.19835526, w: -0.636022}
     speed: 2
-    m_Value: {x: -0.17397195, y: 0.72516686, z: -0.19835483, w: -0.6360206}
+    m_Value: {x: -0.17397232, y: 0.7251684, z: -0.19835526, w: -0.636022}
   m_Size:
     m_Target: 335.40598
     speed: 2
@@ -1324,10 +1324,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Game\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 3840
-    y: 23
+    x: 0
+    y: 26
     width: 1858
-    height: 1028.6666
+    height: 1031
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1425,8 +1425,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1564
-    y: 79
+    x: 1565
+    y: 24
     width: 355
     height: 925
   m_SerializedDataModeController:
@@ -1475,7 +1475,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 79
+    y: 24
     width: 349
     height: 622
   m_SerializedDataModeController:
@@ -1491,9 +1491,9 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_SceneHierarchy:
     m_TreeViewState:
-      scrollPos: {x: 0, y: 1335}
-      m_SelectedIDs: 4a36edff
-      m_LastClickedID: -1231286
+      scrollPos: {x: 0, y: 0}
+      m_SelectedIDs: 
+      m_LastClickedID: 0
       m_ExpandedIDs: 0055edffc0e9ffff00fbffffc603010018040100520701003a090100
       m_RenameOverlay:
         m_UserAcceptedRename: 0
@@ -1620,7 +1620,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000a8020100aa020100ac020100ae020100
+    m_ExpandedIDs: 000000008eef000090ef000092ef000094ef0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1649,7 +1649,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000a8020100aa020100ac020100ae020100
+    m_ExpandedIDs: 000000008eef000090ef000092ef000094ef0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1729,7 +1729,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 727
+    y: 672
     width: 1563
     height: 277
   m_SerializedDataModeController:
@@ -1773,7 +1773,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 99}
     m_SelectedIDs: 48030100
     m_LastClickedID: 66376
-    m_ExpandedIDs: 00000000a8020100aa020100ac020100ae0201005003010000ca9a3b
+    m_ExpandedIDs: 000000008eef000090ef000092ef000094ef0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1802,7 +1802,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000a8020100aa020100ac020100ae020100
+    m_ExpandedIDs: 000000008eef000090ef000092ef000094ef0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
