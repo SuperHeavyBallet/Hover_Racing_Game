@@ -27,6 +27,17 @@ public class Frame_Layout : MonoBehaviour
     List<SideBoosterController> sideBoosterControllers_Right = new List<SideBoosterController>();
     List<SideBoosterController> sideBoosterControllers_Left = new List<SideBoosterController>();
 
+    [Header("Engine Slots")]
+    public Transform[] engineSlots;
+    int engineSlotsCount;
+
+    [Header("Extra Slots")]
+    public Transform[] extraSlots;
+    int extraSlotsCount;
+
+    [Header("Extra Top Slot")]
+    public Transform extraTopSlot;
+
 
     private void Awake()
     {
@@ -52,6 +63,20 @@ public class Frame_Layout : MonoBehaviour
         medium,
         heavy
     }
+
+
+    public Transform[] GetEngineSlots() { return engineSlots; }
+
+    public Transform[] GetExtraSlots() { return extraSlots; }
+
+    public Transform GetExtraTopSlot() {  return extraTopSlot; }
+
+    public Transform GetEngineSlot(int slot) { return engineSlots[slot]; }
+
+    public Transform GetExtraSlot(int slot) { return extraSlots[slot]; }
+
+
+
 
     public Transform GetFrontLeftPosition()
     {
@@ -83,7 +108,7 @@ public class Frame_Layout : MonoBehaviour
         return backRight1Position;
     }
 
-    public Transform GetExtraFrontPosition()
+    public Transform GetExtraTopPosition()
     {
         return extraFrontPosition;
     }
@@ -103,35 +128,7 @@ public class Frame_Layout : MonoBehaviour
         return frameEnginePosition;
     }
 
-    public string GetFrameSize()
-    {
-        return frameSize.ToString();
-    }
-
-    public Dictionary<string, Transform> GetFramePositions()
-    {
-        Dictionary<string, Transform> newFramePositions = new Dictionary<string, Transform>();
-
-        
-
-        return newFramePositions;
-    }
-
-    public void FireBoosters_Left(bool shouldFire)
-    {
-        foreach(SideBoosterController boosterController in sideBoosterControllers_Left)
-        {
-            boosterController.ActivateFire(shouldFire);
-        }
-    }
-
-    public void FireBoosters_Right(bool shouldFire)
-    {
-        foreach (SideBoosterController boosterController in sideBoosterControllers_Right)
-        {
-            boosterController.ActivateFire(shouldFire);
-        }
-    }
+   
 
     public List<SideBoosterController> GetBoosters_Right()
     {

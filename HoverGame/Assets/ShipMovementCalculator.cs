@@ -46,7 +46,7 @@ public class ShipMovementCalculator : MonoBehaviour
 
 
 
-    public void CalculatePerformance(Dictionary<ComponentSlotType, ComponentName> components)
+    public void CalculatePerformance(Dictionary<ComponentSlotPosition, ComponentName> components)
     {
         int rawSpeed = 0;
         int rawPower = 0;
@@ -146,7 +146,7 @@ public class ShipMovementCalculator : MonoBehaviour
     }
 
 
-    public float CalculateCurrentTopSpeed(bool isManualBoosting, bool isTrackBoosting, bool isLimiting)
+    public float CalculateCurrentTopSpeed(bool isManualBoosting, bool isTrackBoosting, bool isLimiting, bool isSurgeBoosting)
     {
 
         int workingTopSpeed = 0;
@@ -166,11 +166,16 @@ public class ShipMovementCalculator : MonoBehaviour
             workingTopSpeed -= 50;
         }
 
+        if(isSurgeBoosting)
+        {
+            workingTopSpeed += 300;
+            
+        }
 
         return BASE_TopSpeed + workingTopSpeed;
     }
 
-    public float CalculateCurrentMovementForce(bool isManualBoosting, bool isTrackBoosting, bool isLimiting)
+    public float CalculateCurrentMovementForce(bool isManualBoosting, bool isTrackBoosting, bool isLimiting, bool isSurgeBoosting)
     {
         int workingMovementForce = 0;
         if (isManualBoosting)
@@ -185,6 +190,12 @@ public class ShipMovementCalculator : MonoBehaviour
         if (isLimiting)
         {
             workingMovementForce -= 50;
+        }
+
+        if (isSurgeBoosting)
+        {
+            workingMovementForce += 200;
+
         }
 
         return BASE_MovementForce + workingMovementForce;

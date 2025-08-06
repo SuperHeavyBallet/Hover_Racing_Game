@@ -56,6 +56,18 @@ public class Input_Receiver : MonoBehaviour
         }
     }
 
+    public void SurgeBoost(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+        {
+            SCRIPT_Ship_Movement.AddSurgeBoost();
+        }
+        else if(ctx.canceled)
+        {
+            SCRIPT_Ship_Movement.StopSurgeBoost();
+        }
+    }
+
     public void Limit(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)

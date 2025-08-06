@@ -77,7 +77,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2020397127552458962}
   m_Layer: 7
-  m_Name: ExtraRight
+  m_Name: ExtraSlot2
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -324,7 +324,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3615042963379928048}
   m_Layer: 7
-  m_Name: FrontRight_Pos
+  m_Name: EngineSlot2
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -853,7 +853,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7531975280228580153}
   m_Layer: 7
-  m_Name: ExtraFront
+  m_Name: ExtraTopSlot
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -1136,7 +1136,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6108339245573756949}
   m_Layer: 7
-  m_Name: BackRight_Pos
+  m_Name: EngineSlot3
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -1167,7 +1167,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9032642107164399299}
   m_Layer: 7
-  m_Name: FrontLeft_Pos
+  m_Name: EngineSlot1
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -1306,7 +1306,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5309039599207702705}
   m_Layer: 7
-  m_Name: BackLeft_Pos
+  m_Name: EngineSlot4
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -1451,7 +1451,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5665158057837219380
 Transform:
   m_ObjectHideFlags: 0
@@ -1506,6 +1506,15 @@ MonoBehaviour:
   rightBoosters:
   - {fileID: 7050150893451521758}
   - {fileID: 1645302897272007506}
+  engineSlots:
+  - {fileID: 9032642107164399299}
+  - {fileID: 3615042963379928048}
+  - {fileID: 6108339245573756949}
+  - {fileID: 5309039599207702705}
+  extraSlots:
+  - {fileID: 1290409553003758334}
+  - {fileID: 2020397127552458962}
+  extraTopSlot: {fileID: 7531975280228580153}
 --- !u!1 &7329583366698741296
 GameObject:
   m_ObjectHideFlags: 0
@@ -1948,7 +1957,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1290409553003758334}
   m_Layer: 7
-  m_Name: ExtraLeft
+  m_Name: ExtraSlot1
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0

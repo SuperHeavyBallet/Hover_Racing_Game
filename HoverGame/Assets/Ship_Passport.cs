@@ -11,7 +11,7 @@ using static Ship_Passport;
 public class Ship_Passport : MonoBehaviour
 {
     public static Ship_Passport Instance {  get; private set; }
-    public Dictionary<ComponentSlotType, ComponentName> componentSlots  = new();
+    public Dictionary<ComponentSlotPosition, ComponentName> componentSlots  = new();
     public bool receivedShipLoadout = false;
 
     public Dictionary<ComponentName, GameObject> componentPrefabs;
@@ -28,7 +28,10 @@ public class Ship_Passport : MonoBehaviour
     public GameObject machineGun;
     public GameObject missile;
 
-
+    Dictionary<ComponentName, GameObject> frameComponentOptions = new();
+    Dictionary<ComponentName, GameObject> engineComponentOptions = new();
+    Dictionary<ComponentName, GameObject> extraComponentOptions = new();
+    Dictionary<ComponentName, GameObject> extraTopComponentOptions = new();
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -45,6 +48,7 @@ public class Ship_Passport : MonoBehaviour
 
         componentPrefabs = new Dictionary<ComponentName, GameObject>();
         InitialisePrefabReferences();
+        DefineComponentOptions();
     }
 
     public GameObject GetShipFrame()
@@ -104,19 +108,7 @@ public class Ship_Passport : MonoBehaviour
     }
 
 
-    
-
-    private void Start()
-    {
-        if (!receivedShipLoadout)
-        {
-            GetShipLoadout();
-            Debug.Log("NO LOADOUT RECEIVED!");
-        }
-
-    }
-
-    public void SetShipLoadout(Dictionary<ComponentSlotType, ComponentName> shipLoadout )
+    public void SetShipLoadout(Dictionary<ComponentSlotPosition, ComponentName> shipLoadout )
     {
         receivedShipLoadout = true;
 
@@ -141,16 +133,17 @@ public class Ship_Passport : MonoBehaviour
         return false;
     }
 
-    public Dictionary<ComponentSlotType, ComponentName> GetShipLoadout()
+    public Dictionary<ComponentSlotPosition, ComponentName> GetShipLoadout()
     {
-        var result = new Dictionary<ComponentSlotType, ComponentName>();
+        var result = new Dictionary<ComponentSlotPosition, ComponentName>();
         bool hasExtraSlots = false;
 
         if (componentSlots.Count > 0)
         {
+            Debug.Log("Ship Prepared");
             foreach (var pair in componentSlots)
             {
-                if (pair.Key == ComponentSlotType.Frame)
+                if (pair.Key == ComponentSlotPosition.Frame)
                 {
                     if (pair.Value == ComponentName.heavyFrame)
                     {
@@ -158,7 +151,7 @@ public class Ship_Passport : MonoBehaviour
                     }
                 }
 
-                if (pair.Key == ComponentSlotType.BackLeft1 || pair.Key == ComponentSlotType.BackRight1)
+                if (pair.Key == ComponentSlotPosition.BackLeft1 || pair.Key == ComponentSlotPosition.BackRight1)
                 {
                     if (hasExtraSlots)
                     {
@@ -169,18 +162,13 @@ public class Ship_Passport : MonoBehaviour
                 {
                     result[pair.Key] = pair.Value;
                 }
-
-
-
-
             }
-
-
             return result;
         }
 
         else
         {
+            Debug.Log("No Ship Prepared, making default");
             var defaultLoadout = CreateDefaultLoadout();
             componentSlots = defaultLoadout;
             return defaultLoadout;
@@ -192,20 +180,22 @@ public class Ship_Passport : MonoBehaviour
 
     }
 
-    public Dictionary<ComponentSlotType, ComponentName> CreateDefaultLoadout()
+
+
+    public Dictionary<ComponentSlotPosition, ComponentName> CreateDefaultLoadout()
     {
-        var defaultLoadout = new Dictionary<ComponentSlotType, ComponentName>
+        var defaultLoadout = new Dictionary<ComponentSlotPosition, ComponentName>
     {
-        { ComponentSlotType.Frame, ComponentName.mediumFrame },
-        { ComponentSlotType.FrontLeft, ComponentName.jetEngine },
-        { ComponentSlotType.FrontRight, ComponentName.jetEngine },
-        { ComponentSlotType.BackLeft, ComponentName.jetEngine },
-        { ComponentSlotType.BackRight, ComponentName.jetEngine },
-        { ComponentSlotType.BackLeft1, ComponentName.empty },
-        { ComponentSlotType.BackRight1, ComponentName.empty },
-        { ComponentSlotType.ExtraFront, ComponentName.boostGulp },
-        { ComponentSlotType.ExtraLeft, ComponentName.jetEngine },
-        { ComponentSlotType.ExtraRight, ComponentName.jetEngine }
+        { ComponentSlotPosition.Frame, ComponentName.mediumFrame },
+        { ComponentSlotPosition.FrontLeft, ComponentName.jetEngine },
+        { ComponentSlotPosition.FrontRight, ComponentName.jetEngine },
+        { ComponentSlotPosition.BackLeft, ComponentName.jetEngine },
+        { ComponentSlotPosition.BackRight, ComponentName.jetEngine },
+        { ComponentSlotPosition.BackLeft1, ComponentName.empty },
+        { ComponentSlotPosition.BackRight1, ComponentName.empty },
+        { ComponentSlotPosition.ExtraTop, ComponentName.boostGulp },
+        { ComponentSlotPosition.ExtraLeft, ComponentName.empty },
+        { ComponentSlotPosition.ExtraRight, ComponentName.empty }
     };
 
         return defaultLoadout;
@@ -215,7 +205,7 @@ public class Ship_Passport : MonoBehaviour
     {
         foreach (var slot in componentSlots)
         {
-            if(slot.Key == ComponentSlotType.ExtraFront)
+            if(slot.Key == ComponentSlotPosition.ExtraTop)
             {
            
                 return slot.Value;
@@ -224,6 +214,60 @@ public class Ship_Passport : MonoBehaviour
 
         return ComponentName.empty;
     }
+
+    void DefineComponentOptions()
+    {
+        frameComponentOptions = new Dictionary<ComponentName, GameObject>
+        {
+             { ComponentName.lightFrame, lightFrame},
+             { ComponentName.mediumFrame, mediumFrame},
+             { ComponentName.heavyFrame, heavyFrame},
+             { ComponentName.empty , null }
+        };
+
+        engineComponentOptions = new Dictionary<ComponentName, GameObject>
+        {
+             { ComponentName.engine, engine },
+             { ComponentName.jetEngine, jetEngine},
+             { ComponentName.empty , null }
+        };
+
+        extraTopComponentOptions = new Dictionary<ComponentName, GameObject>
+        {
+             { ComponentName.boostGulp, boostGulp },
+             { ComponentName.machineGun, machineGun},
+             { ComponentName.missile, missile},
+             { ComponentName.empty , null }
+        };
+
+        extraComponentOptions = new Dictionary<ComponentName, GameObject>
+        {
+             { ComponentName.fuelTank, fuelTank },
+             { ComponentName.aireon, aireon},
+             { ComponentName.empty , null }
+        };
+    }
+
+    public Dictionary<ComponentName, GameObject> GetFrameComponentOptions()
+    {
+        return frameComponentOptions;
+    }
+
+    public Dictionary<ComponentName, GameObject> GetEngineComponentOptions()
+    {
+        return engineComponentOptions;
+    }
+
+    public Dictionary<ComponentName, GameObject> GetExtraTopComponentOptions()
+    {
+        return extraTopComponentOptions;
+    }
+
+    public Dictionary<ComponentName, GameObject> GetExtraComponentOptions()
+    {
+        return extraComponentOptions;
+    }
+
 
 }
 

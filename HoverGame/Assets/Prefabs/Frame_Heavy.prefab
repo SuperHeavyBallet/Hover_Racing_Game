@@ -290,7 +290,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3615042963379928048}
   m_Layer: 7
-  m_Name: FrontRight_Pos
+  m_Name: EngineSlot1
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -715,7 +715,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3934037927377828503}
   m_Layer: 7
-  m_Name: BackRight1_Pos
+  m_Name: EngineSlot6
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -746,7 +746,7 @@ GameObject:
   m_Component:
   - component: {fileID: 872275504707496895}
   m_Layer: 7
-  m_Name: ExtraFront
+  m_Name: ExtraTopSlot
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -885,7 +885,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3539774856890793660}
   m_Layer: 7
-  m_Name: BackLeft1_Pos
+  m_Name: EngineSlot3
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -1122,37 +1122,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1 &2940121573952068651
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 747787587766336653}
-  m_Layer: 7
-  m_Name: FrameEngine_Pos
-  m_TagString: Untagged
-  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &747787587766336653
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2940121573952068651}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.222, z: -0.404}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5665158057837219380}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3221800551956684622
 GameObject:
   m_ObjectHideFlags: 0
@@ -1895,7 +1864,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2772565497346101642}
   m_Layer: 7
-  m_Name: ExtraLeft
+  m_Name: ExtraSlot1
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -2034,7 +2003,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6108339245573756949}
   m_Layer: 7
-  m_Name: BackRight_Pos
+  m_Name: EngineSlot5
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -2065,7 +2034,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9032642107164399299}
   m_Layer: 7
-  m_Name: FrontLeft_Pos
+  m_Name: EngineSlot2
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -2239,7 +2208,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5309039599207702705}
   m_Layer: 7
-  m_Name: BackLeft_Pos
+  m_Name: EngineSlot4
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -2270,7 +2239,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2265770117168918789}
   m_Layer: 7
-  m_Name: ExtraRight
+  m_Name: ExtraSlot2
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -2324,7 +2293,6 @@ Transform:
   - {fileID: 4705048745574538280}
   - {fileID: 9001645292975546664}
   - {fileID: 2100977148864466030}
-  - {fileID: 747787587766336653}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3691966054114652474
@@ -2339,7 +2307,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 568e9e985364d334fbb830dabb2d3f0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frameEnginePosition: {fileID: 747787587766336653}
+  frameEnginePosition: {fileID: 0}
   frontLeftPosition: {fileID: 9032642107164399299}
   frontRightPosition: {fileID: 3615042963379928048}
   backRightPosition: {fileID: 6108339245573756949}
@@ -2356,6 +2324,17 @@ MonoBehaviour:
   rightBoosters:
   - {fileID: 3662136700691307810}
   - {fileID: 3018378445853441343}
+  engineSlots:
+  - {fileID: 3615042963379928048}
+  - {fileID: 9032642107164399299}
+  - {fileID: 3539774856890793660}
+  - {fileID: 5309039599207702705}
+  - {fileID: 6108339245573756949}
+  - {fileID: 3934037927377828503}
+  extraSlots:
+  - {fileID: 2772565497346101642}
+  - {fileID: 2265770117168918789}
+  extraTopSlot: {fileID: 872275504707496895}
 --- !u!1 &6632725990271721159
 GameObject:
   m_ObjectHideFlags: 0

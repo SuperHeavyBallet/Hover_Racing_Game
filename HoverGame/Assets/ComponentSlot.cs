@@ -5,7 +5,7 @@ using UnityEngine;
 
 [System.Serializable]
 
-public enum ComponentSlotType
+public enum ComponentSlotPosition
 {
     Frame,
     FrontLeft,
@@ -14,7 +14,7 @@ public enum ComponentSlotType
     BackRight,
     BackLeft1,
     BackRight1,
-    ExtraFront,
+    ExtraTop,
     ExtraLeft,
     ExtraRight
 }

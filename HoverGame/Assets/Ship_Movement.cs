@@ -74,7 +74,7 @@ public class Ship_Movement : MonoBehaviour
 
     Ship_Constructor shipConstructor;
 
-    Dictionary<ComponentSlotType, ComponentName> componentList = new();
+    Dictionary<ComponentSlotPosition, ComponentName> componentList = new();
 
 
     Audio_Manager audioManager;
@@ -98,7 +98,8 @@ public class Ship_Movement : MonoBehaviour
     public float receivedSteering;
     public float receivedSideBoost;
     public bool isSideBoosting;
-    
+    public bool isSurgeBoosting;
+    Coroutine TurnOffSurgeBoost;
 
     Coroutine TurnOffSideBoost;
 
@@ -153,6 +154,33 @@ public class Ship_Movement : MonoBehaviour
     public void AddBoostStartImpulse(float amount)
     {
         rigidBody.AddForce(this.transform.forward * amount, ForceMode.Impulse);
+    }
+
+    public void AddSurgeBoost()
+    {
+        isSurgeBoosting = false;
+        isSurgeBoosting = true;
+
+        if(TurnOffSurgeBoost == null)
+        {
+            TurnOffSurgeBoost = StartCoroutine(ResetSurgeBoost());
+        }
+       
+
+    }
+
+    public void StopSurgeBoost()
+    {
+        StopCoroutine(TurnOffSurgeBoost);
+        TurnOffSurgeBoost = null;
+        isSurgeBoosting = false;
+    }
+
+    IEnumerator ResetSurgeBoost()
+    {
+        yield return new WaitForSeconds(1);
+        StopSurgeBoost();
+
     }
     public void ExitedBoostZone()
     {
@@ -520,8 +548,8 @@ public class Ship_Movement : MonoBehaviour
     #region // Stat Adjusts /////////////////////////////////////////////////
     void UpdateStats()
     {
-        CURRENT_TopSpeed = shipMovementCalculator.CalculateCurrentTopSpeed(boostActivated, trackBoostActivated, limitActivated);
-        CURRENT_MovementForce = shipMovementCalculator.CalculateCurrentMovementForce(boostActivated, trackBoostActivated, limitActivated);
+        CURRENT_TopSpeed = shipMovementCalculator.CalculateCurrentTopSpeed(boostActivated, trackBoostActivated, limitActivated, isSurgeBoosting);
+        CURRENT_MovementForce = shipMovementCalculator.CalculateCurrentMovementForce(boostActivated, trackBoostActivated, limitActivated, isSurgeBoosting);
         CURRENT_RotationSpeed = shipMovementCalculator.CalculateCurrentRotationSpeed(boostActivated, trackBoostActivated, limitActivated);
         CURRENT_NormalFuelConsumptionRate = shipMovementCalculator.BASE_NormaFuelConsumptionRate;
         CURRENT_BoostFuelConsumptionRate = shipMovementCalculator.BASE_BoostFuelConsumptionRate;
