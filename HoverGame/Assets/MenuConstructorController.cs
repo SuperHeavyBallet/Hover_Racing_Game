@@ -69,6 +69,7 @@ public class MenuConstructorController : MonoBehaviour
     public TMP_Dropdown extraLeftDropdown;
     public TMP_Dropdown extraRightDropdown;
 
+    List<string> componentsList = new List<string>();
 
     List<string> frameOptions = new List<string>
     {
@@ -76,12 +77,24 @@ public class MenuConstructorController : MonoBehaviour
         "Medium",
         "Heavy"
     };
+    List<ComponentName> frameKeys = new List<ComponentName>
+    {
+        ComponentName.lightFrame,
+        ComponentName.mediumFrame,
+        ComponentName.heavyFrame
+    };
 
     List<string> engineOptions = new List<string>
     {
         "Engine",
         "Jet Engine",
         "Empty"
+    };
+    List<ComponentName> engineComponentKeys = new List<ComponentName>
+    {
+        ComponentName.engine,
+        ComponentName.jetEngine,
+        ComponentName.empty
     };
 
     List<string> extraTopOptions = new List<string>
@@ -91,6 +104,13 @@ public class MenuConstructorController : MonoBehaviour
         "Missile Launcher",
         "Empty"
     };
+    List<ComponentName> extraTopComponentKeys = new List<ComponentName>
+    {
+        ComponentName.boostGulp,
+        ComponentName.machineGun,
+        ComponentName.missile,
+        ComponentName.empty
+    };
 
     List<string> extraOptions = new List<string>
     {
@@ -98,7 +118,15 @@ public class MenuConstructorController : MonoBehaviour
         "FuelTank",
         "Empty"
     };
+    List<ComponentName> extraComponentKeys = new List<ComponentName>
+    {
+        ComponentName.aireon,
+        ComponentName.fuelTank,
+        ComponentName.empty
+    };
 
+    public GameObject UI_ComponentList_Holder;
+    public GameObject PREFAB_UI_ComponentList_Element;
 
 
     void Awake()
@@ -190,6 +218,8 @@ public class MenuConstructorController : MonoBehaviour
                 DisplayComponentMeshes();
             }
         }
+
+        ExposeComponentsAsList();
 
     }
 
@@ -437,7 +467,7 @@ public class MenuConstructorController : MonoBehaviour
             Place_Frame(replacementComponent);
         }
         
-        Place_Component(slotPosition, replacementComponent);
+        //Place_Component(slotPosition, replacementComponent);
         
 
        
@@ -445,28 +475,62 @@ public class MenuConstructorController : MonoBehaviour
 
     public void UpdateComponentSlot_FRAME(int val) => UpdateComponentSlot(ComponentSlotPosition.Frame, val);
 
-    public void UpdateComponentSlot_FL(int val) => UpdateComponentSlot(ComponentSlotPosition.FrontLeft, val);
+    public void UpdateComponentSlot_FL(int val)
+    {
+        ComponentName chosenComponent = engineComponentKeys[val];
+        Place_Component(ComponentSlotPosition.FrontLeft, chosenComponent);
+    }
 
-    public void UpdateComponentSlot_FR(int val) => UpdateComponentSlot(ComponentSlotPosition.FrontRight, val);
+    public void UpdateComponentSlot_FR(int val)
+    {
+        ComponentName chosenComponent = engineComponentKeys[val];
+        Place_Component(ComponentSlotPosition.FrontRight, chosenComponent);
+    }
 
-    public void UpdateComponentSlot_BL(int val) => UpdateComponentSlot(ComponentSlotPosition.BackLeft, val);
+    public void UpdateComponentSlot_BL(int val)
+    {
+        ComponentName chosenComponent = engineComponentKeys[val];
+        Place_Component(ComponentSlotPosition.BackLeft, chosenComponent);
+    }
 
-    public void UpdateComponentSlot_BR(int val) => UpdateComponentSlot(ComponentSlotPosition.BackRight, val);
+    public void UpdateComponentSlot_BR(int val)
+    {
+        ComponentName chosenComponent = engineComponentKeys[val];
+        Place_Component(ComponentSlotPosition.BackRight, chosenComponent);
+    }
 
-    public void UpdateComponentSlot_BL1(int val) => UpdateComponentSlot(ComponentSlotPosition.BackLeft1, val);
+    public void UpdateComponentSlot_BL1(int val)
+    {
+        ComponentName chosenComponent = engineComponentKeys[val];
+        Place_Component(ComponentSlotPosition.BackLeft1, chosenComponent);
+    }
+    public void UpdateComponentSlot_BR1(int val)
+    {
+        ComponentName chosenComponent = engineComponentKeys[val];
+        Place_Component(ComponentSlotPosition.BackRight1, chosenComponent);
+    }
 
-    public void UpdateComponentSlot_BR1(int val) => UpdateComponentSlot(ComponentSlotPosition.BackRight1, val);
+    public void UpdateComponentSlot_ExtraFront(int val)
+    {
+        ComponentName chosenComponent = extraTopComponentKeys[val];
+        Place_Component(ComponentSlotPosition.ExtraTop, chosenComponent);
+    }
 
-    public void UpdateComponentSlot_ExtraFront(int val) => UpdateComponentSlot(ComponentSlotPosition.ExtraTop, val);
+    public void UpdateComponentSlot_ExtraLeft(int val)
+    {
+        ComponentName chosenComponent = extraComponentKeys[val];
+        Place_Component(ComponentSlotPosition.ExtraLeft, chosenComponent);
+    }
 
-    public void UpdateComponentSlot_ExtraLeft(int val) => UpdateComponentSlot(ComponentSlotPosition.ExtraLeft, val);
+    public void UpdateComponentSlot_ExtraRight(int val)
+    {
+        ComponentName chosenComponent = extraComponentKeys[val];
+        Place_Component(ComponentSlotPosition.ExtraRight, chosenComponent);
+    }
 
-    public void UpdateComponentSlot_ExtraRight(int val) => UpdateComponentSlot(ComponentSlotPosition.ExtraRight, val);
 
-    
-    
 
-    
+
 
     void SetOptionsForExtraSlots(bool value)
     {
@@ -501,7 +565,41 @@ public class MenuConstructorController : MonoBehaviour
     }
 
 
+    void ExposeComponentsAsList()
+    {
+        
+        foreach(var pair in componentSlotPositions)
+        {
+            string componentName = pair.Value.selectedComponentKey.ToString();
+            componentsList.Add(componentName);
+            
+        }
 
+        BuildNewUIList();
+    }
+
+    void BuildNewUIList()
+    {
+        foreach (Transform child in UI_ComponentList_Holder.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (string component in componentsList)
+        {
+            GameObject newComponentListElement = Instantiate(PREFAB_UI_ComponentList_Element, UI_ComponentList_Holder.transform);
+            TextMeshProUGUI listElementText = newComponentListElement.GetComponent<TextMeshProUGUI>();
+            if(listElementText != null )
+            {
+                listElementText.text = component;
+            }
+            else
+            {
+                Debug.LogWarning("componentTextPrefab does not have a TextMeshProUGUI component attached.");
+            }
+        }
+        
+    }
 
 
 }
