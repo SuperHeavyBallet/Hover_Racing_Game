@@ -45,7 +45,6 @@ public class ShipMovementCalculator : MonoBehaviour
     }
 
 
-
     public void CalculatePerformance(Dictionary<ComponentSlotPosition, ComponentName> components)
     {
         int rawSpeed = 0;
@@ -65,40 +64,40 @@ public class ShipMovementCalculator : MonoBehaviour
         {
             switch (pair.Value)
             {
-                case ComponentName.lightFrame:
+                case ComponentName.Light_Frame:
                     totalWeight += 50;
                     boostFuel += 30;
                     normalFuel += 200;
                     break;
-                case ComponentName.mediumFrame:
+                case ComponentName.Medium_Frame:
                     totalWeight += 70;
                     boostFuel += 10;
                     normalFuel += 100;
                     break;
-                case ComponentName.heavyFrame:
+                case ComponentName.Heavy_Frame:
                     totalWeight += 100;
                     break;
 
-                case ComponentName.engine:
+                case ComponentName.Engine:
                     totalWeight += 100;
                     rawPower += 15;
                     rawSpeed += 30;
                     engineCount += 1;
                     break;
-                case ComponentName.jetEngine:
+                case ComponentName.Jet_Engine:
                     totalWeight += 70;
                     rawPower += 20;
                     rawSpeed += 25;
                     jetEngineCount += 1;
                     break;
 
-                case ComponentName.fuelTank:
+                case ComponentName.Fuel_Tank:
                     totalWeight += 10;
                     boostFuel += 50;
                     normalFuel += 200;
                     fuelTankCount += 1;
                     break;
-                case ComponentName.aireon:
+                case ComponentName.Aireon:
                     totalWeight -= 10;
                     rawSpeed += 10;
                     boostFuelConsumptionRate -= 0.25f;

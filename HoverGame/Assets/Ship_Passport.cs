@@ -56,7 +56,8 @@ public class Ship_Passport : MonoBehaviour
         foreach (var component in componentPrefabs)
         {
             GameObject frame;
-
+            frame = component.Value;
+            /*
             switch (component.Key)
             {
                 case ComponentName.lightFrame:
@@ -72,7 +73,7 @@ public class Ship_Passport : MonoBehaviour
                     frame = null;
 
                 break;
-            }
+            }*/
             return frame;
         }
 
@@ -82,16 +83,16 @@ public class Ship_Passport : MonoBehaviour
 
     void InitialisePrefabReferences()
     {
-        componentPrefabs.Add(ComponentName.lightFrame, lightFrame);
-        componentPrefabs.Add(ComponentName.mediumFrame, mediumFrame);
-        componentPrefabs.Add(ComponentName.heavyFrame, heavyFrame);
-        componentPrefabs.Add(ComponentName.engine, engine);
-        componentPrefabs.Add(ComponentName.jetEngine, jetEngine);
-        componentPrefabs.Add(ComponentName.aireon, aireon);
-        componentPrefabs.Add(ComponentName.fuelTank, fuelTank);
-        componentPrefabs.Add(ComponentName.boostGulp, boostGulp);
-        componentPrefabs.Add(ComponentName.machineGun, machineGun);
-        componentPrefabs.Add(ComponentName.missile, missile);
+        componentPrefabs.Add(ComponentName.Light_Frame, lightFrame);
+        componentPrefabs.Add(ComponentName.Medium_Frame, mediumFrame);
+        componentPrefabs.Add(ComponentName.Heavy_Frame, heavyFrame);
+        componentPrefabs.Add(ComponentName.Engine, engine);
+        componentPrefabs.Add(ComponentName.Jet_Engine, jetEngine);
+        componentPrefabs.Add(ComponentName.Aireon, aireon);
+        componentPrefabs.Add(ComponentName.Fuel_Tank, fuelTank);
+        componentPrefabs.Add(ComponentName.Boost_Gulp, boostGulp);
+        componentPrefabs.Add(ComponentName.Machine_Gun, machineGun);
+        componentPrefabs.Add(ComponentName.Missile, missile);
     }
 
     public GameObject GetPrefab(ComponentName componentName)
@@ -124,7 +125,7 @@ public class Ship_Passport : MonoBehaviour
     {
         foreach(var component in componentSlots)
         {
-            if(component.Value == ComponentName.boostGulp)
+            if(component.Value == ComponentName.Boost_Gulp)
             {
                 return true;
             }
@@ -145,7 +146,7 @@ public class Ship_Passport : MonoBehaviour
             {
                 if (pair.Key == ComponentSlotPosition.Frame)
                 {
-                    if (pair.Value == ComponentName.heavyFrame)
+                    if (pair.Value == ComponentName.Heavy_Frame)
                     {
                         hasExtraSlots = true;
                     }
@@ -186,16 +187,16 @@ public class Ship_Passport : MonoBehaviour
     {
         var defaultLoadout = new Dictionary<ComponentSlotPosition, ComponentName>
     {
-        { ComponentSlotPosition.Frame, ComponentName.mediumFrame },
-        { ComponentSlotPosition.FrontLeft, ComponentName.jetEngine },
-        { ComponentSlotPosition.FrontRight, ComponentName.jetEngine },
-        { ComponentSlotPosition.BackLeft, ComponentName.jetEngine },
-        { ComponentSlotPosition.BackRight, ComponentName.jetEngine },
-        { ComponentSlotPosition.BackLeft1, ComponentName.empty },
-        { ComponentSlotPosition.BackRight1, ComponentName.empty },
-        { ComponentSlotPosition.ExtraTop, ComponentName.boostGulp },
-        { ComponentSlotPosition.ExtraLeft, ComponentName.empty },
-        { ComponentSlotPosition.ExtraRight, ComponentName.empty }
+        { ComponentSlotPosition.Frame, ComponentName.Medium_Frame },
+        { ComponentSlotPosition.FrontLeft, ComponentName.Jet_Engine },
+        { ComponentSlotPosition.FrontRight, ComponentName.Jet_Engine },
+        { ComponentSlotPosition.BackLeft, ComponentName.Jet_Engine },
+        { ComponentSlotPosition.BackRight, ComponentName.Jet_Engine },
+        { ComponentSlotPosition.BackLeft1, ComponentName.Empty },
+        { ComponentSlotPosition.BackRight1, ComponentName.Empty },
+        { ComponentSlotPosition.ExtraTop, ComponentName.Boost_Gulp },
+        { ComponentSlotPosition.ExtraLeft, ComponentName.Empty },
+        { ComponentSlotPosition.ExtraRight, ComponentName.Empty }
     };
 
         return defaultLoadout;
@@ -212,39 +213,39 @@ public class Ship_Passport : MonoBehaviour
             }
         }
 
-        return ComponentName.empty;
+        return ComponentName.Empty;
     }
 
     void DefineComponentOptions()
     {
         frameComponentOptions = new Dictionary<ComponentName, GameObject>
         {
-             { ComponentName.lightFrame, lightFrame},
-             { ComponentName.mediumFrame, mediumFrame},
-             { ComponentName.heavyFrame, heavyFrame},
-             { ComponentName.empty , null }
+             { ComponentName.Light_Frame, lightFrame},
+             { ComponentName.Medium_Frame, mediumFrame},
+             { ComponentName.Heavy_Frame, heavyFrame},
+             { ComponentName.Empty , null }
         };
 
         engineComponentOptions = new Dictionary<ComponentName, GameObject>
         {
-             { ComponentName.engine, engine },
-             { ComponentName.jetEngine, jetEngine},
-             { ComponentName.empty , null }
+             { ComponentName.Engine, engine },
+             { ComponentName.Jet_Engine, jetEngine},
+             { ComponentName.Empty , null }
         };
 
         extraTopComponentOptions = new Dictionary<ComponentName, GameObject>
         {
-             { ComponentName.boostGulp, boostGulp },
-             { ComponentName.machineGun, machineGun},
-             { ComponentName.missile, missile},
-             { ComponentName.empty , null }
+             { ComponentName.Boost_Gulp, boostGulp },
+             { ComponentName.Machine_Gun, machineGun},
+             { ComponentName.Missile, missile},
+             { ComponentName.Empty , null }
         };
 
         extraComponentOptions = new Dictionary<ComponentName, GameObject>
         {
-             { ComponentName.fuelTank, fuelTank },
-             { ComponentName.aireon, aireon},
-             { ComponentName.empty , null }
+             { ComponentName.Fuel_Tank, fuelTank },
+             { ComponentName.Aireon, aireon},
+             { ComponentName.Empty , null }
         };
     }
 

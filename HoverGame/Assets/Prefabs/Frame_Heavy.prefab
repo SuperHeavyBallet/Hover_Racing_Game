@@ -290,7 +290,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3615042963379928048}
   m_Layer: 7
-  m_Name: EngineSlot1
+  m_Name: EngineSlot2
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -885,7 +885,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3539774856890793660}
   m_Layer: 7
-  m_Name: EngineSlot3
+  m_Name: EngineSlot5
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -901,7 +901,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.13052616, w: 0.9914449}
   m_LocalPosition: {x: -0.653, y: 0.353, z: -0.594}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2100977148864466030}
@@ -1733,15 +1733,15 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3615042963379928048}
   - {fileID: 9032642107164399299}
+  - {fileID: 3615042963379928048}
+  - {fileID: 5309039599207702705}
+  - {fileID: 6108339245573756949}
   - {fileID: 3539774856890793660}
+  - {fileID: 3934037927377828503}
   - {fileID: 872275504707496895}
   - {fileID: 2772565497346101642}
   - {fileID: 2265770117168918789}
-  - {fileID: 5309039599207702705}
-  - {fileID: 6108339245573756949}
-  - {fileID: 3934037927377828503}
   m_Father: {fileID: 5665158057837219380}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4945144475637954306
@@ -1880,7 +1880,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.283, y: 0.764, z: -0.68}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2100977148864466030}
@@ -2003,7 +2003,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6108339245573756949}
   m_Layer: 7
-  m_Name: EngineSlot5
+  m_Name: EngineSlot4
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -2034,7 +2034,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9032642107164399299}
   m_Layer: 7
-  m_Name: EngineSlot2
+  m_Name: EngineSlot1
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -2050,7 +2050,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.038543515, y: 0.005074352, z: -0.13042757, w: 0.99069536}
   m_LocalPosition: {x: -0.734, y: 0.438, z: 0.919}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2100977148864466030}
@@ -2208,7 +2208,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5309039599207702705}
   m_Layer: 7
-  m_Name: EngineSlot4
+  m_Name: EngineSlot3
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -2224,7 +2224,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.14905557, w: 0.9888289}
   m_LocalPosition: {x: -0.721, y: 0.766, z: -0.404}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2100977148864466030}
@@ -2325,11 +2325,11 @@ MonoBehaviour:
   - {fileID: 3662136700691307810}
   - {fileID: 3018378445853441343}
   engineSlots:
-  - {fileID: 3615042963379928048}
   - {fileID: 9032642107164399299}
-  - {fileID: 3539774856890793660}
+  - {fileID: 3615042963379928048}
   - {fileID: 5309039599207702705}
   - {fileID: 6108339245573756949}
+  - {fileID: 3539774856890793660}
   - {fileID: 3934037927377828503}
   extraSlots:
   - {fileID: 2772565497346101642}

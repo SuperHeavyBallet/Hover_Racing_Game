@@ -28,9 +28,12 @@ public class Ship_Constructor : MonoBehaviour
     Transform backLeft1Position;
     Transform backRight1Position;
 
+   
+
     void Awake()
     {
         SCRIPT_ShipMovement = this.GetComponent<Ship_Movement>(); 
+        
     }
 
     private void Start()
@@ -38,7 +41,10 @@ public class Ship_Constructor : MonoBehaviour
         CheckShipPassportExists();
         DecideFrame();
         PlaceComponent();
+        
     }
+
+   
 
 
     void CheckShipPassportExists()
@@ -77,11 +83,11 @@ public class Ship_Constructor : MonoBehaviour
 
                 switch (pair.Value)
                 {
-                    case ComponentName.lightFrame:
+                    case ComponentName.Light_Frame:
                         newComponent = shipPassport.lightFrame; break;
-                    case ComponentName.mediumFrame:
+                    case ComponentName.Medium_Frame:
                         newComponent = shipPassport.mediumFrame; break;
-                    case ComponentName.heavyFrame:
+                    case ComponentName.Heavy_Frame:
                         newComponent = shipPassport.heavyFrame; break;
                     default:
                         Debug.LogWarning("No Frame Type Assigned");

@@ -21,22 +21,22 @@ public enum ComponentSlotPosition
 
 public enum ComponentName
 {
-    empty,
-    lightFrame,
-    mediumFrame,
-    heavyFrame,
-    engine,
-    jetEngine,
-    aireon,
-    fuelTank,
-    boostGulp,
-    machineGun,
-    missile
+    Empty,
+    Light_Frame,
+    Medium_Frame,
+    Heavy_Frame,
+    Engine,
+    Jet_Engine,
+    Aireon,
+    Fuel_Tank,
+    Boost_Gulp,
+    Machine_Gun,
+    Missile
 
 }
 public class ComponentSlot 
 {
-    public TextMeshProUGUI label;
+    //public TextMeshProUGUI label;
     public Transform position;
     public Dictionary<ComponentName, GameObject> components; // "engine" => prefab
 

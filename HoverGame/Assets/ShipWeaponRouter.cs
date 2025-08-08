@@ -38,7 +38,7 @@ public class ShipWeaponRouter : MonoBehaviour
     {
         UpdateSightLine();
 
-        if (fireIsHeldDown && weaponName == ComponentName.machineGun)
+        if (fireIsHeldDown && weaponName == ComponentName.Machine_Gun)
         {
             FireMachineGun();
         }
@@ -48,7 +48,7 @@ public class ShipWeaponRouter : MonoBehaviour
     {
        
 
-        if(weaponName == ComponentName.missile)
+        if(weaponName == ComponentName.Missile)
         {
 
             if(!fireIsHeldDown)
@@ -58,7 +58,7 @@ public class ShipWeaponRouter : MonoBehaviour
            
             
         }
-        else if(weaponName == ComponentName.machineGun)
+        else if(weaponName == ComponentName.Machine_Gun)
         {
             FireMachineGun();
         }
