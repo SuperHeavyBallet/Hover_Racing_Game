@@ -11,7 +11,13 @@ using static Ship_Passport;
 public class Ship_Passport : MonoBehaviour
 {
     public static Ship_Passport Instance {  get; private set; }
+
+    [Header("References")]
+    public ComponentCatalogue catalogueAsset; // assign the asset in the inspector
+
+
     public Dictionary<ComponentSlotPosition, ComponentName> componentSlots  = new();
+
     public bool receivedShipLoadout = false;
 
     public Dictionary<ComponentName, GameObject> componentPrefabs;
@@ -34,6 +40,7 @@ public class Ship_Passport : MonoBehaviour
     Dictionary<ComponentName, GameObject> extraTopComponentOptions = new();
 
 
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -46,6 +53,9 @@ public class Ship_Passport : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        //catalogueAsset.BuildLookups();
+
+
         componentPrefabs = new Dictionary<ComponentName, GameObject>();
         InitialisePrefabReferences();
         DefineComponentOptions();
@@ -57,23 +67,7 @@ public class Ship_Passport : MonoBehaviour
         {
             GameObject frame;
             frame = component.Value;
-            /*
-            switch (component.Key)
-            {
-                case ComponentName.lightFrame:
-                    frame = component.Value;
-                    break;
-                    case ComponentName.mediumFrame:
-                    frame = component.Value;
-                    break;
-                case ComponentName.heavyFrame:
-                    frame = component.Value;
-                    break;
-                    default:
-                    frame = null;
-
-                break;
-            }*/
+         
             return frame;
         }
 

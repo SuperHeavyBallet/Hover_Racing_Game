@@ -1,10 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-//using System.ComponentModel;
 using TMPro;
-//using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
-//using UnityEngine.SceneManagement;
+using UnityEngine.Analytics;
 
 public class MenuConstructorController : MonoBehaviour
 {
@@ -43,10 +42,10 @@ public class MenuConstructorController : MonoBehaviour
     public bool currentFrameIsLight = false;
     public bool currentFrameIsHeavy = false;
 
-    Dictionary<ComponentName, GameObject> frameComponentOptions = new();
-    Dictionary<ComponentName, GameObject> engineComponentOptions = new();
-    Dictionary<ComponentName, GameObject> extraComponentOptions = new();
-    Dictionary<ComponentName, GameObject> extraTopComponentOptions = new();
+    Dictionary<string, GameObject> frameComponentOptions = new();
+    Dictionary<string, GameObject> engineComponentOptions = new();
+    Dictionary<string, GameObject> extraComponentOptions = new();
+    Dictionary<string, GameObject> extraTopComponentOptions = new();
 
     public TMP_Dropdown frameDropdown;
     public TMP_Dropdown frontLeftDropdown;
@@ -154,7 +153,7 @@ public class MenuConstructorController : MonoBehaviour
 
         foreach (var pair in componentSlotPositions)
         {
-            shipLoadout[pair.Key] = pair.Value.selectedComponentKey;
+            shipLoadout[pair.Key] = IdToEnum(pair.Value.selectedComponentId);
         }
 
         SCRIPT_ShipStatsCalculator.CalculatePerformance(shipLoadout);
@@ -199,13 +198,17 @@ public class MenuConstructorController : MonoBehaviour
         DisableAllFrames();
         currentFrame = SetFrameObject(newComponentName);
         EnableSingleFrame(currentFrame);
-        UpdateComponents(ComponentSlotPosition.Frame, newComponentName);
-        //UpdateComponentDisplayText(ComponentSlotPosition.Frame, newComponentName);
+
         UpdateComponentPositions();
+        InitializeComponentSlotDefinitions();
+
+        UpdateComponents(ComponentSlotPosition.Frame, EnumToId(newComponentName));
+
+        
         CheckIfLightFrame();
         CheckIfHeavyFrame();
         SetOptionsForExtraSlots(currentFrameIsHeavy);
-        InitializeComponentSlotDefinitions();
+        
 
         UpdateUIElements();
     }
@@ -234,9 +237,10 @@ public class MenuConstructorController : MonoBehaviour
     {
         if (componentSlotPositions.TryGetValue(slotPosition, out var position))
         {
-            if (position.selectedComponentKey != replacementComponent)
+            var newId = EnumToId(replacementComponent);
+            if (position.selectedComponentId != newId)
             {
-                UpdateComponents(slotPosition, replacementComponent);   
+                UpdateComponents(slotPosition, newId);   
                 
             }
         }
@@ -291,8 +295,25 @@ public class MenuConstructorController : MonoBehaviour
     }
 
 
-    void InitializeComponentSlot(ComponentSlotPosition componentSlotPosition, Transform slotTransform, Dictionary<ComponentName, GameObject> slotComponents)
+    void InitializeComponentSlot(ComponentSlotPosition pos, Transform t, Dictionary<string, GameObject> slotComponents)
     {
+        string previousId = null;
+        if(componentSlotPositions.TryGetValue(pos, out var existing))
+        {
+            previousId = existing.selectedComponentId;
+
+          
+        }
+
+        componentSlotPositions[pos] = new ComponentSlot()
+        {
+            position = t,
+            components = slotComponents,
+            selectedComponentId = previousId ?? "Empty"
+        };
+
+        /*
+        ComponentSlotPosition componentSlotPosition, Transform slotTransform, Dictionary<ComponentName, GameObject> slotComponents
         ComponentName previouslySelectedComponent = ComponentName.Empty;
 
         if (componentSlotPositions.TryGetValue(componentSlotPosition, out var existingSlot))
@@ -306,15 +327,15 @@ public class MenuConstructorController : MonoBehaviour
             position = slotTransform,
             components = slotComponents,
             selectedComponentKey = previouslySelectedComponent // Preserve old selection
-        };
+        };*/
     }
 
     void DefineComponentOptions()
     {
-        frameComponentOptions = SHIP_PASSPORT.GetFrameComponentOptions();
-        engineComponentOptions = SHIP_PASSPORT.GetEngineComponentOptions();
-        extraTopComponentOptions = SHIP_PASSPORT.GetExtraTopComponentOptions();
-        extraComponentOptions = SHIP_PASSPORT.GetExtraComponentOptions();
+        frameComponentOptions = ToIdDict(SHIP_PASSPORT.GetFrameComponentOptions());
+        engineComponentOptions = ToIdDict(SHIP_PASSPORT.GetEngineComponentOptions());
+        extraTopComponentOptions = ToIdDict(SHIP_PASSPORT.GetExtraTopComponentOptions());
+        extraComponentOptions = ToIdDict(SHIP_PASSPORT.GetExtraComponentOptions());
     }
 
 
@@ -366,22 +387,47 @@ public class MenuConstructorController : MonoBehaviour
 
     void DisplayComponentMeshes()
     {
+        
+
         foreach (var pair in componentSlotPositions)
         {
-            if(pair.Key != ComponentSlotPosition.Frame)
+            if (pair.Key == ComponentSlotPosition.Frame) continue;
+
+            var slot = pair.Value;
+            var id = slot.selectedComponentId;
+
+            if(string.IsNullOrEmpty(id))
             {
-                
-                 CleanupExcessMeshes(pair.Value.position);
-                 InstantiateSelectedComponent(pair.Value, pair.Value.position.transform);
-               
-                
-                
-            }  
+                Debug.LogWarning($"[{slot.slotPosition}] No selectedComponentId set.");
+                continue;
+            }
+
+            if(!slot.components.TryGetValue(id, out GameObject prefab) || prefab == null)
+            {
+                Debug.LogWarning($"[{slot.slotPosition}] No prefab found for id '{id}'.");
+                continue;
+            }
+
+            Debug.Log($"[{slot.slotPosition}] Using '{prefab.name}'");
+
+
+            CleanupExcessMeshes(slot.position);
+            InstantiateSelectedComponent(slot, slot.position);
         }
     }
 
     void InstantiateSelectedComponent(ComponentSlot slot, Transform slotPosition)
     {
+        var id = slot.selectedComponentId;
+        if (string.IsNullOrEmpty(id) || id == "Empty") return;
+
+        if(slot.components.TryGetValue(id, out var prefab) )
+        {
+            var gameObject = Instantiate(prefab, slotPosition);
+            gameObject.SetActive(true);
+        }
+
+        /*
         var selectedKey = slot.selectedComponentKey;
         if (selectedKey == ComponentName.Empty) return;
        
@@ -394,7 +440,7 @@ public class MenuConstructorController : MonoBehaviour
               
                 newComp.SetActive(true);
             }
-        }
+        }*/
     }
 
     public void CheckIfLightFrame()
@@ -403,7 +449,7 @@ public class MenuConstructorController : MonoBehaviour
 
         if (componentSlotPositions.TryGetValue(ComponentSlotPosition.Frame, out var frame))
         {
-            currentFrameIsLight = (frame.selectedComponentKey == ComponentName.Light_Frame);
+            currentFrameIsLight = IdToEnum(frame.selectedComponentId) == ComponentName.Light_Frame;
         }
 
     }
@@ -416,7 +462,7 @@ public class MenuConstructorController : MonoBehaviour
 
         if(componentSlotPositions.TryGetValue(ComponentSlotPosition.Frame, out var frame))
         {
-            currentFrameIsHeavy = (frame.selectedComponentKey == ComponentName.Heavy_Frame);
+            currentFrameIsHeavy = IdToEnum(frame.selectedComponentId) == ComponentName.Heavy_Frame;
         }
 
         
@@ -441,11 +487,11 @@ public class MenuConstructorController : MonoBehaviour
         return replacementComponent;
     }
 
-    void UpdateComponents(ComponentSlotPosition slotType, ComponentName componentName)
+    void UpdateComponents(ComponentSlotPosition slotType, string componentId)
     {
-        if (!componentSlotPositions.TryGetValue(slotType, out var slotData)) return;
+        if (!componentSlotPositions.TryGetValue(slotType, out var slot)) return;
 
-        slotData.selectedComponentKey = componentName;
+        slot.selectedComponentId = componentId;
     }
 
 
@@ -567,11 +613,14 @@ public class MenuConstructorController : MonoBehaviour
 
         foreach (var pair in componentSlotPositions)
         {
-            shipLoadout[pair.Key] = pair.Value.selectedComponentKey;
+            shipLoadout[pair.Key] = IdToEnum(pair.Value.selectedComponentId);
         }
 
         SHIP_PASSPORT.SetShipLoadout(shipLoadout);
     }
+
+    static string EnumToId(ComponentName n) => n.ToString();
+    static ComponentName IdToEnum(string id) => Enum.TryParse(id, out ComponentName e) ? e : ComponentName.Empty;
 
     void SetDropdownOptions(TMP_Dropdown dropdown, List<string> options, int defaultIndex = 0)
     {
@@ -588,7 +637,7 @@ public class MenuConstructorController : MonoBehaviour
         componentsList.Clear(); // <--- Important
         foreach (var pair in componentSlotPositions)
         {
-            string componentName = pair.Value.selectedComponentKey.ToString();
+            string componentName = pair.Value.selectedComponentId;
             componentsList.Add(componentName);
         }
 
@@ -662,6 +711,13 @@ public class MenuConstructorController : MonoBehaviour
             }
         }
 
+    }
+
+    Dictionary<string, GameObject> ToIdDict(Dictionary<ComponentName, GameObject> source)
+    {
+        var d = new Dictionary<string, GameObject>();
+        foreach(var kv in source) d[kv.Key.ToString()] = kv.Value;
+        return d;
     }
 
 

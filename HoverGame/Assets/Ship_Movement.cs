@@ -178,7 +178,7 @@ public class Ship_Movement : MonoBehaviour
 
     IEnumerator ResetSurgeBoost()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2);
         StopSurgeBoost();
 
     }

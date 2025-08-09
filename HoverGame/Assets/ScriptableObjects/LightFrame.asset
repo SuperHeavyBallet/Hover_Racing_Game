@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 815cad06ef997054784b4b2fb3f0a464, type: 3}
-  m_Name: Engine
+  m_Name: LightFrame
   m_EditorClassIdentifier: 
-  id: ENGINE_DIESEL
-  displayName: Diesel Engine
-  category: 1
-  prefab: {fileID: 3423024166324285631, guid: 19d040c4aa7442b45b857af379eac50d, type: 3}
+  id: FRAME_LIGHT
+  displayName: Light Frame
+  category: 0
+  prefab: {fileID: 6362674939771482359, guid: 83b7b2eb7cd6db24ebc7d96f3f8aa581, type: 3}
   icon: {fileID: 0}
   cost: 0
   weight: 0

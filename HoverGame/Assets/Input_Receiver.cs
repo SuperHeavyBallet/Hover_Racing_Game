@@ -62,10 +62,7 @@ public class Input_Receiver : MonoBehaviour
         {
             SCRIPT_Ship_Movement.AddSurgeBoost();
         }
-        else if(ctx.canceled)
-        {
-            SCRIPT_Ship_Movement.StopSurgeBoost();
-        }
+       
     }
 
     public void Limit(InputAction.CallbackContext ctx)

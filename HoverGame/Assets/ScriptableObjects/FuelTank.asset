@@ -9,7 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 946ddf5d52bf01e48864fb77d422763e, type: 3}
-  m_Name: MediumShip
+  m_Script: {fileID: 11500000, guid: 815cad06ef997054784b4b2fb3f0a464, type: 3}
+  m_Name: FuelTank
   m_EditorClassIdentifier: 
-  SELECTED_shipWeightClass: 1
+  id: FUEL_TANK
+  displayName: Fuel Tank
+  category: 2
+  prefab: {fileID: 3423024166324285631, guid: e9527cfcc6f41e24193d6632b25b5e36, type: 3}
+  icon: {fileID: 0}
+  cost: 0
+  weight: 0

@@ -9,7 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 946ddf5d52bf01e48864fb77d422763e, type: 3}
-  m_Name: HeavyShip
+  m_Script: {fileID: 11500000, guid: 815cad06ef997054784b4b2fb3f0a464, type: 3}
+  m_Name: MediumFrame
   m_EditorClassIdentifier: 
-  SELECTED_shipWeightClass: 2
+  id: FRAME_MEDIUM
+  displayName: Medium Frame
+  category: 0
+  prefab: {fileID: 6362674939771482359, guid: 7ae94c4aeb0df714d8496e6965f5aea2, type: 3}
+  icon: {fileID: 0}
+  cost: 0
+  weight: 0

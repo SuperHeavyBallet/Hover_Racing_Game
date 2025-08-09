@@ -9,8 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ea7aef14ccd76b4cb46a7fc7cb70071, type: 3}
+  m_Script: {fileID: 11500000, guid: 815cad06ef997054784b4b2fb3f0a464, type: 3}
   m_Name: JetEngine
   m_EditorClassIdentifier: 
-  componentType: 1
-  componentWeight: 1
+  id: ENGINE_JET
+  displayName: Jet Engine
+  category: 1
+  prefab: {fileID: 7090124252742436075, guid: 00b938534f0c3544d81a3682a530172c, type: 3}
+  icon: {fileID: 0}
+  cost: 0
+  weight: 0

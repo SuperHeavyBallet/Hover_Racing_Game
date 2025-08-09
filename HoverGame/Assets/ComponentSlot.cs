@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+public enum ComponentSlotPosition { Frame, FrontLeft, FrontRight, BackLeft, BackRight, BackLeft1, BackRight1, ExtraTop, ExtraLeft, ExtraRight }
+
+
 [System.Serializable]
 
+/*
 public enum ComponentSlotPosition
 {
     Frame,
@@ -17,7 +21,7 @@ public enum ComponentSlotPosition
     ExtraTop,
     ExtraLeft,
     ExtraRight
-}
+}*/
 
 public enum ComponentName
 {
@@ -36,9 +40,13 @@ public enum ComponentName
 }
 public class ComponentSlot 
 {
-    //public TextMeshProUGUI label;
-    public Transform position;
-    public Dictionary<ComponentName, GameObject> components; // "engine" => prefab
 
-    public ComponentName selectedComponentKey;
+    public Transform position;
+    public ComponentSlotPosition slotPosition;
+    public ComponentCategory acceptsCategory;
+    public string selectedComponentId;
+
+    public Dictionary<string, GameObject> components; // "engine" => prefab
+
+    //public ComponentName selectedComponentKey;
 }

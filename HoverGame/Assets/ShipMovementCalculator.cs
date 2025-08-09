@@ -14,6 +14,8 @@ public class ShipMovementCalculator : MonoBehaviour
     public float currentBoostFuel = 100f;
     public float maxBoostFuel = 100f;
 
+    public int surgeBoostMultiplier = 1;
+
     public int STAT_ManualBoostAmount;
     public float STAT_RotationSpeed;
 
@@ -167,9 +169,16 @@ public class ShipMovementCalculator : MonoBehaviour
 
         if(isSurgeBoosting)
         {
-            workingTopSpeed += 300;
+            surgeBoostMultiplier = 4 ;
+         
             
         }
+        else
+        {
+            surgeBoostMultiplier = 1;
+        }
+
+        workingTopSpeed *= surgeBoostMultiplier;
 
         return BASE_TopSpeed + workingTopSpeed;
     }
