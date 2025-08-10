@@ -47,7 +47,7 @@ public class ShipMovementCalculator : MonoBehaviour
     }
 
 
-    public void CalculatePerformance(Dictionary<ComponentSlotPosition, ComponentName> components)
+    public void CalculatePerformance(Dictionary<ComponentSlotPosition, string> components)
     {
         int rawSpeed = 0;
         int rawPower = 0;
@@ -66,40 +66,40 @@ public class ShipMovementCalculator : MonoBehaviour
         {
             switch (pair.Value)
             {
-                case ComponentName.Light_Frame:
+                case "Light_Frame":
                     totalWeight += 50;
                     boostFuel += 30;
                     normalFuel += 200;
                     break;
-                case ComponentName.Medium_Frame:
+                case"Medium_Frame":
                     totalWeight += 70;
                     boostFuel += 10;
                     normalFuel += 100;
                     break;
-                case ComponentName.Heavy_Frame:
+                case "Heavy_Frame":
                     totalWeight += 100;
                     break;
 
-                case ComponentName.Engine:
+                case "Engine":
                     totalWeight += 100;
                     rawPower += 15;
                     rawSpeed += 30;
                     engineCount += 1;
                     break;
-                case ComponentName.Jet_Engine:
+                case "Jet_Engine":
                     totalWeight += 70;
                     rawPower += 20;
                     rawSpeed += 25;
                     jetEngineCount += 1;
                     break;
 
-                case ComponentName.Fuel_Tank:
+                case "Fuel_Tank":
                     totalWeight += 10;
                     boostFuel += 50;
                     normalFuel += 200;
                     fuelTankCount += 1;
                     break;
-                case ComponentName.Aireon:
+                case "Aireon":
                     totalWeight -= 10;
                     rawSpeed += 10;
                     boostFuelConsumptionRate -= 0.25f;

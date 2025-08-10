@@ -13,7 +13,11 @@ public class Ship_Constructor : MonoBehaviour
     Ship_Passport shipPassport;
     Ship_Movement SCRIPT_ShipMovement;
 
-    Dictionary<ComponentSlotPosition, ComponentName> componentSlots = new();
+    Dictionary<ComponentSlotPosition, string> componentSlots = new();
+
+    public GameObject TEST_LightFame;
+    public GameObject TEST_MedFame;
+    public GameObject TEST_HevFame;
 
     // Positions to place components around the frame
     public Transform framePosition;
@@ -28,7 +32,7 @@ public class Ship_Constructor : MonoBehaviour
     Transform backLeft1Position;
     Transform backRight1Position;
 
-   
+    [SerializeField] private ComponentCatalogue componentCatalogue;
 
     void Awake()
     {
@@ -38,9 +42,16 @@ public class Ship_Constructor : MonoBehaviour
 
     private void Start()
     {
+        if (!componentCatalogue)
+        {
+            Debug.LogError("ComponentCatalogue not assigned on Ship_Constructor.");
+            return;
+        }
+        componentCatalogue.EnsureBuilt();
+
         CheckShipPassportExists();
         DecideFrame();
-        PlaceComponent();
+        PlaceComponents();
         
     }
 
@@ -83,12 +94,12 @@ public class Ship_Constructor : MonoBehaviour
 
                 switch (pair.Value)
                 {
-                    case ComponentName.Light_Frame:
-                        newComponent = shipPassport.lightFrame; break;
-                    case ComponentName.Medium_Frame:
-                        newComponent = shipPassport.mediumFrame; break;
-                    case ComponentName.Heavy_Frame:
-                        newComponent = shipPassport.heavyFrame; break;
+                    case "LIGHT_FRAME":
+                        newComponent = TEST_LightFame; break;
+                    case "MEDIUM_FRAME":
+                        newComponent = TEST_MedFame; break;
+                    case "HEAVY_FRAME":
+                        newComponent = TEST_HevFame; break;
                     default:
                         Debug.LogWarning("No Frame Type Assigned");
                         break;
@@ -126,10 +137,27 @@ public class Ship_Constructor : MonoBehaviour
         }
     }
     
-    void PlaceComponent()
+    void PlaceComponents()
     { 
+
         foreach(var pair in componentSlots)
         {
+            if (string.Equals(pair.Value, "Empty")) continue; // nothing to place
+
+            var def = componentCatalogue.GetById(pair.Value);
+            if (def == null)
+            {
+                Debug.LogWarning($"Unknown component id '{pair.Value}' in slot {pair.Key}");
+                continue;
+            }
+
+            var prefab = def.prefab;
+            if (!prefab)
+            {
+                Debug.LogWarning($"Component '{pair.Value}' has no prefab assigned.");
+                continue;
+            }
+
             Transform position = null;
             GameObject newComponent = null;
 
@@ -158,7 +186,7 @@ public class Ship_Constructor : MonoBehaviour
                     break;
             }
 
-            newComponent = shipPassport.GetPrefab(pair.Value);
+            newComponent = componentCatalogue.GetById(pair.Value).prefab;
             
     
             if (newComponent != null && position != null)

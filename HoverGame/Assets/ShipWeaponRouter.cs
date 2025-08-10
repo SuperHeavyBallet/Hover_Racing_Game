@@ -5,7 +5,7 @@ public class ShipWeaponRouter : MonoBehaviour
 {
 
     Ship_Passport shipPassport;
-    ComponentName weaponName;
+    string weaponName;
 
     public GameObject missilePrefab;
     public Transform weaponFirePosition;
@@ -38,7 +38,7 @@ public class ShipWeaponRouter : MonoBehaviour
     {
         UpdateSightLine();
 
-        if (fireIsHeldDown && weaponName == ComponentName.Machine_Gun)
+        if (fireIsHeldDown && weaponName == "Machine_Gun")
         {
             FireMachineGun();
         }
@@ -48,7 +48,7 @@ public class ShipWeaponRouter : MonoBehaviour
     {
        
 
-        if(weaponName == ComponentName.Missile)
+        if(weaponName == "Missile")
         {
 
             if(!fireIsHeldDown)
@@ -58,7 +58,7 @@ public class ShipWeaponRouter : MonoBehaviour
            
             
         }
-        else if(weaponName == ComponentName.Machine_Gun)
+        else if(weaponName == "Machine_Gun")
         {
             FireMachineGun();
         }

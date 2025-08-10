@@ -26,5 +26,13 @@ public class ComponentDefinition : ScriptableObject
     public Sprite icon;
     public int cost;
     public int weight;
-    
+
+    public int topSpeedDelta;
+    public int powerDelta;
+    public int controlDelta;
+
+
+    [Header("Frame Specific Extras")]
+
+    public bool hasExtraBackEngineSlots;
 }

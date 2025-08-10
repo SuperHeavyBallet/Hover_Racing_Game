@@ -8,34 +8,20 @@ public enum ComponentSlotPosition { Frame, FrontLeft, FrontRight, BackLeft, Back
 
 [System.Serializable]
 
-/*
-public enum ComponentSlotPosition
-{
-    Frame,
-    FrontLeft,
-    FrontRight,
-    BackLeft,
-    BackRight,
-    BackLeft1,
-    BackRight1,
-    ExtraTop,
-    ExtraLeft,
-    ExtraRight
-}*/
 
 public enum ComponentName
 {
-    Empty,
-    Light_Frame,
-    Medium_Frame,
-    Heavy_Frame,
-    Engine,
-    Jet_Engine,
-    Aireon,
-    Fuel_Tank,
-    Boost_Gulp,
-    Machine_Gun,
-    Missile
+    EMPTY,
+    LIGHT_FRAME,
+    MEDIUM_FRAME,
+    HEAVY_FRAME,
+    ENGINE,
+    JET_ENGINE,
+    AIREON,
+    FUEL_TANK,
+    BOOST_GULP,
+    MACHINE_GUN,
+    MISSILE_LAUNCHER
 
 }
 public class ComponentSlot 

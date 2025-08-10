@@ -44,14 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8698c5d878f8c9448bfe5ac8f276d412, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  receivedShipLoadout: 0
-  engine: {fileID: 3423024166324285631, guid: 16e3ce4818264eb4297d20796ed1f92c, type: 3}
-  jetEngine: {fileID: 7090124252742436075, guid: 00b938534f0c3544d81a3682a530172c, type: 3}
-  aireon: {fileID: 3423024166324285631, guid: 996fa32454078704896c69f754c358a0, type: 3}
-  lightFrame: {fileID: 6362674939771482359, guid: 83b7b2eb7cd6db24ebc7d96f3f8aa581, type: 3}
-  mediumFrame: {fileID: 6362674939771482359, guid: 7ae94c4aeb0df714d8496e6965f5aea2, type: 3}
-  heavyFrame: {fileID: 6362674939771482359, guid: 68768fa2b0a0c9848b99bb5e5167e9c3, type: 3}
-  fuelTank: {fileID: 3423024166324285631, guid: e9527cfcc6f41e24193d6632b25b5e36, type: 3}
-  boostGulp: {fileID: 3423024166324285631, guid: d745f8e742ebebe47a800e1524f562f7, type: 3}
-  machineGun: {fileID: 3423024166324285631, guid: b10c00986f054f9429e78a366ae2b985, type: 3}
-  missile: {fileID: 3423024166324285631, guid: 49f58a5163a488a468c1e97783bdac8f, type: 3}
+  componentCatalogue: {fileID: 11400000, guid: 227856b83cd7dcc47963e9074dbdcaf8, type: 2}

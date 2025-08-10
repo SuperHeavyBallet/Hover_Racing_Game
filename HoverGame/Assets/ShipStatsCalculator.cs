@@ -48,40 +48,40 @@ public class ShipStatsCalculator : MonoBehaviour
         {
             switch (pair.Value)
             {
-                case ComponentName.Light_Frame:
+                case ComponentName.LIGHT_FRAME:
                     totalWeight += 50;
                     boostFuel += 30;
                     normalFuel += 200;
                     break;
-                case ComponentName.Medium_Frame:
+                case ComponentName.MEDIUM_FRAME:
                     totalWeight += 70;
                     boostFuel += 10;
                     normalFuel += 100;
                     break;
-                case ComponentName.Heavy_Frame:
+                case ComponentName.HEAVY_FRAME:
                     totalWeight += 100;
                     break;
 
-                case ComponentName.Engine:
+                case ComponentName.ENGINE:
                     totalWeight += 100;
                     rawPower += 15;
                     rawSpeed += 30;
                     engineCount += 1;
                     break;
-                case ComponentName.Jet_Engine:
+                case ComponentName.JET_ENGINE:
                     totalWeight += 70;
                     rawPower += 20;
                     rawSpeed += 25;
                     jetEngineCount += 1;
                     break;
 
-                case ComponentName.Fuel_Tank:
+                case ComponentName.FUEL_TANK:
                     totalWeight += 10;
                     boostFuel += 50;
                     normalFuel += 200;
                     fuelTankCount += 1;
                     break;
-                case ComponentName.Aireon:
+                case ComponentName.AIREON:
                     totalWeight -= 10;
                     rawSpeed += 10;
                     boostFuelConsumptionRate -= 0.25f;

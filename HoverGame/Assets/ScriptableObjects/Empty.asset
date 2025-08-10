@@ -10,12 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 815cad06ef997054784b4b2fb3f0a464, type: 3}
-  m_Name: Engine
+  m_Name: Empty
   m_EditorClassIdentifier: 
-  id: ENGINE_DIESEL
-  displayName: Weasel Engine
-  category: 1
-  prefab: {fileID: 3423024166324285631, guid: 19d040c4aa7442b45b857af379eac50d, type: 3}
+  id: EMPTY
+  displayName: Empty
+  category: 0
+  prefab: {fileID: 0}
   icon: {fileID: 0}
   cost: 0
   weight: 0
+  topSpeedDelta: 0
+  powerDelta: 0
+  controlDelta: 0
+  hasExtraBackEngineSlots: 0

@@ -4,15 +4,25 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Scriptable/Component Catalogue")]
 public class ComponentCatalogue : ScriptableObject
 {
+    /// <summary>
+    /// This catalogue will be the monolith reference for other scripts to pull from
+    /// </summary>
+    /// Components are assigned in the inspector - this should be the extent of adding a new component
     public List<ComponentDefinition> components = new();
 
 
     //Built at runtime
     private Dictionary<string, ComponentDefinition> byId;
     private Dictionary<ComponentCategory, List<ComponentDefinition>> byCategory;
+    bool built;
 
-    public void BuildLookups()
+    // Self enforced Init, Ensure via other calling scripts
+
+    void OnEnable() => built = false;
+
+    public void EnsureBuilt()
     {
+        if (built) return;
         byId = new();
         byCategory = new()
         {
@@ -22,24 +32,36 @@ public class ComponentCatalogue : ScriptableObject
             { ComponentCategory.ExtraTop, new() },
         };
 
-        foreach (var component in components)
+        foreach (var c in components)
         {
-            if(component == null || string.IsNullOrWhiteSpace(component.id)) continue;
-
-            byId[component.id] = component;
-            byCategory[component.category].Add(component);
+            if (!c || string.IsNullOrWhiteSpace(c.id)) continue;
+            byId[c.id] = c;
+            byCategory[c.category].Add(c);
         }
+        built = true;
     }
 
+
+    // External Functions which query the catalogue  content
     public ComponentDefinition GetById(string id)
     {
-        if(byId != null && byId.TryGetValue(id, out var component)) return component;
-        else return null;
+        EnsureBuilt();
+
+        if (byId != null)
+        {
+            if (byId.TryGetValue(id, out var component))
+            {
+                return component;
+            }
+        }
+
+        return null;
     }
 
     public IReadOnlyList<ComponentDefinition> GetByCategory(ComponentCategory cat)
     {
-        if(byCategory != null)
+        EnsureBuilt();
+        if (byCategory != null)
         {
             return byCategory[cat];
         }
@@ -48,4 +70,20 @@ public class ComponentCatalogue : ScriptableObject
             return System.Array.Empty<ComponentDefinition>();
         }
     }
+
+    public List<string> GetComponentList(ComponentCategory cat)
+    {
+        EnsureBuilt();
+        List<string> componentList = new();
+
+        foreach(ComponentDefinition componentDefinition in GetByCategory(cat))
+        {
+            componentList.Add(componentDefinition.id);
+        }
+
+
+        return componentList;
+    }
+
+
 }

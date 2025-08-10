@@ -74,7 +74,7 @@ public class Ship_Movement : MonoBehaviour
 
     Ship_Constructor shipConstructor;
 
-    Dictionary<ComponentSlotPosition, ComponentName> componentList = new();
+    Dictionary<ComponentSlotPosition, string> componentList = new();
 
 
     Audio_Manager audioManager;
