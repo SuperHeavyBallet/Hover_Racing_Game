@@ -1,23 +1,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.ComponentModel;
 public class ShipComponentsList_Controller : MonoBehaviour
 {
 
     public GameObject[] UI_ComponenentListElements;
+    List<string> newComponentsList = new List<string>();
 
-  
 
-    public void ExposeComponentsAsList(List<string> componentsList, Dictionary<ComponentSlotPosition, ComponentSlot> componentSlotPositions)
+
+    public void ExposeComponentsAsList(List<string> componentsList, Dictionary<ComponentSlotPosition, SlotState> componentSlotPositions)
     {
-        componentsList.Clear(); // <--- Important
+        //componentsList.Clear(); // <--- Important
+        newComponentsList.Clear();
 
-        foreach (var pair in componentSlotPositions)
+        foreach (var component in componentsList)
         {
-            string componentName = pair.Value.selectedComponentId;
-            componentsList.Add(componentName);
 
-            //Debug.Log(componentName);
+            newComponentsList.Add(component);
         }
 
         ClearElementContents();

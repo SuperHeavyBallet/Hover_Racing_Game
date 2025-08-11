@@ -30,6 +30,7 @@ public class ComponentCatalogue : ScriptableObject
             { ComponentCategory.Engine, new() },
             { ComponentCategory.Extra, new() },
             { ComponentCategory.ExtraTop, new() },
+            { ComponentCategory.Empty, new() }
         };
 
         foreach (var c in components)
@@ -76,7 +77,7 @@ public class ComponentCatalogue : ScriptableObject
         EnsureBuilt();
         List<string> componentList = new();
 
-        foreach(ComponentDefinition componentDefinition in GetByCategory(cat))
+        foreach (ComponentDefinition componentDefinition in GetByCategory(cat))
         {
             componentList.Add(componentDefinition.id);
         }

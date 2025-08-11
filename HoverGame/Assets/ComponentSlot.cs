@@ -36,3 +36,12 @@ public class ComponentSlot
 
     //public ComponentName selectedComponentKey;
 }
+
+[Serializable]
+public class SlotState
+{
+    public Transform position;
+    // Prefer definitions so you can access prefab + displayName, etc.
+    public Dictionary<string, ComponentDefinition> optionsById;
+    public string selectedId; // "EMPTY" or a real id
+}

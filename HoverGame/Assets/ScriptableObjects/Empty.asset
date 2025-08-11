@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: EMPTY
   displayName: Empty
-  category: 0
-  prefab: {fileID: 0}
+  category: 4
+  prefab: {fileID: 3423024166324285631, guid: 266145e1ff7eb2546987c30b08035611, type: 3}
   icon: {fileID: 0}
   cost: 0
   weight: 0

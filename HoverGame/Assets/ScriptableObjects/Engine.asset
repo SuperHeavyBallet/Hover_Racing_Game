@@ -13,9 +13,13 @@ MonoBehaviour:
   m_Name: Engine
   m_EditorClassIdentifier: 
   id: ENGINE_DIESEL
-  displayName: Weasel Engine
+  displayName: Diesel Engine
   category: 1
   prefab: {fileID: 3423024166324285631, guid: 19d040c4aa7442b45b857af379eac50d, type: 3}
   icon: {fileID: 0}
   cost: 0
   weight: 0
+  topSpeedDelta: 0
+  powerDelta: 0
+  controlDelta: 0
+  hasExtraBackEngineSlots: 0

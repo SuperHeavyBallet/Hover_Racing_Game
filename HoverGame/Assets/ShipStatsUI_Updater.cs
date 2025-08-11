@@ -18,13 +18,13 @@ public class ShipStatsUI_Updater : MonoBehaviour
     }
 
  
-    public void UpdateShipStats(Dictionary<ComponentSlotPosition, ComponentSlot> componentSlotPositions)
+    public void UpdateShipStats(Dictionary<ComponentSlotPosition, SlotState> componentSlotPositions)
     {
         var shipLoadout = new Dictionary<ComponentSlotPosition, ComponentName>();
 
         foreach (var pair in componentSlotPositions)
         {
-            shipLoadout[pair.Key] = IdToEnum(pair.Value.selectedComponentId);
+            shipLoadout[pair.Key] = IdToEnum(pair.Value.selectedId);
         }
 
         SCRIPT_ShipStatsCalculator.CalculatePerformance(shipLoadout);

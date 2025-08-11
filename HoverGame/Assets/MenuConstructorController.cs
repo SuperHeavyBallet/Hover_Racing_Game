@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Analytics;
+using UnityEngine.UIElements;
 
 public class MenuConstructorController : MonoBehaviour
 {
@@ -20,7 +21,7 @@ public class MenuConstructorController : MonoBehaviour
 
     Ship_Passport SHIP_PASSPORT;
 
-    public Dictionary<ComponentSlotPosition, ComponentSlot> componentSlotPositions = new();
+    public Dictionary<ComponentSlotPosition, SlotState> componentSlotPositions = new();
     public Dictionary<ComponentSlotPosition, string> receivedShipLoadout = new();
 
     ComponentDefinition currentFrame;
@@ -62,11 +63,14 @@ public class MenuConstructorController : MonoBehaviour
 
     Frame_Layout currentFrameLayout;
     GameObject currentFrameInstance;
+
+    const string EMPTY_ID = "EMPTY";
     #endregion
 
     void Awake()
     {
         Get_SCRIPT_References();
+        SCRIPT_ComponentCatalogue.EnsureBuilt();
         CheckExistingShip();
         Create_DropDownReferences();
     }
@@ -78,7 +82,7 @@ public class MenuConstructorController : MonoBehaviour
 
         if (receivedShipLoadout != null)
         {
-            // Good To this point
+            
             GenerateShipModel();
         }
     }
@@ -86,42 +90,42 @@ public class MenuConstructorController : MonoBehaviour
     public void GenerateShipModel()
     {
         // Good To this point
+        // 1) Frame first (explicit)
+        if (receivedShipLoadout.TryGetValue(ComponentSlotPosition.Frame, out var frameId))
+        {
+            Place_Frame(frameId); // creates all slots in componentSlotPositions
+        }
+        else
+        {
+            Debug.LogWarning("Loadout missing Frame; using default.");
+            // optionally: Place_Frame("FRAME_MEDIUM");
+        }
+
+        // 2) Then apply the rest
         foreach (var kvp in receivedShipLoadout)
         {
-            if (kvp.Key == ComponentSlotPosition.Frame)
-            {
-                Place_Frame(kvp.Value);
-            }
-            else
-            {
-               Set_ComponentPosition(kvp.Key, kvp.Value);
-            }
+            if (kvp.Key == ComponentSlotPosition.Frame) continue;
+            Set_Component_At_Position(kvp.Key, kvp.Value);
         }
+ 
     }
 
     void Place_Frame(string newComponentId)
     {
-        
-        
-
         //Set, Create and Update for new frame
         currentFrame = DecideFrame(newComponentId);
-        InstantiatePrefabAtPosition(currentFrame.prefab, framePosition);
+        currentFrameInstance = SCRIPT_MeshDisplayController.InstantiatePrefabAtPosition(currentFrame.prefab, framePosition);
         UpdateFrameLayout();
 
-   
-
-        // Authorise the positions and contents of each component slot per current frame
+        // Define the positions and contents of each component slot per current frame
         SET_FrameSlotPositionsAndContents();
 
-
-        // Good To this point
         UpdateComponents(ComponentSlotPosition.Frame, newComponentId);
 
-        CheckIfLightFrame();
         CheckIfHeavyFrame();
         SetOptionsForExtraSlots(currentFrameIsHeavy);
-        
+
+        // Maybe Good To this point - Potential Issue with Updating Ship Stats, Wait until Components added to check if it is actually displaying
         UpdateUIElements();
     }
 
@@ -134,10 +138,7 @@ public class MenuConstructorController : MonoBehaviour
         return chosenFrame;
     }
 
-    void InstantiatePrefabAtPosition(GameObject prefab, Transform position)
-    {
-       currentFrameInstance = Instantiate(prefab, position);
-    }
+   
 
     void UpdateFrameLayout()
     {
@@ -166,35 +167,47 @@ public class MenuConstructorController : MonoBehaviour
         }
     }
 
-    void UpdateComponents(ComponentSlotPosition slotType, string componentId)
+    void UpdateComponents(ComponentSlotPosition slotPosition, string newComponentId)
     {
-
-        /// SEARCH FOR THIS, AT THIS POINT
-        /// 
-        Debug.Log("ID: " + componentId);
-        if (!componentSlotPositions.TryGetValue(slotType, out var slot))
+        if (componentSlotPositions.TryGetValue(slotPosition, out var slot))
         {
-            Debug.Log("Update Component NOT OK");
-            return;
-        }
-
-        Debug.Log("Update Component YES OK");
-        slot.selectedComponentId = componentId;
+            slot.selectedId = newComponentId;
+        }    
     }
 
-
-
-    void Set_ComponentPosition(ComponentSlotPosition slotPosition, string replacementComponentId)
+    void Set_Component_At_Position(ComponentSlotPosition slotPosition, string replacementComponentId)
     {
+
+        if(slotPosition == ComponentSlotPosition.Frame) return;
+
+        if (!componentSlotPositions.TryGetValue(slotPosition, out var slot)) return;
+
+       
+
+        Debug.Log("CHECK EMPTY: " + replacementComponentId);
+
+
         if (componentSlotPositions.TryGetValue(slotPosition, out var position))
         {
-            var newId = replacementComponentId;
-            if (position.selectedComponentId != newId)
-            {
-                UpdateComponents(slotPosition, newId);      
-            }
+            string currentComponentId = position.selectedId;
+           
+
+            Debug.Log("HERE: " + replacementComponentId);
+
+            
+            ComponentDefinition componentDef = SCRIPT_ComponentCatalogue.GetById(replacementComponentId);
+            GameObject prefab = componentDef.prefab;
+
+            GameObject newCom = Instantiate(prefab, framePosition);
+
+            //SCRIPT_MeshDisplayController.InstantiatePrefabAtPosition(prefab, position.position);
+
+            UpdateComponents(slotPosition, replacementComponentId);
+                
         }
+
         UpdateUIElements();
+ 
     }
 
     
@@ -203,19 +216,41 @@ public class MenuConstructorController : MonoBehaviour
 
 
 
-    void SetFrameSlot(ComponentSlotPosition pos, Transform t, Dictionary<string, GameObject> slotComponents)
+    void Set_FrameSlot_Definitions(ComponentSlotPosition componentSlotPosition, Transform position, IReadOnlyList<ComponentDefinition> allowedOptions)
     {
-        string previousId = null;
-        if(componentSlotPositions.TryGetValue(pos, out var existing))
+        var possibleOptions = new Dictionary<string, ComponentDefinition>(allowedOptions.Count);
+        foreach(var definition in allowedOptions)
         {
-            previousId = existing.selectedComponentId; 
+            possibleOptions[definition.id] = definition;
         }
 
-        componentSlotPositions[pos] = new ComponentSlot()
+        // Preferred: wantedId from saved loadout
+        receivedShipLoadout.TryGetValue(componentSlotPosition, out var wantedId);
+
+        // Secondary: previousId if we’re rebuilding this slot (e.g., after changing frame)
+        componentSlotPositions.TryGetValue(componentSlotPosition, out var existing);
+
+        string selected;
+        var previousId = existing?.selectedId;
+
+        if (!string.IsNullOrEmpty(wantedId) && possibleOptions.ContainsKey(wantedId))
         {
-            position = t,
-            components = slotComponents,
-            selectedComponentId = previousId ?? "EMPTY"
+            selected = wantedId;
+        }
+        else if(!string.IsNullOrEmpty(previousId) && possibleOptions.ContainsKey(previousId))
+        {
+            selected = previousId;
+        }
+        else
+        {
+            selected = EMPTY_ID;
+        }
+
+        componentSlotPositions[componentSlotPosition] = new SlotState
+        {
+           position = position,
+           optionsById = possibleOptions,
+           selectedId = selected
         };
 
     }
@@ -235,31 +270,11 @@ public class MenuConstructorController : MonoBehaviour
         extraTopSlotPosition = frameLayout.GetExtraTopSlot();
     }
 
-
-    public void CheckIfLightFrame()
-    {
-        currentFrameIsLight = false;
-
-        if (componentSlotPositions.TryGetValue(ComponentSlotPosition.Frame, out var frame))
-        {
-            currentFrameIsLight = IdToEnum(frame.selectedComponentId) == ComponentName.LIGHT_FRAME;
-        }
-
-    }
-
-   
-
     public void CheckIfHeavyFrame()
     {
-        currentFrameIsHeavy = false;
-
-        if(componentSlotPositions.TryGetValue(ComponentSlotPosition.Frame, out var frame))
-        {
-            currentFrameIsHeavy = IdToEnum(frame.selectedComponentId) == ComponentName.HEAVY_FRAME;
-        }
-
-        
+        currentFrameIsHeavy = currentFrame.hasExtraBackEngineSlots;
     }
+
 
     string GetComponentName(int val)
     {
@@ -274,7 +289,7 @@ public class MenuConstructorController : MonoBehaviour
             case 4: replacementComponent = "BOOST_GULP"; break;
             case 5: replacementComponent = "MACHINE_GUN"; break;
             case 6: replacementComponent = "MISSILE_LAUNCHER"; break;
-            default: replacementComponent = "EMPTY"; break;
+            default: replacementComponent = EMPTY_ID; break;
         }
 
         return replacementComponent;
@@ -292,7 +307,7 @@ public class MenuConstructorController : MonoBehaviour
             case 0: replacementComponent = "FRAME_LIGHT"; break;
             case 1: replacementComponent = "FRAME_MEDIUM"; break;
             case 2: replacementComponent = "FRAME_HEAVY"; break;
-            default: replacementComponent = "EMPTY"; break;
+            default: replacementComponent = EMPTY_ID; break;
         }
 
         return replacementComponent;
@@ -312,67 +327,67 @@ public class MenuConstructorController : MonoBehaviour
 
         if(slotPosition == ComponentSlotPosition.Frame)
         {
-           // Place_Frame(replacementComponent);
+           Place_Frame(replacementComponent);
         }
     }
 
     public void UpdateComponentSlot_FRAME(int val) => UpdateComponentSlot(ComponentSlotPosition.Frame, val);
-
+    /*
     public void UpdateComponentSlot_FL(int val)
     {
 
         string chosenComponent = engineComponentKeys[val];
-        Set_ComponentPosition(ComponentSlotPosition.FrontLeft, chosenComponent);
+        Set_Component_At_Position(ComponentSlotPosition.FrontLeft, chosenComponent);
     }
 
     public void UpdateComponentSlot_FR(int val)
     {
         string chosenComponent = engineComponentKeys[val];
-        Set_ComponentPosition(ComponentSlotPosition.FrontRight, chosenComponent);
+        Set_Component_At_Position(ComponentSlotPosition.FrontRight, chosenComponent);
     }
 
     public void UpdateComponentSlot_BL(int val)
     {
         string chosenComponent = engineComponentKeys[val];
-        Set_ComponentPosition(ComponentSlotPosition.BackLeft, chosenComponent);
+        Set_Component_At_Position(ComponentSlotPosition.BackLeft, chosenComponent);
     }
 
     public void UpdateComponentSlot_BR(int val)
     {
         string chosenComponent = engineComponentKeys[val];
-        Set_ComponentPosition(ComponentSlotPosition.BackRight, chosenComponent);
+        Set_Component_At_Position(ComponentSlotPosition.BackRight, chosenComponent);
     }
 
     public void UpdateComponentSlot_BL1(int val)
     {
         string chosenComponent = engineComponentKeys[val];
-        Set_ComponentPosition(ComponentSlotPosition.BackLeft1, chosenComponent);
+        Set_Component_At_Position(ComponentSlotPosition.BackLeft1, chosenComponent);
     }
     public void UpdateComponentSlot_BR1(int val)
     {
         string chosenComponent = engineComponentKeys[val];
-        Set_ComponentPosition(ComponentSlotPosition.BackRight1, chosenComponent);
+        Set_Component_At_Position(ComponentSlotPosition.BackRight1, chosenComponent);
     }
 
     public void UpdateComponentSlot_ExtraFront(int val)
     {
         string chosenComponent = engineComponentKeys[val];
-        Set_ComponentPosition(ComponentSlotPosition.ExtraTop, chosenComponent);
+        Set_Component_At_Position(ComponentSlotPosition.ExtraTop, chosenComponent);
     }
 
     public void UpdateComponentSlot_ExtraLeft(int val)
     {
         string chosenComponent = engineComponentKeys[val];
-        Set_ComponentPosition(ComponentSlotPosition.ExtraLeft, chosenComponent);
+        Set_Component_At_Position(ComponentSlotPosition.ExtraLeft, chosenComponent);
     }
 
     public void UpdateComponentSlot_ExtraRight(int val)
     {
         string chosenComponent = engineComponentKeys[val];
-        Set_ComponentPosition(ComponentSlotPosition.ExtraRight, chosenComponent);
+        Set_Component_At_Position(ComponentSlotPosition.ExtraRight, chosenComponent);
     }
 
-
+    */
 
 
 
@@ -391,7 +406,7 @@ public class MenuConstructorController : MonoBehaviour
 
         foreach (var pair in componentSlotPositions)
         {
-            shipLoadout[pair.Key] = pair.Value.selectedComponentId;
+            shipLoadout[pair.Key] = pair.Value.selectedId;
         }
 
         SHIP_PASSPORT.SetShipLoadout(shipLoadout);
@@ -414,8 +429,7 @@ public class MenuConstructorController : MonoBehaviour
 
     //////////////////// SETUPS ETC - OUT OF SIGHT OUT OF MIND
     void Get_SCRIPT_References()
-    {
-        
+    {  
         SCRIPT_shipComponentsList_Controller = this.GetComponent<ShipComponentsList_Controller>();
         SCRIPT_MeshDisplayController = this.GetComponent<MeshDisplayController>();
         SCRIPT_ShipStatsUI_Updater = this.GetComponent<ShipStatsUI_Updater>();
@@ -434,16 +448,41 @@ public class MenuConstructorController : MonoBehaviour
 
     void UpdateUIElements()
     {
-        SCRIPT_MeshDisplayController.DisplayComponentMeshes(componentSlotPositions);
+        BuildComponentsList();
         SCRIPT_shipComponentsList_Controller.ExposeComponentsAsList(componentsList, componentSlotPositions);
         SCRIPT_ShipStatsUI_Updater.UpdateShipStats(componentSlotPositions);
+    }
+
+    void BuildComponentsList()
+    {
+        // Make sure lookups exist
+        // (Do this once in Awake ideally, but having it here is a safe guard)
+        SCRIPT_ComponentCatalogue.EnsureBuilt();
+
+        componentsList.Clear();
+
+        foreach (var kvp in componentSlotPositions)
+        {
+            string id = kvp.Value.selectedId;
+
+
+
+            var def = SCRIPT_ComponentCatalogue.GetById(id);
+            if (def == null)
+            {
+                continue;
+            }
+
+      
+            componentsList.Add(def.displayName);
+        }
     }
 
     Dictionary<string, GameObject> ToPrefabDict(IReadOnlyList<ComponentDefinition> defs)
     {
         var d = new Dictionary<string, GameObject>();
         foreach (var def in defs) d[def.id] = def.prefab;
-        d["Empty"] = null; // if you want the empty option
+        d[EMPTY_ID] = null; // if you want the empty option
         return d;
     }
 
@@ -458,38 +497,42 @@ public class MenuConstructorController : MonoBehaviour
 
     void Set_Frame_PositionAndContents()
     {
-        SetFrameSlot(ComponentSlotPosition.Frame, framePosition, frameComponentOptions);
+        Set_FrameSlot_Definitions(ComponentSlotPosition.Frame, framePosition, SCRIPT_ComponentCatalogue.GetByCategory(ComponentCategory.Frame));
     }
     void Set_Front_Engine_PositionsAndContents()
     {
-        SetFrameSlot(ComponentSlotPosition.FrontLeft, currentFrameLayout.GetFrontLeftPosition(), engineComponentOptions);
-        SetFrameSlot(ComponentSlotPosition.FrontRight, currentFrameLayout.GetFrontRightPosition(), engineComponentOptions);
+        var engines = SCRIPT_ComponentCatalogue.GetByCategory(ComponentCategory.Engine);
+        Set_FrameSlot_Definitions(ComponentSlotPosition.FrontLeft, currentFrameLayout.GetFrontLeftPosition(), engines);
+        Set_FrameSlot_Definitions(ComponentSlotPosition.FrontRight, currentFrameLayout.GetFrontRightPosition(), engines);
     }
 
     void Set_Back_Engine_PositionsAndContents()
     {
-        SetFrameSlot(ComponentSlotPosition.BackLeft, currentFrameLayout.GetBackLeftPosition(), engineComponentOptions);
-        SetFrameSlot(ComponentSlotPosition.BackRight, currentFrameLayout.GetBackRightPosition(), engineComponentOptions);
+        var engines = SCRIPT_ComponentCatalogue.GetByCategory(ComponentCategory.Engine);
+        Set_FrameSlot_Definitions(ComponentSlotPosition.BackLeft, currentFrameLayout.GetBackLeftPosition(), engines);
+        Set_FrameSlot_Definitions(ComponentSlotPosition.BackRight, currentFrameLayout.GetBackRightPosition(), engines);
     }
 
     void Set_Back_Extra_PositionsAndContents()
     {
         if (currentFrame.hasExtraBackEngineSlots)
         {
-            SetFrameSlot(ComponentSlotPosition.BackLeft1, currentFrameLayout.GetBackLeft1Position(), engineComponentOptions);
-            SetFrameSlot(ComponentSlotPosition.BackRight1, currentFrameLayout.GetBackRight1Position(), engineComponentOptions);
+            var engines = SCRIPT_ComponentCatalogue.GetByCategory(ComponentCategory.Engine);
+            Set_FrameSlot_Definitions(ComponentSlotPosition.BackLeft1, currentFrameLayout.GetBackLeft1Position(), engines);
+            Set_FrameSlot_Definitions(ComponentSlotPosition.BackRight1, currentFrameLayout.GetBackRight1Position(), engines);
         }
     }
 
     void Set_Extra_Top_PositionsAndContents()
     {
-        SetFrameSlot(ComponentSlotPosition.ExtraTop, currentFrameLayout.GetExtraTopPosition(), extraTopComponentOptions);
+        Set_FrameSlot_Definitions(ComponentSlotPosition.ExtraTop, currentFrameLayout.GetExtraTopPosition(), SCRIPT_ComponentCatalogue.GetByCategory(ComponentCategory.ExtraTop));
     }
 
     void Set_Extra_PositionsAndContents()
     {
-        SetFrameSlot(ComponentSlotPosition.ExtraLeft, currentFrameLayout.GetExtraLeftPosition(), extraComponentOptions);
-        SetFrameSlot(ComponentSlotPosition.ExtraRight, currentFrameLayout.GetExtraRightPosition(), extraComponentOptions);
+        var extras = SCRIPT_ComponentCatalogue.GetByCategory(ComponentCategory.Extra);
+        Set_FrameSlot_Definitions(ComponentSlotPosition.ExtraLeft, currentFrameLayout.GetExtraLeftPosition(), extras);
+        Set_FrameSlot_Definitions(ComponentSlotPosition.ExtraRight, currentFrameLayout.GetExtraRightPosition(), extras);
     }
 }
 

@@ -122,7 +122,7 @@ public class Ship_Passport : MonoBehaviour
     {
         foreach(var component in componentSlots)
         {
-            if(component.Value == "Boost_Gulp")
+            if(component.Value == "BOOST_GULP")
             {
                 return true;
             }
@@ -136,21 +136,20 @@ public class Ship_Passport : MonoBehaviour
     {
         if (componentSlots.Count > 0) return new(componentSlots);
 
-        Debug.Log("Then assumiing Counts is < = 0");
 
         // Default loadout now also by IDs (use actual IDs from your catalogue)
         var def = new Dictionary<ComponentSlotPosition, string>
         {
             { ComponentSlotPosition.Frame,     "FRAME_MEDIUM" },
-            { ComponentSlotPosition.FrontLeft, "JET_ENGINE"   },
-            { ComponentSlotPosition.FrontRight,"JET_ENGINE"   },
-            { ComponentSlotPosition.BackLeft,  "JET_ENGINE"   },
-            { ComponentSlotPosition.BackRight, "JET_ENGINE"   },
+            { ComponentSlotPosition.FrontLeft, "ENGINE_JET"   },
+            { ComponentSlotPosition.FrontRight,"ENGINE_JET"   },
+            { ComponentSlotPosition.BackLeft,  "ENGINE_JET"   },
+            { ComponentSlotPosition.BackRight, "ENGINE_JET"   },
             { ComponentSlotPosition.BackLeft1, "EMPTY"        },
             { ComponentSlotPosition.BackRight1,"EMPTY"        },
             { ComponentSlotPosition.ExtraTop,  "BOOST_GULP"   },
-            { ComponentSlotPosition.ExtraLeft, "EMPTY"         },
-            { ComponentSlotPosition.ExtraRight,"EMPTY"        },
+            { ComponentSlotPosition.ExtraLeft, "FUEL_TANK"         },
+            { ComponentSlotPosition.ExtraRight,"FUEL_TANK"         },
         };
         componentSlots = def;
         return def;
@@ -209,15 +208,15 @@ public class Ship_Passport : MonoBehaviour
         var defaultLoadout = new Dictionary<ComponentSlotPosition, string>
     {
             { ComponentSlotPosition.Frame,     "FRAME_MEDIUM" },
-            { ComponentSlotPosition.FrontLeft, "JET_ENGINE"   },
-            { ComponentSlotPosition.FrontRight,"JET_ENGINE"   },
-            { ComponentSlotPosition.BackLeft,  "JET_ENGINE"   },
-            { ComponentSlotPosition.BackRight, "JET_ENGINE"   },
+            { ComponentSlotPosition.FrontLeft, "ENGINE_JET"   },
+            { ComponentSlotPosition.FrontRight,"ENGINE_JET"   },
+            { ComponentSlotPosition.BackLeft,  "ENGINE_JET"   },
+            { ComponentSlotPosition.BackRight, "ENGINE_JET"   },
             { ComponentSlotPosition.BackLeft1, "EMPTY"        },
             { ComponentSlotPosition.BackRight1,"EMPTY"        },
             { ComponentSlotPosition.ExtraTop,  "BOOST_GULP"   },
-            { ComponentSlotPosition.ExtraLeft, "EMPTY"         },
-            { ComponentSlotPosition.ExtraRight,"EMPTY"        },
+            { ComponentSlotPosition.ExtraLeft, "FUEL_TANK"         },
+            { ComponentSlotPosition.ExtraRight,"FUEL_TANK"        },
     };
 
         return defaultLoadout;
@@ -229,14 +228,14 @@ public class Ship_Passport : MonoBehaviour
     {
 
 
-        string chosenWeapon = "Boost_Gulp";
+        string chosenWeapon = "BOOST_GULP";
 
         if (chosenWeapon != null)
         {
             return chosenWeapon;
         }
 
-        return "Empty";
+        return "EMPTY";
     }
 
     /*

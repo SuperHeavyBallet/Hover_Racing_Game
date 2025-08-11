@@ -6,8 +6,10 @@ public enum ComponentCategory
     Frame,
     Engine,
     Extra,
-    ExtraTop
+    ExtraTop,
+    Empty
 }
+
 
 [CreateAssetMenu(fileName = "Component", menuName = "Scriptable/Component Definition")]
 public class ComponentDefinition : ScriptableObject
