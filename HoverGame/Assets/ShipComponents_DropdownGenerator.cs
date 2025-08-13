@@ -1,36 +1,41 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 public class ShipComponents_DropdownGenerator : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
 
-    public TMP_Dropdown frameDropdown;
-    public TMP_Dropdown frontLeftDropdown;
-    public TMP_Dropdown frontRightDropdown;
-    public TMP_Dropdown backLeftDropdown;
-    public TMP_Dropdown backRightDropdown;
-    public TMP_Dropdown backLeft1Dropdown;
-    public TMP_Dropdown backRight1Dropdown;
-    public TMP_Dropdown extraTopDropdown;
-    public TMP_Dropdown extraLeftDropdown;
-    public TMP_Dropdown extraRightDropdown;
+    [SerializeField] private TMP_Dropdown frameDropdown;
+    [SerializeField] private TMP_Dropdown frontLeftDropdown;
+    [SerializeField] private TMP_Dropdown frontRightDropdown;
+    [SerializeField] private TMP_Dropdown backLeftDropdown;
+    [SerializeField] private TMP_Dropdown backRightDropdown;
+    [SerializeField] private TMP_Dropdown backLeft1Dropdown;
+    [SerializeField] private TMP_Dropdown backRight1Dropdown;
+    [SerializeField] private TMP_Dropdown extraTopDropdown;
+    [SerializeField] private TMP_Dropdown extraLeftDropdown;
+    [SerializeField] private TMP_Dropdown extraRightDropdown;
 
-    public ComponentCatalogue catalogueAsset;
+    [SerializeField] private ComponentCatalogue catalogueAsset;
 
-    public void CreateDropdownOptions()
+    public void CreateDropdownOptions(Dictionary<ComponentSlotPosition, SlotState> existingSlot)
     {
         catalogueAsset.EnsureBuilt();
 
+        foreach(var slot in existingSlot)
+        {
+           // Debug.Log(slot.Key + " : " +  slot.Value.selectedId);
+        }
+
         SetDropdownOptions(frameDropdown, AssembleDropDown(ComponentCategory.Frame), 1);
 
-        SetDropdownOptions(frontLeftDropdown, AssembleDropDown(ComponentCategory.Engine), 1);
-        SetDropdownOptions(frontRightDropdown, AssembleDropDown(ComponentCategory.Engine), 1);
-        SetDropdownOptions(backLeftDropdown, AssembleDropDown(ComponentCategory.Engine), 1);
-        SetDropdownOptions(backRightDropdown, AssembleDropDown(ComponentCategory.Engine), 1);
+        SetDropdownOptions(frontLeftDropdown, AssembleDropDown(ComponentCategory.Engine), AssembleDropDown(ComponentCategory.Engine).Count - 1);
+        SetDropdownOptions(frontRightDropdown, AssembleDropDown(ComponentCategory.Engine), AssembleDropDown(ComponentCategory.Engine).Count - 1);
+        SetDropdownOptions(backLeftDropdown, AssembleDropDown(ComponentCategory.Engine), AssembleDropDown(ComponentCategory.Engine).Count - 1);
+        SetDropdownOptions(backRightDropdown, AssembleDropDown(ComponentCategory.Engine), AssembleDropDown(ComponentCategory.Engine).Count - 1);
         SetDropdownOptions(backLeft1Dropdown, AssembleDropDown(ComponentCategory.Engine), AssembleDropDown(ComponentCategory.Engine).Count - 1);
         SetDropdownOptions(backRight1Dropdown, AssembleDropDown(ComponentCategory.Engine), AssembleDropDown(ComponentCategory.Engine).Count - 1);
-        SetDropdownOptions(extraTopDropdown, AssembleDropDown(ComponentCategory.ExtraTop), 0);
+        SetDropdownOptions(extraTopDropdown, AssembleDropDown(ComponentCategory.ExtraTop), AssembleDropDown(ComponentCategory.Engine).Count - 1);
         SetDropdownOptions(extraLeftDropdown, AssembleDropDown(ComponentCategory.Extra), AssembleDropDown(ComponentCategory.Extra).Count - 1);
         SetDropdownOptions(extraRightDropdown, AssembleDropDown(ComponentCategory.Extra), AssembleDropDown(ComponentCategory.Extra).Count - 1);
     }
@@ -40,29 +45,122 @@ public class ShipComponents_DropdownGenerator : MonoBehaviour
         dropdown.ClearOptions();
         dropdown.AddOptions(options);
 
-        dropdown.value = Mathf.Clamp(defaultIndex, 0, options.Count - 1);
+        //int selectedInt = Mathf.Clamp(defaultIndex, 0, options.Count - 1);
+
+        //dropdown.SetValueWithoutNotify(selectedInt);
+
         dropdown.RefreshShownValue();
+    }
+
+    public void Update_ALL_DropdownOptions(Dictionary<ComponentSlotPosition, SlotState> currentSlotComponents)
+    {
+
+        foreach(var slot in currentSlotComponents)
+        {
+            TMP_Dropdown currentDropdown = null;
+
+            switch (slot.Key)
+            {
+                case ComponentSlotPosition.Frame:
+                    currentDropdown = frameDropdown; break;
+                case ComponentSlotPosition.FrontLeft:
+                    currentDropdown = frontLeftDropdown; break;
+                case ComponentSlotPosition.FrontRight:
+                    currentDropdown = frontRightDropdown; break;
+                case ComponentSlotPosition.BackLeft:
+                    currentDropdown = backLeftDropdown; break;
+                case ComponentSlotPosition.BackRight:
+                    currentDropdown = backRightDropdown; break;
+                case ComponentSlotPosition.BackLeft1:
+                    currentDropdown = backLeft1Dropdown; break;
+                case ComponentSlotPosition.BackRight1:
+                    currentDropdown = backRight1Dropdown; break;
+                case ComponentSlotPosition.ExtraTop:
+                    currentDropdown = extraTopDropdown; break;
+                case ComponentSlotPosition.ExtraLeft:
+                    currentDropdown = extraLeftDropdown; break;
+                case ComponentSlotPosition.ExtraRight:
+                    currentDropdown = extraRightDropdown; break;
+                default:
+                    Debug.LogError("No Valid Dropdown Found for: " + slot.Key); break;
+
+            }
+            
+            if(currentDropdown != null)
+            {
+                Update_DropdownCurrentOption(slot.Value.selectedId, currentDropdown);
+            }
+            
+        }
+    }
+
+    void Update_DropdownCurrentOption(string selectedId, TMP_Dropdown dropdown)
+    {
+        string componentName = catalogueAsset.GetById(selectedId).displayName;
+        int index = dropdown.options.FindIndex(option => option.text == componentName);
+        dropdown.SetValueWithoutNotify(index);
+        dropdown.RefreshShownValue();
+    }
+
+    public void Update_IndividualDropdownOptions( ComponentSlotPosition slotPosition ,int selectedInt)
+    {
+        TMP_Dropdown dropdown;
+
+        switch (slotPosition)
+        { 
+            case ComponentSlotPosition.Frame:
+                dropdown = frameDropdown; break;
+            case ComponentSlotPosition.FrontLeft:
+                dropdown = frontLeftDropdown; break;
+                case ComponentSlotPosition.FrontRight:
+                    dropdown = frontRightDropdown; break;
+            case ComponentSlotPosition.BackLeft:
+                dropdown = backLeftDropdown; break;
+                case ComponentSlotPosition.BackRight:
+                    dropdown = backRightDropdown; break;
+            case ComponentSlotPosition.BackLeft1:
+                dropdown = backLeft1Dropdown; break;
+            case ComponentSlotPosition.BackRight1:
+                dropdown = backRight1Dropdown; break;
+                case ComponentSlotPosition.ExtraTop:
+                    dropdown = extraTopDropdown; break;
+                case ComponentSlotPosition.ExtraLeft:
+                    dropdown = extraLeftDropdown; break;
+                case ComponentSlotPosition.ExtraRight:
+                    dropdown = extraRightDropdown; break;
+            default: Debug.LogError("No Dropdown found for: " + slotPosition); dropdown = null; break;
+        }
+
+
+        if(dropdown != null)
+        {
+            dropdown.SetValueWithoutNotify(selectedInt);
+            dropdown.RefreshShownValue();
+        }
+        
     }
 
 
     List<string> AssembleDropDown(ComponentCategory componentCategory)
     {
-        
-
-        List<string> options = new();
+        List<string> dropdownOptions = new();
 
         foreach (ComponentDefinition componentDefinition in catalogueAsset.GetByCategory(componentCategory))
         {
-            string name = componentDefinition.displayName;
+            string componentName = componentDefinition.displayName;
 
-            if (!options.Contains(name))
+            if (!dropdownOptions.Contains(componentName))
             {
-                options.Add(name);
+                dropdownOptions.Add(componentName);
             }
-
         }
 
-        return options;
+        if(componentCategory != ComponentCategory.Frame)
+        {
+            dropdownOptions.Add("Empty");
+        }
+
+        return dropdownOptions;
 
     }
 

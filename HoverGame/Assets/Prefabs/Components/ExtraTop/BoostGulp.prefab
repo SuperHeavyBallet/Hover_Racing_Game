@@ -227,7 +227,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6461904132691850111}
-  - component: {fileID: 1357122593875521815}
   - component: {fileID: -1573346372581630855}
   m_Layer: 7
   m_Name: BoostGulp
@@ -252,19 +251,6 @@ Transform:
   - {fileID: 2420421654961298699}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1357122593875521815
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3423024166324285631}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 322d340979e7b6741aaf5bbf279a6e7b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentScipt: {fileID: 11400000, guid: 444dc53af735c794d8f0bc251486977e, type: 2}
 --- !u!114 &-1573346372581630855
 MonoBehaviour:
   m_ObjectHideFlags: 0

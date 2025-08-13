@@ -36,7 +36,7 @@ public class Ship_Movement : MonoBehaviour
     public bool boostActivated;
     public bool limitActivated;
 
-    private List<IEngineFireListener> engineFireListeners = new List<IEngineFireListener>();
+    private Dictionary<IEngineFireListener, int> engineFireListeners = new Dictionary<IEngineFireListener, int>();
 
     float bounceAmplitude = 0.1f;   // Max up/down movement
     float bounceSpeed = 2f;         // How fast it bounces
@@ -74,7 +74,7 @@ public class Ship_Movement : MonoBehaviour
 
     Ship_Constructor shipConstructor;
 
-    Dictionary<ComponentSlotPosition, string> componentList = new();
+    Dictionary<ComponentSlotPosition, SlotState> componentList = new();
 
 
     Audio_Manager audioManager;
@@ -325,9 +325,9 @@ public class Ship_Movement : MonoBehaviour
     {
         foreach (var listener in engineFireListeners)
         {
-            if (listener != null)
+            if (listener.Key != null)
             {
-                listener.OnShipBoostFiring(firing);
+                listener.Key.OnShipBoostFiring(firing);
             }
         }
     }
@@ -464,9 +464,9 @@ public class Ship_Movement : MonoBehaviour
         {
             foreach (var listener in engineFireListeners)
             {
-                if (listener != null)
+                if (listener.Key != null)
                 {
-                    listener.OnShipEngineFiring(true);
+                    listener.Key.OnShipEngineFiring(true);
 
                 }
 
@@ -479,9 +479,9 @@ public class Ship_Movement : MonoBehaviour
 
             foreach (var listener in engineFireListeners)
             {
-                if (listener != null)
+                if (listener.Key != null)
                 {
-                    listener.OnShipEngineFiring(false);
+                    listener.Key.OnShipEngineFiring(false);
                 }
 
             }
@@ -505,20 +505,22 @@ public class Ship_Movement : MonoBehaviour
 
         rigidBody.linearVelocity = forwardComponent + verticalComponent;
     }
-    public void RegisterEngineFireListener(IEngineFireListener listener)
+    public void RegisterEngineFireListener(IEngineFireListener listener, int localScaleX)
     {
-        if (!engineFireListeners.Contains(listener))
-        {
-            engineFireListeners.Add(listener);
-        }
+
+        if (listener == null) return;
+        if (!engineFireListeners.ContainsKey(listener))
+            engineFireListeners.Add(listener, localScaleX);
     }
+    /*
     public void UnregisterEngineFireListener(IEngineFireListener listener)
     {
         if (engineFireListeners.Contains(listener))
         {
             engineFireListeners.Remove(listener);
         }
-    }
+    }*/
+
     void AssignSideBoosters()
     {
         if (shipPassport != null)
@@ -551,7 +553,7 @@ public class Ship_Movement : MonoBehaviour
         CURRENT_TopSpeed = shipMovementCalculator.CalculateCurrentTopSpeed(boostActivated, trackBoostActivated, limitActivated, isSurgeBoosting);
         CURRENT_MovementForce = shipMovementCalculator.CalculateCurrentMovementForce(boostActivated, trackBoostActivated, limitActivated, isSurgeBoosting);
         CURRENT_RotationSpeed = shipMovementCalculator.CalculateCurrentRotationSpeed(boostActivated, trackBoostActivated, limitActivated);
-        CURRENT_NormalFuelConsumptionRate = shipMovementCalculator.BASE_NormaFuelConsumptionRate;
+        CURRENT_NormalFuelConsumptionRate = shipMovementCalculator.BASE_NormalFuelConsumptionRate;
         CURRENT_BoostFuelConsumptionRate = shipMovementCalculator.BASE_BoostFuelConsumptionRate;
         CURRENT_SideBoostAmount = shipMovementCalculator.CalculateCurrentSideBoostAmount();
     }
@@ -575,23 +577,7 @@ public class Ship_Movement : MonoBehaviour
     }
     public void UpdateSteering(Vector2 movementValue)
     {
-        
-
         receivedSteering = movementValue.x;
-
-        /*
-        Vector3 euler = transform.rotation.eulerAngles;
-        // Convert to -180 to +180 range
-        if (euler.x > 180) euler.x -= 360;
-        if (euler.z > 180) euler.z -= 360;
-
-        // Clamp pitch (X) and roll (Z)
-        euler.x = Mathf.Clamp(euler.x, -2f, 2f);
-        euler.z = Mathf.Clamp(euler.z, -2f, 2f);
-
-        // Preserve yaw (Y)
-        transform.rotation = Quaternion.Euler(euler);*/
-
     }
 
 
@@ -655,12 +641,17 @@ public class Ship_Movement : MonoBehaviour
         }
 
 
-        /*
-        // Apply downward drag from ship weight
-        float downwardPull = shipMovementCalculator.shipWeight / 1000f;
-        rigidBody.linearVelocity -= new Vector3(0f, downwardPull, 0f);*/
+        
+        
 
         UpdateRotation();
+    }
+
+    public void AddDownwardDrag()
+    {
+        // Apply downward drag from ship weight
+        float downwardPull = shipMovementCalculator.shipWeight / 100f;
+        rigidBody.linearVelocity -= new Vector3(0f, downwardPull, 0f);
     }
     void UpdateRotation()
     {
@@ -688,7 +679,17 @@ public class Ship_Movement : MonoBehaviour
     {
         foreach (var listener in engineFireListeners)
         {
-            listener.OnShipRotateNozzle(turnAmount * -1);
+            int scaleRotation;
+
+            if(listener.Value < 0)
+            {
+                scaleRotation = -1;
+            }
+            else
+            {
+                scaleRotation = 1;
+            }
+            listener.Key.OnShipRotateNozzle(turnAmount * scaleRotation);
         }
     }
     #endregion

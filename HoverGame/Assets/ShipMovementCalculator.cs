@@ -6,7 +6,7 @@ public class ShipMovementCalculator : MonoBehaviour
     public float BASE_TopSpeed;
     public float BASE_MovementForce;
     public float BASE_RotationSpeed;
-    public float BASE_NormaFuelConsumptionRate;
+    public float BASE_NormalFuelConsumptionRate;
     public float BASE_BoostFuelConsumptionRate;
 
     public float currentNormalFuel = 500f;
@@ -31,6 +31,8 @@ public class ShipMovementCalculator : MonoBehaviour
 
     int boostZoneAmount = 50;
 
+    [SerializeField] private ComponentCatalogue componentCatalogue;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -47,7 +49,7 @@ public class ShipMovementCalculator : MonoBehaviour
     }
 
 
-    public void CalculatePerformance(Dictionary<ComponentSlotPosition, string> components)
+    public void CalculatePerformance(Dictionary<ComponentSlotPosition, SlotState> components)
     {
         int rawSpeed = 0;
         int rawPower = 0;
@@ -64,52 +66,21 @@ public class ShipMovementCalculator : MonoBehaviour
 
         foreach (var pair in components)
         {
-            switch (pair.Value)
-            {
-                case "Light_Frame":
-                    totalWeight += 50;
-                    boostFuel += 30;
-                    normalFuel += 200;
-                    break;
-                case"Medium_Frame":
-                    totalWeight += 70;
-                    boostFuel += 10;
-                    normalFuel += 100;
-                    break;
-                case "Heavy_Frame":
-                    totalWeight += 100;
-                    break;
+            /// POTENTIAL ROUTE FOR CALUCULAR PER COMPONENT, NOT HARD STRINGS
+            ComponentDefinition componentDefinition = componentCatalogue.GetById(pair.Value.selectedId);
 
-                case "Engine":
-                    totalWeight += 100;
-                    rawPower += 15;
-                    rawSpeed += 30;
-                    engineCount += 1;
-                    break;
-                case "Jet_Engine":
-                    totalWeight += 70;
-                    rawPower += 20;
-                    rawSpeed += 25;
-                    jetEngineCount += 1;
-                    break;
 
-                case "Fuel_Tank":
-                    totalWeight += 10;
-                    boostFuel += 50;
-                    normalFuel += 200;
-                    fuelTankCount += 1;
-                    break;
-                case "Aireon":
-                    totalWeight -= 10;
-                    rawSpeed += 10;
-                    boostFuelConsumptionRate -= 0.25f;
-                    normalFuelConsumptionRate -= 0.25f;
-                    aireonCount += 1;
-                    break;
-                default:
-                    break;
-            }
+            totalWeight += componentDefinition.weight;
+            normalFuel += componentDefinition.normalfuelDelta;
+            boostFuel += componentDefinition.boostFuelDelta;
+            rawPower += componentDefinition.powerDelta;
+            rawSpeed += componentDefinition.topSpeedDelta;
+            normalFuelConsumptionRate += componentDefinition.normalFuelConsumptionDelta;
+            boostFuelConsumptionRate += componentDefinition.boostFuelConsumptionDelta;
+
+            if (componentDefinition.category == ComponentCategory.Engine) { engineCount++; }
         }
+    
 
         float weightFactor = Mathf.Max(totalWeight, 1);
 
@@ -121,16 +92,16 @@ public class ShipMovementCalculator : MonoBehaviour
         float t = Mathf.InverseLerp(maxWeight, minWeight, weightFactor); // Note the reverse
         BASE_RotationSpeed = Mathf.Lerp(30f, 150f, t); // Heavy = 30, Light = 150
 
-        BASE_BoostFuelConsumptionRate = 0.25f + boostFuelConsumptionRate;
-        BASE_NormaFuelConsumptionRate = 0.25f + normalFuelConsumptionRate;
+        BASE_BoostFuelConsumptionRate = Mathf.Max(0, 0.25f + boostFuelConsumptionRate);
+        BASE_NormalFuelConsumptionRate = Mathf.Max(0.25f + normalFuelConsumptionRate);
 
         shipWeight = Mathf.Max(0, totalWeight);
 
-        maxBoostFuel = boostFuel;
-        currentBoostFuel = boostFuel;
-        maxNormalFuel = normalFuel;
-        currentNormalFuel = normalFuel;
-        STAT_ManualBoostAmount = rawPower;
+        maxBoostFuel = Mathf.Max(0, boostFuel);
+        currentBoostFuel = Mathf.Max(0, boostFuel);
+        maxNormalFuel = Mathf.Max(0, normalFuel);
+        currentNormalFuel = Mathf.Max(0, normalFuel);
+        STAT_ManualBoostAmount = Mathf.Max(0, rawPower);
 
         fuelController.SetTotalFuelCapacity(normalFuel);
 

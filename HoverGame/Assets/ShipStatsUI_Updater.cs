@@ -9,9 +9,12 @@ public class ShipStatsUI_Updater : MonoBehaviour
     public GameObject DISPLAY_ShipTopSpeed;
     public GameObject DISPLAY_ShipPower;
     public GameObject DISPLAY_ShipControl;
-    public float ShipTopSpeed;
-    public float ShipPower;
-    public float ShipControl;
+    public GameObject DISPLAY_ShipWeight;
+    private float shipTopSpeed;
+    private float shipPower;
+    private float shipControl;
+    private float shipWeight;
+
     void Awake()
     {
        
@@ -20,21 +23,23 @@ public class ShipStatsUI_Updater : MonoBehaviour
  
     public void UpdateShipStats(Dictionary<ComponentSlotPosition, SlotState> componentSlotPositions)
     {
-        var shipLoadout = new Dictionary<ComponentSlotPosition, ComponentName>();
+       /* var shipLoadout = new Dictionary<ComponentSlotPosition, ComponentName>();
 
         foreach (var pair in componentSlotPositions)
         {
             shipLoadout[pair.Key] = IdToEnum(pair.Value.selectedId);
-        }
+        }*/
 
-        SCRIPT_ShipStatsCalculator.CalculatePerformance(shipLoadout);
-        ShipTopSpeed = SCRIPT_ShipStatsCalculator.GetShipTopSpeed();
-        ShipPower = SCRIPT_ShipStatsCalculator.GetShipPower();
-        ShipControl = SCRIPT_ShipStatsCalculator.GetShipControl();
+        SCRIPT_ShipStatsCalculator.CalculatePerformance(componentSlotPositions);
+        shipTopSpeed = SCRIPT_ShipStatsCalculator.GetShipTopSpeed();
+        shipPower = SCRIPT_ShipStatsCalculator.GetShipPower();
+        shipControl = SCRIPT_ShipStatsCalculator.GetShipControl();
+        shipWeight = SCRIPT_ShipStatsCalculator.GetShipWeight();
 
-        DISPLAY_ShipTopSpeed.GetComponent<TextMeshProUGUI>().text = "TOP SPEED: " + ShipTopSpeed.ToString();
-        DISPLAY_ShipPower.GetComponent<TextMeshProUGUI>().text = "POWER: " + ShipPower.ToString();
-        DISPLAY_ShipControl.GetComponent<TextMeshProUGUI>().text = "CONTROL: " + ShipControl.ToString();
+        DISPLAY_ShipTopSpeed.GetComponent<TextMeshProUGUI>().text = "TOP SPEED: " + shipTopSpeed.ToString();
+        DISPLAY_ShipPower.GetComponent<TextMeshProUGUI>().text = "POWER: " + shipPower.ToString();
+        DISPLAY_ShipControl.GetComponent<TextMeshProUGUI>().text = "CONTROL: " + shipControl.ToString();
+        DISPLAY_ShipWeight.GetComponent<TextMeshProUGUI>().text = "WEIGHT: " + shipWeight.ToString();
     }
 
     static string EnumToId(ComponentName n) => n.ToString();

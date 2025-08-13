@@ -1264,8 +1264,6 @@ MonoBehaviour:
   extraSlots:
   - {fileID: 5745200205587136476}
   - {fileID: 4255900053888097646}
-  - {fileID: 775723771243171661}
-  - {fileID: 7291727679521264437}
   extraTopSlot: {fileID: 2221071916239539217}
 --- !u!1 &7275295678520023399
 GameObject:

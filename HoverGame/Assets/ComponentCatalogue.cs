@@ -16,6 +16,14 @@ public class ComponentCatalogue : ScriptableObject
     private Dictionary<ComponentCategory, List<ComponentDefinition>> byCategory;
     bool built;
 
+
+
+    // Later set these to pull from the components themselves
+    const string EMPTY_ID = "EMPTY";
+    const string FRAME_LIGHT_ID = "FRAME_MEDIUM";
+    const string FRAME_MEDIUM_ID = "FRAME_MEDIUM";
+    const string FRAME_HEAVY_ID = "FRAME_HEAVY";
+
     // Self enforced Init, Ensure via other calling scripts
 
     void OnEnable() => built = false;
@@ -84,6 +92,31 @@ public class ComponentCatalogue : ScriptableObject
 
 
         return componentList;
+    }
+
+    public string GET_EmptyComponentID_AsString()
+    {
+        return EMPTY_ID;
+    }
+
+    public string GET_FrameID_AsString(string frameWeight)
+    {
+        string returnID;
+
+        switch(frameWeight)
+        {
+            case "light":
+                returnID = "FRAME_LIGHT"; break;
+            case "medium":
+                returnID = "FRAME_MEDIUM"; break;
+            case "heavy":
+                returnID = "FRAME_HEAVY"; break;
+            default:
+                Debug.LogError("Invalid Frame Weight: " + frameWeight + " - Sent to Receive ID");
+                returnID = null; break;
+
+        }
+        return returnID;
     }
 
 

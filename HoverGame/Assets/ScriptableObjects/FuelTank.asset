@@ -18,4 +18,12 @@ MonoBehaviour:
   prefab: {fileID: 3423024166324285631, guid: e9527cfcc6f41e24193d6632b25b5e36, type: 3}
   icon: {fileID: 0}
   cost: 0
-  weight: 0
+  weight: 30
+  topSpeedDelta: 0
+  powerDelta: 0
+  controlDelta: 0
+  normalfuelDelta: 100
+  boostFuelDelta: 50
+  normalFuelConsumptionDelta: 0
+  boostFuelConsumptionDelta: 0
+  hasExtraBackEngineSlots: 0

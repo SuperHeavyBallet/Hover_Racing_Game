@@ -33,6 +33,12 @@ public class ComponentDefinition : ScriptableObject
     public int powerDelta;
     public int controlDelta;
 
+    public int normalfuelDelta;
+    public int boostFuelDelta;
+
+    public int normalFuelConsumptionDelta;
+    public int boostFuelConsumptionDelta;
+
 
     [Header("Frame Specific Extras")]
 

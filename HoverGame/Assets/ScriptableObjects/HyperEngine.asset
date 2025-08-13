@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 815cad06ef997054784b4b2fb3f0a464, type: 3}
-  m_Name: MediumFrame
+  m_Name: HyperEngine
   m_EditorClassIdentifier: 
-  id: FRAME_MEDIUM
-  displayName: Medium Frame
-  category: 0
-  prefab: {fileID: 6362674939771482359, guid: 7ae94c4aeb0df714d8496e6965f5aea2, type: 3}
+  id: ENGINE_HYPER
+  displayName: Hyper Engine
+  category: 1
+  prefab: {fileID: 7090124252742436075, guid: eda4065c75e135d46bd0c73865d372e3, type: 3}
   icon: {fileID: 0}
   cost: 0
-  weight: 350
-  topSpeedDelta: 5
-  powerDelta: 5
-  controlDelta: 20
+  weight: 80
+  topSpeedDelta: 50
+  powerDelta: 80
+  controlDelta: -10
   normalfuelDelta: 0
   boostFuelDelta: 0
   normalFuelConsumptionDelta: 0

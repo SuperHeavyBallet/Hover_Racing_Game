@@ -13,24 +13,24 @@ public class Ship_Constructor : MonoBehaviour
     Ship_Passport shipPassport;
     Ship_Movement SCRIPT_ShipMovement;
 
-    Dictionary<ComponentSlotPosition, string> componentSlots = new();
+    Dictionary<ComponentSlotPosition, SlotState> componentSlots = new();
 
     public GameObject TEST_LightFame;
     public GameObject TEST_MedFame;
     public GameObject TEST_HevFame;
 
     // Positions to place components around the frame
-    public Transform framePosition;
-    Transform frontLeftPosition;
-    Transform frontRightPosition;
-    Transform backLeftPosition;
-    Transform backRightPosition;
-    Transform extraFrontPosition;
+    [SerializeField] private Transform framePosition;
+    [SerializeField] private Transform frontLeftPosition;
+    [SerializeField] private Transform frontRightPosition;
+    [SerializeField] private Transform backLeftPosition;
+    [SerializeField] private Transform backRightPosition;
+    [SerializeField] private Transform extraFrontPosition;
     Transform extraLeftPosition;
-    Transform extraRightPosition;
+    [SerializeField] private Transform extraRightPosition;
 
-    Transform backLeft1Position;
-    Transform backRight1Position;
+    [SerializeField] private Transform backLeft1Position;
+    [SerializeField] private Transform backRight1Position;
 
     [SerializeField] private ComponentCatalogue componentCatalogue;
 
@@ -50,6 +50,8 @@ public class Ship_Constructor : MonoBehaviour
         componentCatalogue.EnsureBuilt();
 
         CheckShipPassportExists();
+
+
         DecideFrame();
         PlaceComponents();
         
@@ -68,15 +70,12 @@ public class Ship_Constructor : MonoBehaviour
             {
                 componentSlots = shipPassport.GetShipLoadout();
             }
-            else
-            {
-                componentSlots = shipPassport.CreateDefaultLoadout();
-            }
+ 
         }
-        else
+
+        foreach (var slot in componentSlots)
         {
-            Debug.LogWarning("Ship Passport not found or loadout not received. Using default backup loadout.");
-            componentSlots = shipPassport.CreateDefaultLoadout();
+            Debug.Log(slot.Key +" ; "+ slot.Value);
         }
     }
 
@@ -92,14 +91,14 @@ public class Ship_Constructor : MonoBehaviour
             {
                 position = framePosition;
 
-                switch (pair.Value)
+                switch (pair.Value.selectedId)
                 {
-                    case "LIGHT_FRAME":
-                        newComponent = TEST_LightFame; break;
-                    case "MEDIUM_FRAME":
-                        newComponent = TEST_MedFame; break;
-                    case "HEAVY_FRAME":
-                        newComponent = TEST_HevFame; break;
+                    case "FRAME_LIGHT":
+                        newComponent = componentCatalogue.GetById(pair.Value.selectedId).prefab; break;
+                    case "FRAME_MEDIUM":
+                        newComponent = componentCatalogue.GetById(pair.Value.selectedId).prefab; break;
+                    case "FRAME_HEAVY":
+                        newComponent = componentCatalogue.GetById(pair.Value.selectedId).prefab; break;
                     default:
                         Debug.LogWarning("No Frame Type Assigned");
                         break;
@@ -142,9 +141,12 @@ public class Ship_Constructor : MonoBehaviour
 
         foreach(var pair in componentSlots)
         {
-            if (string.Equals(pair.Value, "Empty")) continue; // nothing to place
 
-            var def = componentCatalogue.GetById(pair.Value);
+            
+
+            if (pair.Key == ComponentSlotPosition.Frame) continue; // Don't place frame
+
+            var def = componentCatalogue.GetById(pair.Value.selectedId);
             if (def == null)
             {
                 Debug.LogWarning($"Unknown component id '{pair.Value}' in slot {pair.Key}");
@@ -161,32 +163,44 @@ public class Ship_Constructor : MonoBehaviour
             Transform position = null;
             GameObject newComponent = null;
 
+            int localScaleX = 1;
+
             switch (pair.Key)
             {
-                case ComponentSlotPosition.FrontLeft: 
+                case ComponentSlotPosition.FrontLeft:
+                    localScaleX = -1;
                     position = frontLeftPosition; break;
-                case ComponentSlotPosition.FrontRight: 
+                case ComponentSlotPosition.FrontRight:
+                    localScaleX = 1;
                     position = frontRightPosition; break;
-                case ComponentSlotPosition.BackLeft: 
+                case ComponentSlotPosition.BackLeft:
+                    localScaleX = -1;
                     position = backLeftPosition; break;
-                case ComponentSlotPosition.BackRight: 
+                case ComponentSlotPosition.BackRight:
+                    localScaleX = 1;
                     position = backRightPosition; break;
-                case ComponentSlotPosition.BackLeft1: 
+                case ComponentSlotPosition.BackLeft1:
+                    localScaleX = -1;
                     position = backLeft1Position; break;
-                case ComponentSlotPosition.BackRight1: 
+                case ComponentSlotPosition.BackRight1:
+                    localScaleX = 1;
                     position = backRight1Position; break;
                 case ComponentSlotPosition.ExtraTop:
+                    localScaleX = 1;
                     position = extraFrontPosition; break;
                 case ComponentSlotPosition.ExtraLeft:
+                    localScaleX = -1;
                     position = extraLeftPosition; break;
                 case ComponentSlotPosition.ExtraRight:
+                    localScaleX = 1;
                     position = extraRightPosition; break;
                 default:
-                    Debug.LogWarning("No Slot Assigned");
+                    localScaleX = 1;
+                    Debug.LogWarning("No Slot Assigned: " + pair.Key + " : " + pair.Value);
                     break;
             }
 
-            newComponent = componentCatalogue.GetById(pair.Value).prefab;
+            newComponent = componentCatalogue.GetById(pair.Value.selectedId).prefab;
             
     
             if (newComponent != null && position != null)
@@ -197,7 +211,7 @@ public class Ship_Constructor : MonoBehaviour
                 EngineController engineController = chosenComponent.GetComponent<EngineController>();
                 if(engineController != null )
                 {
-                    SCRIPT_ShipMovement.RegisterEngineFireListener(engineController);
+                    SCRIPT_ShipMovement.RegisterEngineFireListener(engineController, localScaleX);
                 }
             }
             else

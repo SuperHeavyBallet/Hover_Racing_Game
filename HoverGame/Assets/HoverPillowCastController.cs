@@ -19,10 +19,13 @@ public class HoverPillowCastController : MonoBehaviour
 
     Rigidbody rigidBody;
 
+    Ship_Movement shipMovementController;
+
     private void Awake()
     {
         neutralRotation = transform.rotation;
         rigidBody = GetComponent<Rigidbody>();
+        shipMovementController = GetComponent<Ship_Movement>();
     }
  
 
@@ -40,8 +43,7 @@ public class HoverPillowCastController : MonoBehaviour
         }
         else
         {
-            Vector3 downwardPull = Vector3.down * (reGroundForce * 2f);
-           rigidBody.AddForceAtPosition(downwardPull, this.transform.position, ForceMode.Force);
+            shipMovementController.AddDownwardDrag();
         }
 
         if(isGrounded)
