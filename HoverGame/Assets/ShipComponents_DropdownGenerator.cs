@@ -18,14 +18,29 @@ public class ShipComponents_DropdownGenerator : MonoBehaviour
 
     [SerializeField] private ComponentCatalogue catalogueAsset;
 
+
+
+    Ship_Passport SHIP_PASSPORT;
+
+    List<ComponentDefinition> unlockedComponents = new List<ComponentDefinition>();
+
+
+    private void Start()
+    {
+        
+    }
+
+    List<ComponentDefinition> FetchUnlockedList()
+    {
+        SHIP_PASSPORT = GameObject.Find("ShipPassport").GetComponent<Ship_Passport>();
+        return SHIP_PASSPORT.GetUnlockedComponents();
+    }
+
     public void CreateDropdownOptions(Dictionary<ComponentSlotPosition, SlotState> existingSlot)
     {
         catalogueAsset.EnsureBuilt();
 
-        foreach(var slot in existingSlot)
-        {
-           // Debug.Log(slot.Key + " : " +  slot.Value.selectedId);
-        }
+        unlockedComponents = FetchUnlockedList();
 
         SetDropdownOptions(frameDropdown, AssembleDropDown(ComponentCategory.Frame), 1);
 
@@ -45,9 +60,7 @@ public class ShipComponents_DropdownGenerator : MonoBehaviour
         dropdown.ClearOptions();
         dropdown.AddOptions(options);
 
-        //int selectedInt = Mathf.Clamp(defaultIndex, 0, options.Count - 1);
 
-        //dropdown.SetValueWithoutNotify(selectedInt);
 
         dropdown.RefreshShownValue();
     }
@@ -147,11 +160,27 @@ public class ShipComponents_DropdownGenerator : MonoBehaviour
 
         foreach (ComponentDefinition componentDefinition in catalogueAsset.GetByCategory(componentCategory))
         {
+            bool componentUnlocked = false;
             string componentName = componentDefinition.displayName;
 
-            if (!dropdownOptions.Contains(componentName))
+            foreach (ComponentDefinition component in unlockedComponents)
+            {
+                Debug.Log("CHECK: " + componentName + " : " + component.displayName);
+
+                if (component.displayName == componentName)
+                {
+                    componentUnlocked = true;
+                }
+            }
+
+
+            if (!dropdownOptions.Contains(componentName) && componentUnlocked)
             {
                 dropdownOptions.Add(componentName);
+            }
+            else
+            {
+                Debug.Log("NOT UNLOCKED! : " + componentName);
             }
         }
 

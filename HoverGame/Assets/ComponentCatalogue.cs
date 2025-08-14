@@ -50,6 +50,11 @@ public class ComponentCatalogue : ScriptableObject
         built = true;
     }
 
+    public List<ComponentDefinition> GetListOfAllComponents()
+    {
+        return components;
+    }
+
 
     // External Functions which query the catalogue  content
     public ComponentDefinition GetById(string id)

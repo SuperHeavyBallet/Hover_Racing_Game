@@ -2,71 +2,69 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.ComponentModel;
+using NUnit.Framework;
 public class ShipComponentsList_Controller : MonoBehaviour
 {
 
     public GameObject[] UI_ComponenentListElements;
-    List<string> newComponentsList = new List<string>();
+    List<SlotState> newComponentsList = new List<SlotState>();
+    [SerializeField] private ComponentCatalogue componentCatalogue;
+    
+
+    
 
 
-
-    public void ExposeComponentsAsList(List<string> componentsList, Dictionary<ComponentSlotPosition, SlotState> componentSlotPositions)
+    public void ExposeComponentsAsList(Dictionary<ComponentSlotPosition, SlotState> componentSlotPositions)
     {
-        //componentsList.Clear(); // <--- Important
+        
         newComponentsList.Clear();
 
-        foreach (var component in componentsList)
+        foreach (var componentSlot in componentSlotPositions)
         {
 
-            newComponentsList.Add(component);
+            newComponentsList.Add(componentSlot.Value);
         }
 
         ClearElementContents();
-        BuildNewUIList(componentsList);
+        BuildNewUIList(newComponentsList);
     }
 
-    void BuildNewUIList(List<string> componentsList)
+    void BuildNewUIList(List<SlotState> componentsList)
     {
-
-        string[] componentsListArray = componentsList.ToArray();
-
-        List<string> populatedComponents = new List<string>();
-        List<string> emptyComponents = new List<string>();
+        List<string> filledSlots = new List<string>();
+        List<string> emptySlots = new List<string>();
 
 
-        foreach (var component in componentsList)
+        foreach (var componentSlot in componentsList)
         {
-            if (component == "EMPTY")
+          
+            
+            string displayName = componentCatalogue.GetById(componentSlot.selectedId).displayName;
+
+          
+
+            if (displayName == "EMPTY" || displayName == "Empty")
             {
-                emptyComponents.Add(component);
+                emptySlots.Add(displayName);
             }
             else
             {
-                populatedComponents.Add(component);
+                filledSlots.Add(displayName);
             }
         }
 
-        List<string> completedList = new List<string>();
+       List<string> finalSLots = new List<string>();
+        finalSLots.AddRange(filledSlots);
+        finalSLots.AddRange(emptySlots);
 
-        foreach (string component in populatedComponents)
-        {
-            completedList.Add(component);
-        }
-
-        foreach (string component in emptyComponents)
-        {
-            completedList.Add(component);
-        }
-
-        componentsListArray = completedList.ToArray();
-
+        string[] componentsListArray = finalSLots.ToArray();
 
         for (int i = 0; i < componentsListArray.Length; i++)
         {
             TextMeshProUGUI elementText = UI_ComponenentListElements[i].GetComponent<TextMeshProUGUI>();
             if (elementText != null)
             {
-                if (componentsListArray[i] == "EMPTY")
+                if (componentsListArray[i] == "EMPTY" || componentsListArray[i] == "Empty")
                 {
                     elementText.text = "";
 
@@ -76,7 +74,6 @@ public class ShipComponentsList_Controller : MonoBehaviour
                     elementText.text = componentsListArray[i];
 
                 }
-
             }
             else
             {
@@ -84,7 +81,10 @@ public class ShipComponentsList_Controller : MonoBehaviour
             }
         }
 
+
     }
+
+ 
 
 
     void ClearElementContents()

@@ -114,7 +114,7 @@ public class MenuConstructorController : MonoBehaviour
     void UPDATE_UIElements()
     {
         UPDATE_CREATE_NewComponentsList();
-        SCRIPT_shipComponentsList_Controller.ExposeComponentsAsList(componentsList, componentSlotPositions);
+        SCRIPT_shipComponentsList_Controller.ExposeComponentsAsList(componentSlotPositions);
         SCRIPT_ShipStatsUI_Updater.UpdateShipStats(componentSlotPositions);
        
     }
@@ -339,8 +339,7 @@ public class MenuConstructorController : MonoBehaviour
 
         string existingComponent = slot.selectedId;
 
-        if (existingComponent != replacementComponentId)
-        {
+      
 
             if (componentSlotPositions.TryGetValue(slotPosition, out var position))
             {
@@ -355,7 +354,7 @@ public class MenuConstructorController : MonoBehaviour
             UPDATE_Component(slotPosition, replacementComponentId);
 
             UPDATE_UIElements();
-        }
+        
 
 
     }

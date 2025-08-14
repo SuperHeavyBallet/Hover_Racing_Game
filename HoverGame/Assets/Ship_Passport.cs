@@ -17,10 +17,20 @@ public class Ship_Passport : MonoBehaviour
 
     // The ship build, by IDs:
     public Dictionary<ComponentSlotPosition, SlotState> componentSlots  = new();
+    List<ComponentDefinition> allComponentsList = new List<ComponentDefinition>();
+    List<string> idOfUnlockedComponents = new List<string> {
+        "FRAME_LIGHT",
+        "FRAME_MEDIUM",
+        "ENGINE_DIESEL",
+        "ENGINE_JET",
+        "FUEL_TANK",
+        "BOOST_GULP"
+    };
 
     public GameObject mediumFrame;
     
-    
+    public List<ComponentDefinition> UnlockedComponents = new();
+    public List<ComponentDefinition> allComponents = new();
 
     public Dictionary<ComponentName, GameObject> componentPrefabs;
 
@@ -54,6 +64,8 @@ void Awake()
         }
         Instance = this;
         DontDestroyOnLoad(gameObject); 
+
+        BuildLocalCatalogue();
     }
     
     public GameObject GetShipFrame()
@@ -69,6 +81,36 @@ void Awake()
             return mediumFrame;
         }
 
+    }
+
+    void BuildLocalCatalogue()
+    {
+        allComponentsList.Clear();
+        allComponentsList = componentCatalogue.GetListOfAllComponents();
+
+        UpdatePlayerComponentUnlockList();
+    }
+
+    void UpdatePlayerComponentUnlockList()
+    {
+        foreach(var component in allComponentsList)
+        {
+            if(idOfUnlockedComponents.Contains(component.id))
+            {
+                UnlockedComponents.Add(component);
+            }
+        }
+
+        foreach(var component in UnlockedComponents)
+        {
+           // Debug.Log("UNLOCKED: " + component);
+        }
+    }
+
+
+    public List<ComponentDefinition> GetUnlockedComponents()
+    {
+        return UnlockedComponents;
     }
     
 

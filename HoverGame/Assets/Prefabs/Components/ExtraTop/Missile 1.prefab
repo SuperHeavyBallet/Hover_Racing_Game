@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 411764725037727879}
   - component: {fileID: 7695965477517909092}
   - component: {fileID: 1843441861516525078}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Particle System (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4854,7 +4854,7 @@ GameObject:
   - component: {fileID: 5146248917842374146}
   - component: {fileID: 5147046974281753925}
   - component: {fileID: 7932455839048324848}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: e
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4961,7 +4961,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5072763582351133458}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4998,7 +4998,7 @@ GameObject:
   - component: {fileID: 8912962372257353841}
   - component: {fileID: 6137502298601771727}
   - component: {fileID: 7939296488240535739}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Cube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5106,7 +5106,7 @@ GameObject:
   - component: {fileID: 7924707013089591778}
   - component: {fileID: 5832083664015592598}
   - component: {fileID: 7709075399771676695}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Plane (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5215,7 +5215,7 @@ GameObject:
   - component: {fileID: 5261441821844248519}
   - component: {fileID: 7822397055923416309}
   - component: {fileID: 1775966370888379389}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Plane (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5324,7 +5324,7 @@ GameObject:
   - component: {fileID: 907548974541638235}
   - component: {fileID: 2826317163766474010}
   - component: {fileID: 2748037343047363114}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5429,7 +5429,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5341869703713943631}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: BoostFlame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5468,7 +5468,7 @@ GameObject:
   - component: {fileID: 2434914747325295238}
   - component: {fileID: 2070363192870524851}
   - component: {fileID: 3995564430338150504}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Missile 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5535,10 +5535,10 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3423024166324285631}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -5567,7 +5567,7 @@ GameObject:
   - component: {fileID: 8482625363536228324}
   - component: {fileID: 413495037584510377}
   - component: {fileID: 623003386891530296}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5676,7 +5676,7 @@ GameObject:
   - component: {fileID: 4847760754508210786}
   - component: {fileID: 6184333538481643476}
   - component: {fileID: 2570995388834266378}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Plane (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5785,7 +5785,7 @@ GameObject:
   - component: {fileID: 6247901035281233345}
   - component: {fileID: 4722973670184573815}
   - component: {fileID: 7499447032807740969}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5894,7 +5894,7 @@ GameObject:
   - component: {fileID: 5888471504333771877}
   - component: {fileID: 4309893262423920400}
   - component: {fileID: 5720781520699984334}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6000,7 +6000,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3999447989551343405}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Mesh (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6034,7 +6034,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3373815128216860782}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: GameObject (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6071,7 +6071,7 @@ GameObject:
   - component: {fileID: 888354019752255882}
   - component: {fileID: 3867988739987057845}
   - component: {fileID: 6255865565010310199}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Plane (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6180,7 +6180,7 @@ GameObject:
   - component: {fileID: 6152512702635209186}
   - component: {fileID: 5075989852503238410}
   - component: {fileID: 5493059200827594041}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Plane (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6286,7 +6286,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2363700226023272363}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: GameObject (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6322,7 +6322,7 @@ GameObject:
   - component: {fileID: 4761180457347693563}
   - component: {fileID: 2059439722139689634}
   - component: {fileID: 5250630533871694885}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Particle System (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11165,7 +11165,7 @@ GameObject:
   - component: {fileID: 1052544046619945514}
   - component: {fileID: 309134235217068622}
   - component: {fileID: 2544996744613949940}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Plane (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

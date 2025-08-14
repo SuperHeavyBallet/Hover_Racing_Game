@@ -58666,7 +58666,7 @@ MonoBehaviour:
   BASE_TopSpeed: 0
   BASE_MovementForce: 0
   BASE_RotationSpeed: 0
-  BASE_NormaFuelConsumptionRate: 0
+  BASE_NormalFuelConsumptionRate: 0
   BASE_BoostFuelConsumptionRate: 0
   currentNormalFuel: 500
   maxNormalFuel: 500
@@ -63922,7 +63922,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 0
+  m_Constraints: 32
   m_CollisionDetection: 1
 --- !u!4 &4236394552825826590
 Transform:

@@ -27,20 +27,21 @@ public class CameraFollowTarget : MonoBehaviour
     {
         if (target == null) return;
 
-        // float speed = targetRigidbody != null ? targetRigidbody.linearVelocity.magnitude : 0f;
+        float speed = targetRigidbody != null ? targetRigidbody.linearVelocity.magnitude : 0f;
 
 
-        // float targetZoom = Mathf.Clamp(speed * zoomMultiplier, 0f, maxZoomOut);
-        // currentZoom = Mathf.Lerp(currentZoom, targetZoom, Time.deltaTime * zoomLerpSpeed);
+        float targetZoom = Mathf.Clamp(speed * zoomMultiplier, 0f, maxZoomOut);
+        currentZoom = Mathf.Lerp(currentZoom, targetZoom, Time.deltaTime * zoomLerpSpeed);
 
-        // Vector3 dynamicOffset = offset - (target.forward * currentZoom);
-        // Vector3 desiredPosition = target.position + target.rotation * dynamicOffset;
+        Vector3 dynamicOffset = offset - (target.forward * currentZoom);
+        Vector3 desiredPosition = target.position + target.rotation * dynamicOffset;
 
-        //transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * smoothSpeed);
+        transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * smoothSpeed);
 
-        //Quaternion desiredRotation = Quaternion.LookRotation(target.forward, Vector3.up);
-        //transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, Time.deltaTime * rotationSmoothSpeed);
+        Quaternion desiredRotation = Quaternion.LookRotation(target.forward, Vector3.up);
+        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, Time.deltaTime * rotationSmoothSpeed);
 
+        /*
         // Simple static offset
         Vector3 desiredPosition = target.position + target.rotation * offset;
         transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * smoothSpeed);
@@ -48,6 +49,7 @@ public class CameraFollowTarget : MonoBehaviour
         // Smooth rotation to follow target direction
         Quaternion desiredRotation = Quaternion.LookRotation(target.forward, Vector3.up);
         transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, Time.deltaTime * rotationSmoothSpeed);
+        */
     
 
     
