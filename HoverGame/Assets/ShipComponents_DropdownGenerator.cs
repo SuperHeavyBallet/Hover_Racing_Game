@@ -16,7 +16,7 @@ public class ShipComponents_DropdownGenerator : MonoBehaviour
     [SerializeField] private TMP_Dropdown extraLeftDropdown;
     [SerializeField] private TMP_Dropdown extraRightDropdown;
 
-    [SerializeField] private ComponentCatalogue catalogueAsset;
+    [SerializeField] private ComponentCatalogue componentCatalogue;
 
 
 
@@ -38,7 +38,7 @@ public class ShipComponents_DropdownGenerator : MonoBehaviour
 
     public void CreateDropdownOptions(Dictionary<ComponentSlotPosition, SlotState> existingSlot)
     {
-        catalogueAsset.EnsureBuilt();
+        componentCatalogue.EnsureBuilt();
 
         unlockedComponents = FetchUnlockedList();
 
@@ -109,7 +109,7 @@ public class ShipComponents_DropdownGenerator : MonoBehaviour
 
     void Update_DropdownCurrentOption(string selectedId, TMP_Dropdown dropdown)
     {
-        string componentName = catalogueAsset.GetById(selectedId).displayName;
+        string componentName = componentCatalogue.GetById(selectedId).displayName;
         int index = dropdown.options.FindIndex(option => option.text == componentName);
         dropdown.SetValueWithoutNotify(index);
         dropdown.RefreshShownValue();
@@ -158,14 +158,14 @@ public class ShipComponents_DropdownGenerator : MonoBehaviour
     {
         List<string> dropdownOptions = new();
 
-        foreach (ComponentDefinition componentDefinition in catalogueAsset.GetByCategory(componentCategory))
+        foreach (ComponentDefinition componentDefinition in componentCatalogue.GetByCategory(componentCategory))
         {
             bool componentUnlocked = false;
             string componentName = componentDefinition.displayName;
 
             foreach (ComponentDefinition component in unlockedComponents)
             {
-                Debug.Log("CHECK: " + componentName + " : " + component.displayName);
+                //Debug.Log("CHECK: " + componentName + " : " + component.displayName);
 
                 if (component.displayName == componentName)
                 {
@@ -180,7 +180,7 @@ public class ShipComponents_DropdownGenerator : MonoBehaviour
             }
             else
             {
-                Debug.Log("NOT UNLOCKED! : " + componentName);
+               // Debug.Log("NOT UNLOCKED! : " + componentName);
             }
         }
 

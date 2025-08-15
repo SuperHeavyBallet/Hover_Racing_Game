@@ -12,25 +12,32 @@ public class Ship_Passport : MonoBehaviour
 {
     public static Ship_Passport Instance {  get; private set; }
 
-    [Header("References")]
+    [Header("Component Catalogue")]
     public ComponentCatalogue componentCatalogue; // assign the asset in the inspector
+
+    [Header("Unlocked Components")] // Assign here what the player will have access too
+    public ComponentDefinition[] allUnlockedComponents;
+
+    private List<string> unlockedComponent_IDs = new List<string>();
 
     // The ship build, by IDs:
     public Dictionary<ComponentSlotPosition, SlotState> componentSlots  = new();
     List<ComponentDefinition> allComponentsList = new List<ComponentDefinition>();
-    List<string> idOfUnlockedComponents = new List<string> {
+   /*List<string> idOfUnlockedComponents = new List<string> {
         "FRAME_LIGHT",
         "FRAME_MEDIUM",
+        "FRAME_HEAVY",
         "ENGINE_DIESEL",
         "ENGINE_JET",
         "FUEL_TANK",
-        "BOOST_GULP"
-    };
+        "BOOST_GULP",
+        "MACHINE_GUN"
+    };*/
 
     public GameObject mediumFrame;
     
-    public List<ComponentDefinition> UnlockedComponents = new();
-    public List<ComponentDefinition> allComponents = new();
+    List<ComponentDefinition> UnlockedComponents = new();
+    //public List<ComponentDefinition> allComponents = new();
 
     public Dictionary<ComponentName, GameObject> componentPrefabs;
 
@@ -55,7 +62,7 @@ public class Ship_Passport : MonoBehaviour
 
 
 // Start is called once before the first execution of Update after the MonoBehaviour is created
-void Awake()
+    void Awake()
     {
         if(Instance != null && Instance != this)
         {
@@ -63,9 +70,12 @@ void Awake()
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject); 
+        DontDestroyOnLoad(gameObject);
+
+        BuildUnlockedList();
 
         BuildLocalCatalogue();
+
     }
     
     public GameObject GetShipFrame()
@@ -83,6 +93,14 @@ void Awake()
 
     }
 
+    void BuildUnlockedList()
+    {
+        foreach(ComponentDefinition component in allUnlockedComponents)
+        {
+            unlockedComponent_IDs.Add(component.id);
+        }
+    }
+
     void BuildLocalCatalogue()
     {
         allComponentsList.Clear();
@@ -95,15 +113,15 @@ void Awake()
     {
         foreach(var component in allComponentsList)
         {
-            if(idOfUnlockedComponents.Contains(component.id))
+            if(unlockedComponent_IDs.Contains(component.id))
             {
-                UnlockedComponents.Add(component);
+               UnlockedComponents.Add(component);
             }
         }
 
         foreach(var component in UnlockedComponents)
         {
-           // Debug.Log("UNLOCKED: " + component);
+           Debug.Log("UNLOCKED: " + component);
         }
     }
 
