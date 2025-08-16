@@ -12,11 +12,13 @@ public class ComponentPanelController : MonoBehaviour
 
     private Sprite componentImage;
     private string componentName;
-    private int componentCost;
+    private int? componentCost;
 
     public Sprite defaultIconImage;
-    private string defaultComponentName = "Missing";
-    private string defaultComponentCost = "$???";
+    private string defaultComponentName = "-";
+    private string defaultComponentCost = "-";
+
+    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -45,10 +47,6 @@ public class ComponentPanelController : MonoBehaviour
         {
             componentName = name;
         }
-        else
-        {
-            componentName = defaultComponentName;
-        }
         
         if(cost != null)
         {
@@ -65,6 +63,6 @@ public class ComponentPanelController : MonoBehaviour
         
         componentIcon_Display.sprite = componentImage;
         componentName_Display.text = componentName;
-        componentCost_Display.text = "$ " + componentCost.ToString();
+        componentCost_Display.text = "$" + componentCost.ToString();
     }
 }

@@ -52,7 +52,15 @@ public class ComponentCatalogue : ScriptableObject
 
     public List<ComponentDefinition> GetListOfAllComponents()
     {
-        return components;
+        List<ComponentDefinition> componentsWithoutEmpty = new();
+        foreach (var c in components)
+        {
+            if(c.id != EMPTY_ID)
+            {
+                componentsWithoutEmpty.Add(c);
+            }
+        }
+        return componentsWithoutEmpty;
     }
 
 

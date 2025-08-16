@@ -16,8 +16,8 @@ MonoBehaviour:
   displayName: Aireon
   category: 2
   prefab: {fileID: 3423024166324285631, guid: 996fa32454078704896c69f754c358a0, type: 3}
-  icon: {fileID: 0}
-  cost: 0
+  icon: {fileID: 21300000, guid: de4145141eecad04692640065d81d1f1, type: 3}
+  cost: 20
   weight: -10
   topSpeedDelta: 10
   powerDelta: 10

@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 815cad06ef997054784b4b2fb3f0a464, type: 3}
-  m_Name: MachineGun
+  m_Name: Test5
   m_EditorClassIdentifier: 
-  id: MACHINE_GUN
-  displayName: Machine Gun
-  category: 3
-  prefab: {fileID: 3423024166324285631, guid: b10c00986f054f9429e78a366ae2b985, type: 3}
+  id: TEST_5
+  displayName: Test 1
+  category: 0
+  prefab: {fileID: 3423024166324285631, guid: 266145e1ff7eb2546987c30b08035611, type: 3}
   icon: {fileID: 21300000, guid: de4145141eecad04692640065d81d1f1, type: 3}
-  cost: 40
-  weight: 20
-  topSpeedDelta: 0
-  powerDelta: 0
-  controlDelta: 0
-  normalfuelDelta: 0
-  boostFuelDelta: 0
-  normalFuelConsumptionDelta: 0
-  boostFuelConsumptionDelta: 0
+  cost: 99
+  weight: 99
+  topSpeedDelta: 99
+  powerDelta: 99
+  controlDelta: 99
+  normalfuelDelta: 99
+  boostFuelDelta: 99
+  normalFuelConsumptionDelta: 99
+  boostFuelConsumptionDelta: 99
   hasExtraBackEngineSlots: 0

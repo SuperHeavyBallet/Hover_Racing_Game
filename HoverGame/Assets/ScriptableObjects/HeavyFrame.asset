@@ -16,8 +16,8 @@ MonoBehaviour:
   displayName: Heavy Frame
   category: 0
   prefab: {fileID: 6362674939771482359, guid: 68768fa2b0a0c9848b99bb5e5167e9c3, type: 3}
-  icon: {fileID: 0}
-  cost: 0
+  icon: {fileID: 21300000, guid: de4145141eecad04692640065d81d1f1, type: 3}
+  cost: 200
   weight: 450
   topSpeedDelta: 0
   powerDelta: 0

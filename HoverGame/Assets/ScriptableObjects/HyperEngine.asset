@@ -16,8 +16,8 @@ MonoBehaviour:
   displayName: Hyper Engine
   category: 1
   prefab: {fileID: 7090124252742436075, guid: eda4065c75e135d46bd0c73865d372e3, type: 3}
-  icon: {fileID: 0}
-  cost: 0
+  icon: {fileID: 21300000, guid: de4145141eecad04692640065d81d1f1, type: 3}
+  cost: 200
   weight: 80
   topSpeedDelta: 50
   powerDelta: 80
