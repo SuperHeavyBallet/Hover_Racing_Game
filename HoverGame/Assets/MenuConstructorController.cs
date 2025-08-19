@@ -92,9 +92,9 @@ public class MenuConstructorController : MonoBehaviour
     
     public void CREATE_ShipModel()
     {
-        if (receivedShipLoadout.TryGetValue(ComponentSlotPosition.Frame, out var frameId))
+        if (receivedShipLoadout.TryGetValue(ComponentSlotPosition.Frame, out var frameSlot))
         {
-            SET_INITIAL_Frame_At_Position(frameId.selectedId);
+            SET_INITIAL_Frame_At_Position(frameSlot.selectedId);
         }
 
         foreach (var kvp in receivedShipLoadout)
@@ -104,6 +104,7 @@ public class MenuConstructorController : MonoBehaviour
         }
 
         SCRIPT_Menu_DropdownInterface.Update_ALL_DropdownOptions(componentSlotPositions);
+        UPDATE_UIElements(); // do once here
 
     }
     #endregion
@@ -307,28 +308,76 @@ public class MenuConstructorController : MonoBehaviour
         }
     }
 
-    void SET_INITIAL_Component_At_Position(ComponentSlotPosition slotPosition, string replacementComponentId)
+    void SET_INITIAL_Component_At_Position(ComponentSlotPosition slotPosition, string requestedComponentId)
     {
 
         if (slotPosition == ComponentSlotPosition.Frame) return;
 
-        if (!componentSlotPositions.TryGetValue(slotPosition, out var slot)) return;
-
-        string existingComponent = slot.selectedId;
-
-        if (componentSlotPositions.TryGetValue(slotPosition, out var position))
+        if (!componentSlotPositions.TryGetValue(slotPosition, out var slotState) || slotState == null)
         {
-            string currentComponentId = position.selectedId;
-            ComponentDefinition componentDef = SCRIPT_ComponentCatalogue.GetById(replacementComponentId);
-            GameObject prefab = componentDef.prefab;
-
-            GameObject newComponent = SCRIPT_MeshDisplayController.InstantiatePrefabAtPosition(prefab, position.position);
-
-
-            UPDATE_Component(slotPosition, replacementComponentId);
-
-            UPDATE_UIElements();
+            Debug.LogWarning($"SET_INITIAL_Component_At_Position: SlotState missing for {slotPosition}");
+            return;
         }
+
+        // Guard: slot transform must exist
+        var slotTransform = slotState.position;
+        if (slotTransform == null)
+        {
+            Debug.LogWarning($"SET_INITIAL_Component_At_Position: Slot Transform is null for {slotPosition}");
+            return;
+        }
+
+        // If requested is empty or not allowed for this slot, downgrade to LOCAL_EMPTY_ID
+        string finalId = requestedComponentId;
+
+        // Not selected or explicitly empty?
+        if (string.IsNullOrEmpty(finalId) || finalId == LOCAL_EMPTY_ID)
+        {
+            finalId = LOCAL_EMPTY_ID;
+        }
+        else
+        {
+            // Respect allowed options for this slot (from SET_FrameSlot_Definitions)
+            var options = slotState.optionsById;
+            if (options == null || !options.ContainsKey(finalId))
+            {
+                Debug.Log($"SET_INITIAL_Component_At_Position: Requested '{requestedComponentId}' not allowed in {slotPosition}. Using EMPTY.");
+                finalId = LOCAL_EMPTY_ID;
+            }
+        }
+
+        // If EMPTY, just clear any existing meshes in the slot and update the id
+        if (finalId == LOCAL_EMPTY_ID)
+        {
+            SCRIPT_MeshDisplayController?.CleanupExcessMeshesInSlot(slotTransform);
+            UPDATE_Component(slotPosition, LOCAL_EMPTY_ID);
+            return; // nothing to instantiate
+        }
+
+        // Lookup definition safely
+        var def = SCRIPT_ComponentCatalogue?.GetById(finalId);
+        if (def == null)
+        {
+            Debug.LogWarning($"SET_INITIAL_Component_At_Position: Unknown component id '{finalId}' in slot {slotPosition}. Using EMPTY.");
+            SCRIPT_MeshDisplayController?.CleanupExcessMeshesInSlot(slotTransform);
+            UPDATE_Component(slotPosition, LOCAL_EMPTY_ID);
+            return;
+        }
+
+        // Instantiate if a prefab exists; otherwise treat as empty visually but keep the id if that’s your design
+        if (def.prefab != null)
+        {
+            SCRIPT_MeshDisplayController?.CleanupExcessMeshesInSlot(slotTransform);
+            _ = SCRIPT_MeshDisplayController?.InstantiatePrefabAtPosition(def.prefab, slotTransform);
+        }
+        else
+        {
+            // No prefab: clear visuals
+            SCRIPT_MeshDisplayController?.CleanupExcessMeshesInSlot(slotTransform);
+        }
+
+        UPDATE_Component(slotPosition, def.id);
+
     }
     public void SET_DYNAMIC_Component_At_Position(ComponentSlotPosition slotPosition, string replacementComponentId)
     {

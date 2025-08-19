@@ -220,9 +220,10 @@ public class Ship_Movement : MonoBehaviour
 
     void UpdateUI()
     {
-        if (forwardSpeed > 0)
+        int currentSpeed = Mathf.CeilToInt(rigidBody.linearVelocity.magnitude);
+        if (currentSpeed > 0)
         {
-            UI_Router.UpdateSpeedDisplay(Mathf.RoundToInt(forwardSpeed));
+            UI_Router.UpdateSpeedDisplay(Mathf.RoundToInt(currentSpeed));
         }
         else
         {

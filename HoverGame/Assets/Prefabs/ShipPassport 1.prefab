@@ -45,6 +45,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   componentCatalogue: {fileID: 11400000, guid: 227856b83cd7dcc47963e9074dbdcaf8, type: 2}
+  allUnlockedComponents:
+  - {fileID: 11400000, guid: f12ac0684ab263546a53265639032983, type: 2}
+  - {fileID: 11400000, guid: 94f80d114d3303f45adbdec19c81661d, type: 2}
+  - {fileID: 11400000, guid: 97a115dbb6fd8fe429e3fe2d23646bd8, type: 2}
+  - {fileID: 11400000, guid: 8f04054b3900cc84295d91031c529d33, type: 2}
+  - {fileID: 11400000, guid: 4648df668e3c1464e828a9056817ea9f, type: 2}
+  - {fileID: 11400000, guid: 6eda3a7be6a26714eb10eb4ad91522e1, type: 2}
+  - {fileID: 11400000, guid: 89017ef01823e6d4693ec0491e775c99, type: 2}
+  - {fileID: 11400000, guid: 776e9be4e0a0f474a8aa06e516a50f89, type: 2}
   mediumFrame: {fileID: 6362674939771482359, guid: 7ae94c4aeb0df714d8496e6965f5aea2, type: 3}
-  UnlockedComponents: []
-  allComponents: []

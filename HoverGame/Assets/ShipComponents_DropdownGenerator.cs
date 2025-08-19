@@ -109,10 +109,54 @@ public class ShipComponents_DropdownGenerator : MonoBehaviour
 
     void Update_DropdownCurrentOption(string selectedId, TMP_Dropdown dropdown)
     {
-        string componentName = componentCatalogue.GetById(selectedId).displayName;
-        int index = dropdown.options.FindIndex(option => option.text == componentName);
+
+        if (dropdown == null) return;
+
+        if (componentCatalogue == null)
+        {
+            Debug.LogError("ShipComponents_DropdownGenerator: componentCatalogue is not assigned.");
+            return;
+        }
+
+        // Map ids -> display names, with a robust “Empty” fallback
+        string emptyId = componentCatalogue.GET_EmptyComponentID_AsString(); // your canonical empty id
+        string targetName;
+
+        bool isEmpty =
+            string.IsNullOrEmpty(selectedId) ||
+            selectedId.Equals(emptyId, System.StringComparison.OrdinalIgnoreCase) ||
+            selectedId.Equals("EMPTY", System.StringComparison.OrdinalIgnoreCase) ||
+            selectedId.Equals("Empty", System.StringComparison.OrdinalIgnoreCase);
+
+        if (isEmpty)
+        {
+            targetName = "Empty"; // this is the label you add in AssembleDropDown
+        }
+        else
+        {
+            var def = componentCatalogue.GetById(selectedId);
+            if (def == null)
+            {
+                Debug.LogWarning($"Dropdown: unknown component id '{selectedId}'. Selecting 'Empty'.");
+                targetName = "Empty";
+            }
+            else
+            {
+                targetName = def.displayName;
+            }
+        }
+
+        int index = dropdown.options.FindIndex(o => o.text == targetName);
+        if (index < 0)
+        {
+            // If “Empty” or the targetName isn’t present, fall back to 0 to avoid another nullref
+            index = 0;
+        }
+
         dropdown.SetValueWithoutNotify(index);
         dropdown.RefreshShownValue();
+
+
     }
 
     public void Update_IndividualDropdownOptions( ComponentSlotPosition slotPosition ,int selectedInt)

@@ -30,6 +30,7 @@ public class ShipStatsUI_Updater : MonoBehaviour
             shipLoadout[pair.Key] = IdToEnum(pair.Value.selectedId);
         }*/
 
+
         SCRIPT_ShipStatsCalculator.CalculatePerformance(componentSlotPositions);
         shipTopSpeed = SCRIPT_ShipStatsCalculator.GetShipTopSpeed();
         shipPower = SCRIPT_ShipStatsCalculator.GetShipPower();
