@@ -5,7 +5,7 @@ public class PlayerPositionSpawner : MonoBehaviour
     public GameObject player;
     public Transform spawnPosition;
 
-    bool hasSpawnedCorrectPosition = false;
+    //bool hasSpawnedCorrectPosition = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

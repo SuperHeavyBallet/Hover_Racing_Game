@@ -69,7 +69,7 @@ public class Ship_Movement : MonoBehaviour
 
     bool trackBoostActivated;
 
-    int boostZoneAmount = 50;
+    //int boostZoneAmount = 50;
 
 
     Ship_Constructor shipConstructor;
@@ -101,7 +101,7 @@ public class Ship_Movement : MonoBehaviour
     public bool isSurgeBoosting;
     Coroutine TurnOffSurgeBoost;
 
-    Coroutine TurnOffSideBoost;
+    //Coroutine TurnOffSideBoost;
 
     GameObject chosenFrame;
 
@@ -495,7 +495,7 @@ public class Ship_Movement : MonoBehaviour
         yield return new WaitForSeconds(delay);
         receivedSideBoost = 0;
         isSideBoosting = false;
-        TurnOffSideBoost = null;
+        //TurnOffSideBoost = null;
 
         Vector3 velocity = rigidBody.linearVelocity;
         Vector3 forward = transform.forward;

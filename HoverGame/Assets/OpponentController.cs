@@ -6,9 +6,9 @@ public class OpponentController : MonoBehaviour
 {
     private List<GhostFrame> recordedPath = new List<GhostFrame>();
     private float ghostTimer = 0f;
-    private int currentIndex = 0;
+   // private int currentIndex = 0;
 
-    private bool replayActive = false;
+    //private bool replayActive = false;
     private int ghostStartIndex = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -38,7 +38,7 @@ public class OpponentController : MonoBehaviour
 
         if (nextIndex >= recordedPath.Count)
         {
-            replayActive = false;
+           // replayActive = false;
             return;
         }
 
@@ -110,8 +110,8 @@ public class OpponentController : MonoBehaviour
         }
 
         ghostTimer = 0f;
-        currentIndex = 0;
-        replayActive = true;
+        //currentIndex = 0;
+      //  replayActive = true;
 
         Debug.Log($"Ghost will start from frame {ghostStartIndex}.");
 

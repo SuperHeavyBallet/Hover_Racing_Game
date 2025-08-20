@@ -149,14 +149,14 @@ public class Ship_Constructor : MonoBehaviour
             var def = componentCatalogue.GetById(pair.Value.selectedId);
             if (def == null)
             {
-                Debug.LogWarning($"Unknown component id '{pair.Value}' in slot {pair.Key}");
+                Debug.LogWarning($"Unknown component id '{pair.Value.selectedId}' in slot {pair.Key}");
                 continue;
             }
 
             var prefab = def.prefab;
             if (!prefab)
             {
-                Debug.LogWarning($"Component '{pair.Value}' has no prefab assigned.");
+                Debug.LogWarning($"Component '{pair.Value.selectedId}' has no prefab assigned.");
                 continue;
             }
 

@@ -60,14 +60,19 @@ public class ShipMovementCalculator : MonoBehaviour
         float boostFuelConsumptionRate = 0;
 
         float engineCount = 0;
-        float jetEngineCount = 0;
-        float fuelTankCount = 0;
-        float aireonCount = 0;
+        //float jetEngineCount = 0;
+        //float fuelTankCount = 0;
+        //float aireonCount = 0;
 
         foreach (var pair in components)
         {
+            if (pair.Value.selectedId == componentCatalogue.GET_EmptyComponentID_AsString()) continue;
+
             /// POTENTIAL ROUTE FOR CALUCULAR PER COMPONENT, NOT HARD STRINGS
             ComponentDefinition componentDefinition = componentCatalogue.GetById(pair.Value.selectedId);
+
+            
+    
 
 
             totalWeight += componentDefinition.weight;

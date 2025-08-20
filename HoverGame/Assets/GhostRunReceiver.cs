@@ -6,7 +6,7 @@ public class GhostRunReceiver : MonoBehaviour
 {
     private List<GhostFrame> recordedPath = new List<GhostFrame>();
     private float ghostTimer = 0f;
-    private int currentIndex = 0;
+    //private int currentIndex = 0;
 
     private bool replayActive = false;
 
@@ -62,7 +62,7 @@ public class GhostRunReceiver : MonoBehaviour
         this.transform.rotation = recordedPath[0].ToQuaternion();
 
         ghostTimer = 0f;
-        currentIndex = 0;
+        //currentIndex = 0;
         replayActive = true;
     }
 }

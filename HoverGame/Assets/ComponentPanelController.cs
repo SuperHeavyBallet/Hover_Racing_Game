@@ -52,6 +52,8 @@ public class ComponentPanelController : MonoBehaviour
         {
             componentCost = cost;
         }
+      
+      
         
 
         UpdateDisplay();
@@ -62,7 +64,24 @@ public class ComponentPanelController : MonoBehaviour
     {
         
         componentIcon_Display.sprite = componentImage;
-        componentName_Display.text = componentName;
-        componentCost_Display.text = "$" + componentCost.ToString();
+
+        if (!String.IsNullOrEmpty(componentName))
+        {
+            componentName_Display.text = componentName;
+        }
+        else
+        {
+            componentName_Display.text = defaultComponentName;
+        }
+            
+        if(componentCost != null)
+        {
+            componentCost_Display.text = "$" + componentCost.ToString();
+        }
+        else
+        {
+            componentCost_Display.text = "$" + defaultComponentCost;
+        }
+        
     }
 }
