@@ -12006,6 +12006,52 @@ Transform:
   - {fileID: 792180267}
   m_Father: {fileID: 2001265942}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &511648764
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 511648766}
+  - component: {fileID: 511648765}
+  m_Layer: 0
+  m_Name: LapCounter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &511648765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 511648764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 196059e651d8881488b3c6399179a65f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LevelCatalogue: {fileID: 11400000, guid: 76d34ee85b0540747aa0ba206b8cf835, type: 2}
+  thisLevel: {fileID: 11400000, guid: 1e0207ed0fb836a4db9b20153741371e, type: 2}
+--- !u!4 &511648766
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 511648764}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5654.239, y: -0.00024, z: -9712.498}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &513270281
 GameObject:
   m_ObjectHideFlags: 0
@@ -58242,10 +58288,10 @@ MonoBehaviour:
     m_ActionName: 'Player/BoostLeft[/Keyboard/leftArrow,/DualShock4GamepadHID/leftShoulder]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6261204171794853082}
-        m_TargetAssemblyTypeName: Ship_Movement, Assembly-CSharp
-        m_MethodName: AddSurgeBoost
-        m_Mode: 1
+      - m_Target: {fileID: 5580502319031642481}
+        m_TargetAssemblyTypeName: Input_Receiver, Assembly-CSharp
+        m_MethodName: SurgeBoost
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -58273,9 +58319,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce0d8bad1fa6b544d851308674855be8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TEST_LightFame: {fileID: 6362674939771482359, guid: 83b7b2eb7cd6db24ebc7d96f3f8aa581, type: 3}
-  TEST_MedFame: {fileID: 6362674939771482359, guid: 7ae94c4aeb0df714d8496e6965f5aea2, type: 3}
-  TEST_HevFame: {fileID: 6362674939771482359, guid: 68768fa2b0a0c9848b99bb5e5167e9c3, type: 3}
   framePosition: {fileID: 6189902116806249884}
   frontLeftPosition: {fileID: 0}
   frontRightPosition: {fileID: 0}
@@ -58340,6 +58383,7 @@ GameObject:
   - component: {fileID: 2201430898840259327}
   - component: {fileID: 8471041520366890375}
   - component: {fileID: 1044712303872050050}
+  - component: {fileID: 8471041520366890376}
   m_Layer: 7
   m_Name: Ship
   m_TagString: Player
@@ -64543,6 +64587,51 @@ MonoBehaviour:
   receivedSideBoost: 0
   isSideBoosting: 0
   isSurgeBoosting: 0
+  lateralDampingBySpeed:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 30
+      value: 2
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 60
+      value: 5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 120
+      value: 10
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  lateralMaxBrakePerStep: 20
+  snapOutThreshold: 6
+  snapImpulse: 3
 --- !u!1 &6320256283917098615
 GameObject:
   m_ObjectHideFlags: 0
@@ -65109,6 +65198,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 303f036f60f678349b6f59a6deccb387, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8471041520366890376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397305541769707696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 815801da2d2d40b4481562ab4b64975d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentCatalogue: {fileID: 11400000, guid: 227856b83cd7dcc47963e9074dbdcaf8, type: 2}
 --- !u!1 &9117259623988389971
 GameObject:
   m_ObjectHideFlags: 0
@@ -65215,3 +65317,4 @@ SceneRoots:
   - {fileID: 753011212}
   - {fileID: 1372087354}
   - {fileID: 1396884489}
+  - {fileID: 511648766}

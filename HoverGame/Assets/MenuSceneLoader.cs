@@ -15,7 +15,7 @@ public class MenuSceneLoader : MonoBehaviour
     }
     public void LoadScene(string sceneName)
     {
-        menuConstructorController.SET_ShipLoadout();
+        menuConstructorController.SEND_ShipLoadout();
         StartCoroutine(LoadSceneDelayed(sceneName));
     }
 

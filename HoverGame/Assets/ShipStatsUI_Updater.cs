@@ -37,7 +37,7 @@ public class ShipStatsUI_Updater : MonoBehaviour
         shipControl = SCRIPT_ShipStatsCalculator.GetShipControl();
         shipWeight = SCRIPT_ShipStatsCalculator.GetShipWeight();
 
-        DISPLAY_ShipTopSpeed.GetComponent<TextMeshProUGUI>().text = "TOP SPEED: " + shipTopSpeed.ToString();
+        DISPLAY_ShipTopSpeed.GetComponent<TextMeshProUGUI>().text = "SPEED: " + shipTopSpeed.ToString();
         DISPLAY_ShipPower.GetComponent<TextMeshProUGUI>().text = "POWER: " + shipPower.ToString();
         DISPLAY_ShipControl.GetComponent<TextMeshProUGUI>().text = "CONTROL: " + shipControl.ToString();
         DISPLAY_ShipWeight.GetComponent<TextMeshProUGUI>().text = "WEIGHT: " + shipWeight.ToString();

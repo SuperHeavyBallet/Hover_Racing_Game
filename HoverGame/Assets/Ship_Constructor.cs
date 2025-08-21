@@ -15,9 +15,9 @@ public class Ship_Constructor : MonoBehaviour
 
     Dictionary<ComponentSlotPosition, SlotState> componentSlots = new();
 
-    public GameObject TEST_LightFame;
-    public GameObject TEST_MedFame;
-    public GameObject TEST_HevFame;
+    //public GameObject TEST_LightFame;
+    //public GameObject TEST_MedFame;
+    //public GameObject TEST_HevFame;
 
     // Positions to place components around the frame
     [SerializeField] private Transform framePosition;
@@ -91,17 +91,16 @@ public class Ship_Constructor : MonoBehaviour
             {
                 position = framePosition;
 
-                switch (pair.Value.selectedId)
+                var def = componentCatalogue.GetById(pair.Value.selectedId);
+
+                if (def != null && def.prefab != null)
                 {
-                    case "FRAME_LIGHT":
-                        newComponent = componentCatalogue.GetById(pair.Value.selectedId).prefab; break;
-                    case "FRAME_MEDIUM":
-                        newComponent = componentCatalogue.GetById(pair.Value.selectedId).prefab; break;
-                    case "FRAME_HEAVY":
-                        newComponent = componentCatalogue.GetById(pair.Value.selectedId).prefab; break;
-                    default:
-                        Debug.LogWarning("No Frame Type Assigned");
-                        break;
+                    newComponent = def.prefab;
+                }
+                else
+                {
+                    Debug.LogWarning($"Frame id '{pair.Value.selectedId}' not found or has no prefab assigned.");
+                    newComponent = null;
                 }
             }
         }

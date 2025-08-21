@@ -25,14 +25,18 @@ public class Input_Receiver : MonoBehaviour
 
     public void Thrust(InputAction.CallbackContext ctx)
     {
-        if(ctx.performed)
+        bool pressed = ctx.ReadValueAsButton();
+        SCRIPT_Ship_Movement.UpdateThrust(pressed);
+
+        /*
+        if(ctx.started)
         {
             SCRIPT_Ship_Movement.UpdateThrust(true);
         }
         else if (ctx.canceled)
         {
             SCRIPT_Ship_Movement.UpdateThrust(false);
-        }
+        }*/
     }
 
 
@@ -46,22 +50,19 @@ public class Input_Receiver : MonoBehaviour
 
     public void Boost(InputAction.CallbackContext ctx)
     {
-       if(ctx.performed)
-        {
-            SCRIPT_Ship_Movement.ActivateBoost(true);
-        }
-       else if (ctx.canceled)
-        {
-            SCRIPT_Ship_Movement.ActivateBoost(false);
-        }
+        bool pressed = ctx.ReadValueAsButton();
+        
+      
+            SCRIPT_Ship_Movement.ActivateBoost(pressed);
+        
+     
     }
 
     public void SurgeBoost(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
-        {
-            SCRIPT_Ship_Movement.AddSurgeBoost();
-        }
+        bool pressed = ctx.ReadValueAsButton();
+        SCRIPT_Ship_Movement.AddSurgeBoost(pressed);
+
        
     }
 
@@ -105,7 +106,8 @@ public class Input_Receiver : MonoBehaviour
 
     public void Fire(InputAction.CallbackContext ctx)
     {
-        if(ctx.performed)
+        
+        if(ctx.started)
         {
             SCRIPT_Ship_WeaponRouter.ShipFireWeapon();
         }

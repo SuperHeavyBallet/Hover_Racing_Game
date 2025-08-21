@@ -119,6 +119,18 @@ public class Ship_Movement : MonoBehaviour
     public float boostImpulseAmount { get; private set; } = 40f;
     public float boostZoneImpulseAmount { get; private set; } = 50f;
 
+    // Designer knobs
+    [SerializeField]
+    AnimationCurve lateralDampingBySpeed = new AnimationCurve(
+        new Keyframe(0f, 0.5f),   // low speed: barely damp; allow drift
+        new Keyframe(30f, 2f),
+        new Keyframe(60f, 5f),
+        new Keyframe(120f, 10f)     // high speed: clamp sideways hard
+    );
+    [SerializeField] float lateralMaxBrakePerStep = 20f;   // cap for stability
+    [SerializeField] float snapOutThreshold = 6f;          // optional “shoot straight” snap
+    [SerializeField] float snapImpulse = 3f;               // small burst to kill big slips
+
     private void Awake()
     {
         InitialiseReferences();
@@ -134,7 +146,6 @@ public class Ship_Movement : MonoBehaviour
         UpdateStats();
         CheckBoostFiring();
         FireBoostEngines(boostersActive);
-        UpdateCameraShake();
         UpdateAudio();
         UpdateUI();
     }
@@ -156,32 +167,16 @@ public class Ship_Movement : MonoBehaviour
         rigidBody.AddForce(this.transform.forward * amount, ForceMode.Impulse);
     }
 
-    public void AddSurgeBoost()
+    public void AddSurgeBoost(bool pressed )
     {
-        isSurgeBoosting = false;
-        isSurgeBoosting = true;
+        
+        isSurgeBoosting = pressed;
 
-        if(TurnOffSurgeBoost == null)
-        {
-            TurnOffSurgeBoost = StartCoroutine(ResetSurgeBoost());
-        }
        
 
     }
 
-    public void StopSurgeBoost()
-    {
-        StopCoroutine(TurnOffSurgeBoost);
-        TurnOffSurgeBoost = null;
-        isSurgeBoosting = false;
-    }
 
-    IEnumerator ResetSurgeBoost()
-    {
-        yield return new WaitForSeconds(2);
-        StopSurgeBoost();
-
-    }
     public void ExitedBoostZone()
     {
         enteredBoostZone = false;
@@ -199,6 +194,7 @@ public class Ship_Movement : MonoBehaviour
     {
         AddHoverForces();
         ApplyMovement();
+        ApplyLateralGrip();
         UpdateVisualTilt();
         UpdateVisualBounce();
         LimitAngularVelocity();
@@ -275,10 +271,7 @@ public class Ship_Movement : MonoBehaviour
         // Smoothly interpolate to target
         shipVisual.localPosition = Vector3.Lerp(shipVisual.localPosition, targetPosition, Time.deltaTime * 5f);
     }
-    void UpdateCameraShake()
-    {
-        //innerCameraController.SetShakeAmount(forwardSpeed / 2000);
-    }
+   
     #endregion
 
     #region // Checks /////////////////////////////////////////////////
@@ -702,6 +695,36 @@ public class Ship_Movement : MonoBehaviour
         hoverForceCalculator.CastHoverZone();
     }
 
- 
-    
+
+    void ApplyLateralGrip()
+    {
+        Vector3 v = rigidBody.linearVelocity;
+
+        // Decompose velocity
+        Vector3 up = Vector3.up;
+        Vector3 fwd = transform.forward;
+        Vector3 vertical = Vector3.Project(v, up);
+        Vector3 forwardComp = Vector3.Project(v, fwd);
+        Vector3 lateral = v - vertical - forwardComp;          // horizontal sideways drift
+
+        float speedFwd = forwardComp.magnitude;                 // only forward speed matters
+        float k = lateralDampingBySpeed.Evaluate(speedFwd);     // grip grows with speed
+
+        // Brake lateral component toward zero
+        Vector3 desiredDelta = -lateral * k * Time.fixedDeltaTime;
+
+        // Keep it stable—no giant snaps per step
+        desiredDelta = Vector3.ClampMagnitude(desiredDelta, lateralMaxBrakePerStep);
+
+        // Apply as a velocity change so mass doesn’t matter
+        rigidBody.AddForce(desiredDelta, ForceMode.VelocityChange);
+
+        // Optional: if you’ve stopped steering and you’re still sliding a lot,
+        // give a tiny shove to "shoot straight" out of a drift.
+        if (Mathf.Abs(receivedSteering) < 0.1f && lateral.magnitude > snapOutThreshold)
+        {
+            rigidBody.AddForce(-lateral.normalized * snapImpulse, ForceMode.VelocityChange);
+        }
+    }
+
 }

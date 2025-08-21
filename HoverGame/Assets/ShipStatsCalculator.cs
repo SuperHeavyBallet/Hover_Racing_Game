@@ -19,18 +19,6 @@ public class ShipStatsCalculator : MonoBehaviour
 
     [SerializeField] private ComponentCatalogue componentCatalogue;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void CalculatePerformance(Dictionary<ComponentSlotPosition, SlotState> components)
     {
 
@@ -58,19 +46,20 @@ public class ShipStatsCalculator : MonoBehaviour
 
         foreach (var pair in components)
         {
+
             var slotState = pair.Value;
 
-            // No slot / no selection => skip
-            if (slotState == null)
-            {
-                Debug.LogWarning($"Slot {pair.Key} has null SlotState.");
-                continue;
-            }
-            if (string.IsNullOrEmpty(slotState.selectedId))
-            {
-                // Treat as empty slot
-                continue;
-            }
+           // No slot / no selection => skip
+           if (slotState == null)
+           {
+               Debug.LogWarning($"Slot {pair.Key} has null SlotState.");
+               continue;
+           }
+           if (string.IsNullOrEmpty(slotState.selectedId))
+           {
+               // Treat as empty slot
+               continue;
+           }
 
             var def = componentCatalogue.GetById(slotState.selectedId);
             if (def == null)
@@ -119,7 +108,6 @@ public class ShipStatsCalculator : MonoBehaviour
 
     }
 
-  
 
     public float GetShipTopSpeed()
     {

@@ -33,10 +33,10 @@ public class MenuConstructorController : MonoBehaviour
     
 
     [Header("Dictionaries")]
-    Dictionary<string, GameObject> frameComponentOptions = new();
-    Dictionary<string, GameObject> engineComponentOptions = new();
-    Dictionary<string, GameObject> extraComponentOptions = new();
-    Dictionary<string, GameObject> extraTopComponentOptions = new();
+    Dictionary<string, GameObject> OPTIONS_FrameComponents = new();
+    Dictionary<string, GameObject> OPTIONS_EngineComponents = new();
+    Dictionary<string, GameObject> OPTIONS_ExtraComponents = new();
+    Dictionary<string, GameObject> OPTIONS_ExtraTopComponents = new();
 
     [Header("Lists")]
     List<string> componentsList = new List<string>();
@@ -47,7 +47,10 @@ public class MenuConstructorController : MonoBehaviour
 
 
     [Header("References")]
-    public ComponentCatalogue SCRIPT_ComponentCatalogue; // assign the asset in the inspector
+
+    private ComponentCatalogue_Wrapper _componentCatalogue_Wrapper;
+
+    //public ComponentCatalogue SCRIPT_ComponentCatalogue; // assign the asset in the inspector
     ShipComponentsList_Controller SCRIPT_shipComponentsList_Controller;
     MeshDisplayController SCRIPT_MeshDisplayController;
     ShipStatsUI_Updater SCRIPT_ShipStatsUI_Updater;
@@ -75,10 +78,12 @@ public class MenuConstructorController : MonoBehaviour
     #region START PROCEDURE
     void Awake()
     {
+
         _suppressUI = true;
         SETUP_SET_LocalIDs();
         SETUP_GET_SCRIPT_References();
-        SCRIPT_ComponentCatalogue.EnsureBuilt();
+        //SCRIPT_ComponentCatalogue.EnsureBuilt();
+        _componentCatalogue_Wrapper.EnsureBuilt();
         SETUP_GET_LoadoutFrom_ShipPassport();
 
         if (receivedShipLoadout != null)
@@ -112,6 +117,32 @@ public class MenuConstructorController : MonoBehaviour
     // UPDATE FUNCTIONS //////////////////////////////////////////////////////
 
     #region UPDATE FUNCTIONS
+
+     void UPDATE_AllSlotMeshes_AfterFrameChange()
+    {
+        foreach(var kvp in componentSlotPositions)
+        {
+            var slotPos = kvp.Key;
+            if (slotPos == ComponentSlotPosition.Frame) continue;
+
+            var slotState = kvp.Value;
+            if(slotState?.position == null) continue;
+
+            SCRIPT_MeshDisplayController.CleanupExcessMeshesInSlot(slotState.position);
+
+            var selectedID = slotState.selectedId;
+            if(string.IsNullOrEmpty(selectedID) || selectedID == LOCAL_EMPTY_ID)
+            {
+                // Keep it empty visually
+                continue;
+            }
+
+            var def = _componentCatalogue_Wrapper?.Get_ComponentBy_ID(selectedID);
+            if(def?.prefab == null) continue;
+
+            SCRIPT_MeshDisplayController?.InstantiatePrefabAtPosition(def.prefab, slotState.position);
+        }
+    }
     void UPDATE_UIElements()
     {
         UPDATE_CREATE_NewComponentsList();
@@ -122,13 +153,13 @@ public class MenuConstructorController : MonoBehaviour
 
     void UPDATE_CREATE_NewComponentsList()
     {
-        SCRIPT_ComponentCatalogue.EnsureBuilt();
+        _componentCatalogue_Wrapper.EnsureBuilt();
         componentsList.Clear();
 
         foreach (var kvp in componentSlotPositions)
         {
             string id = kvp.Value.selectedId;
-            var def = SCRIPT_ComponentCatalogue.GetById(id);
+            var def = _componentCatalogue_Wrapper.Get_ComponentBy_ID(id);
             if (def == null)
             {
                 continue;
@@ -243,6 +274,10 @@ public class MenuConstructorController : MonoBehaviour
 
     #endregion
 
+    // REFRESH FUNCTIONS //////////////////////////////////////////////////
+
+   
+
     // SET FUNCTIONS //////////////////////////////////////////////////////
 
     #region SET FUNCTIONS
@@ -280,6 +315,7 @@ public class MenuConstructorController : MonoBehaviour
 
         GET_HeavyFrameStatus();
         SET_OptionsForExtraSlots(currentFrameIsHeavy);
+        UPDATE_AllSlotMeshes_AfterFrameChange();
         UPDATE_UIElements();
     }
 
@@ -288,7 +324,7 @@ public class MenuConstructorController : MonoBehaviour
     {
         ComponentDefinition chosenFrame;
 
-        chosenFrame = SCRIPT_ComponentCatalogue.GetById(frameId);
+        chosenFrame = _componentCatalogue_Wrapper.Get_ComponentBy_ID(frameId);
 
         return chosenFrame;
     }
@@ -355,7 +391,7 @@ public class MenuConstructorController : MonoBehaviour
         }
 
         // Lookup definition safely
-        var def = SCRIPT_ComponentCatalogue?.GetById(finalId);
+        var def = _componentCatalogue_Wrapper?.Get_ComponentBy_ID(finalId);
         if (def == null)
         {
             Debug.LogWarning($"SET_INITIAL_Component_At_Position: Unknown component id '{finalId}' in slot {slotPosition}. Using EMPTY.");
@@ -394,7 +430,7 @@ public class MenuConstructorController : MonoBehaviour
             {
                 string currentComponentId = position.selectedId;
                 SCRIPT_MeshDisplayController.CleanupExcessMeshesInSlot(position.position);
-                ComponentDefinition componentDef = SCRIPT_ComponentCatalogue.GetById(replacementComponentId);
+                ComponentDefinition componentDef = _componentCatalogue_Wrapper.Get_ComponentBy_ID(replacementComponentId);
                 GameObject prefab = componentDef.prefab;
 
                 GameObject newComponent = SCRIPT_MeshDisplayController.InstantiatePrefabAtPosition(prefab, position.position);
@@ -455,7 +491,7 @@ public class MenuConstructorController : MonoBehaviour
         backRight1Label.gameObject.SetActive(value);
     }
 
-    public void SET_ShipLoadout()
+    public void SEND_ShipLoadout()
     {
         var shipLoadout = new Dictionary<ComponentSlotPosition, string>();
 
@@ -472,33 +508,38 @@ public class MenuConstructorController : MonoBehaviour
 
     void SET_ComponentOptions()
     {
-        frameComponentOptions = CONVERT_ToPrefabDict(SCRIPT_ComponentCatalogue.GetByCategory(ComponentCategory.Frame));
-        engineComponentOptions = CONVERT_ToPrefabDict(SCRIPT_ComponentCatalogue.GetByCategory(ComponentCategory.Engine));
-        extraTopComponentOptions = CONVERT_ToPrefabDict(SCRIPT_ComponentCatalogue.GetByCategory(ComponentCategory.ExtraTop));
-        extraComponentOptions = CONVERT_ToPrefabDict(SCRIPT_ComponentCatalogue.GetByCategory(ComponentCategory.Extra));
+        frameKeys.Clear();
+        engineComponentKeys.Clear();
+        extraTopComponentKeys.Clear();
+        extraComponentKeys.Clear();
 
-        UPDATE_ADD_OptionsTo_KeyList(frameComponentOptions, frameKeys);
-        UPDATE_ADD_OptionsTo_KeyList(engineComponentOptions, engineComponentKeys);
-        UPDATE_ADD_OptionsTo_KeyList(extraTopComponentOptions, extraTopComponentKeys);
-        UPDATE_ADD_OptionsTo_KeyList(extraComponentOptions, extraComponentKeys);
+        OPTIONS_FrameComponents = CONVERT_ToPrefabDict(_componentCatalogue_Wrapper.Get_ComponentBy_Category(ComponentCategory.Frame));
+        OPTIONS_EngineComponents = CONVERT_ToPrefabDict(_componentCatalogue_Wrapper.Get_ComponentBy_Category(ComponentCategory.Engine));
+        OPTIONS_ExtraTopComponents = CONVERT_ToPrefabDict(_componentCatalogue_Wrapper.Get_ComponentBy_Category(ComponentCategory.ExtraTop));
+        OPTIONS_ExtraComponents = CONVERT_ToPrefabDict(_componentCatalogue_Wrapper.Get_ComponentBy_Category(ComponentCategory.Extra));
+
+        UPDATE_ADD_OptionsTo_KeyList(OPTIONS_FrameComponents, frameKeys);
+        UPDATE_ADD_OptionsTo_KeyList(OPTIONS_EngineComponents, engineComponentKeys);
+        UPDATE_ADD_OptionsTo_KeyList(OPTIONS_ExtraTopComponents, extraTopComponentKeys);
+        UPDATE_ADD_OptionsTo_KeyList(OPTIONS_ExtraComponents, extraComponentKeys);
     }
 
 
 
     void SET_Frame_PositionAndContents()
     {
-        SET_FrameSlot_Definitions(ComponentSlotPosition.Frame, framePosition, SCRIPT_ComponentCatalogue.GetByCategory(ComponentCategory.Frame));
+        SET_FrameSlot_Definitions(ComponentSlotPosition.Frame, framePosition, _componentCatalogue_Wrapper.Get_ComponentBy_Category(ComponentCategory.Frame));
     }
     void SET_Front_Engine_PositionsAndContents()
     {
-        var engines = SCRIPT_ComponentCatalogue.GetByCategory(ComponentCategory.Engine);
+        var engines = _componentCatalogue_Wrapper.Get_ComponentBy_Category(ComponentCategory.Engine);
         SET_FrameSlot_Definitions(ComponentSlotPosition.FrontLeft, currentFrameLayout.GetFrontLeftPosition(), engines);
         SET_FrameSlot_Definitions(ComponentSlotPosition.FrontRight, currentFrameLayout.GetFrontRightPosition(), engines);
     }
 
     void SET_Back_Engine_PositionsAndContents()
     {
-        var engines = SCRIPT_ComponentCatalogue.GetByCategory(ComponentCategory.Engine);
+        var engines = _componentCatalogue_Wrapper.Get_ComponentBy_Category(ComponentCategory.Engine);
         SET_FrameSlot_Definitions(ComponentSlotPosition.BackLeft, currentFrameLayout.GetBackLeftPosition(), engines);
         SET_FrameSlot_Definitions(ComponentSlotPosition.BackRight, currentFrameLayout.GetBackRightPosition(), engines);
     }
@@ -507,7 +548,7 @@ public class MenuConstructorController : MonoBehaviour
     {
         if (currentFrame.hasExtraBackEngineSlots)
         {
-            var engines = SCRIPT_ComponentCatalogue.GetByCategory(ComponentCategory.Engine);
+            var engines = _componentCatalogue_Wrapper.Get_ComponentBy_Category(ComponentCategory.Engine);
             SET_FrameSlot_Definitions(ComponentSlotPosition.BackLeft1, currentFrameLayout.GetBackLeft1Position(), engines);
             SET_FrameSlot_Definitions(ComponentSlotPosition.BackRight1, currentFrameLayout.GetBackRight1Position(), engines);
         }
@@ -515,12 +556,12 @@ public class MenuConstructorController : MonoBehaviour
 
     void SET_Extra_Top_PositionsAndContents()
     {
-        SET_FrameSlot_Definitions(ComponentSlotPosition.ExtraTop, currentFrameLayout.GetExtraTopPosition(), SCRIPT_ComponentCatalogue.GetByCategory(ComponentCategory.ExtraTop));
+        SET_FrameSlot_Definitions(ComponentSlotPosition.ExtraTop, currentFrameLayout.GetExtraTopPosition(), _componentCatalogue_Wrapper.Get_ComponentBy_Category(ComponentCategory.ExtraTop));
     }
 
     void SET_Extra_PositionsAndContents()
     {
-        var extras = SCRIPT_ComponentCatalogue.GetByCategory(ComponentCategory.Extra);
+        var extras = _componentCatalogue_Wrapper.Get_ComponentBy_Category(ComponentCategory.Extra);
         SET_FrameSlot_Definitions(ComponentSlotPosition.ExtraLeft, currentFrameLayout.GetExtraLeftPosition(), extras);
         SET_FrameSlot_Definitions(ComponentSlotPosition.ExtraRight, currentFrameLayout.GetExtraRightPosition(), extras);
     }
@@ -531,6 +572,8 @@ public class MenuConstructorController : MonoBehaviour
     #region SetupFunctions
     void SETUP_GET_SCRIPT_References()
     {  
+        _componentCatalogue_Wrapper = this.GetComponent<ComponentCatalogue_Wrapper>();
+
         SCRIPT_shipComponentsList_Controller = this.GetComponent<ShipComponentsList_Controller>();
         SCRIPT_MeshDisplayController = this.GetComponent<MeshDisplayController>();
         SCRIPT_ShipStatsUI_Updater = this.GetComponent<ShipStatsUI_Updater>();
@@ -552,10 +595,10 @@ public class MenuConstructorController : MonoBehaviour
 
     void SETUP_SET_LocalIDs()
     {
-        LOCAL_EMPTY_ID = SCRIPT_ComponentCatalogue.GET_EmptyComponentID_AsString();
-        LOCAL_FRAME_LIGHT_ID = SCRIPT_ComponentCatalogue.GET_FrameID_AsString("light");
-        LOCAL_FRAME_MEDIUM_ID = SCRIPT_ComponentCatalogue.GET_FrameID_AsString("medium");
-        LOCAL_FRAME_HEAVY_ID = SCRIPT_ComponentCatalogue.GET_FrameID_AsString("heavy");
+        LOCAL_EMPTY_ID = _componentCatalogue_Wrapper.GET_EmptyComponentID_AsString();
+        LOCAL_FRAME_LIGHT_ID = _componentCatalogue_Wrapper.GET_FrameID_AsString("LIGHT");
+        LOCAL_FRAME_MEDIUM_ID = _componentCatalogue_Wrapper.GET_FrameID_AsString("MEDIUM");
+        LOCAL_FRAME_HEAVY_ID = _componentCatalogue_Wrapper.GET_FrameID_AsString("HEAVY");
     }
     #endregion
 

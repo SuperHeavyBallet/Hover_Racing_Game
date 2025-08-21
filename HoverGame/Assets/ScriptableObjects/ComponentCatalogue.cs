@@ -19,14 +19,39 @@ public class ComponentCatalogue : ScriptableObject
 
 
     // Later set these to pull from the components themselves
-    const string EMPTY_ID = "EMPTY";
-    const string FRAME_LIGHT_ID = "FRAME_MEDIUM";
-    const string FRAME_MEDIUM_ID = "FRAME_MEDIUM";
-    const string FRAME_HEAVY_ID = "FRAME_HEAVY";
+    //public string EMPTY_ID;
+    //public string FRAME_LIGHT_ID;
+    //public string FRAME_MEDIUM_ID;
+    //public string FRAME_HEAVY_ID;
+
+    [SerializeField] private ComponentDefinition LightFrameDefinition;
+    [SerializeField] private ComponentDefinition MediumFrameDefinition;
+    [SerializeField] private ComponentDefinition HeavyFrameDefinition;
+    [SerializeField] private ComponentDefinition EmptyComponentDefinition;
 
     // Self enforced Init, Ensure via other calling scripts
 
     void OnEnable() => built = false;
+
+    private void Awake()
+    {
+        //AssignIDs(EMPTY_ID, EmptyComponentDefinition);
+        //AssignIDs(FRAME_LIGHT_ID, LightFrameDefinition);
+        //AssignIDs(FRAME_MEDIUM_ID, MediumFrameDefinition);
+        //AssignIDs(FRAME_HEAVY_ID, HeavyFrameDefinition);
+    }
+
+    void AssignIDs(string id_String, ComponentDefinition componentDefinition)
+    {
+        if(componentDefinition.id != null)
+        {
+            id_String = componentDefinition.id;
+        }
+        else
+        {
+            Debug.LogError("Unable to assign id from: " + componentDefinition.id + " to: " +  id_String);
+        }
+    }
 
     public void EnsureBuilt()
     {
@@ -52,10 +77,11 @@ public class ComponentCatalogue : ScriptableObject
 
     public List<ComponentDefinition> GetListOfAllComponents()
     {
+        EnsureBuilt();
         List<ComponentDefinition> componentsWithoutEmpty = new();
         foreach (var c in components)
         {
-            if(c.id != EMPTY_ID)
+            if(c.id != EmptyComponentDefinition.id)
             {
                 componentsWithoutEmpty.Add(c);
             }
@@ -109,7 +135,7 @@ public class ComponentCatalogue : ScriptableObject
 
     public string GET_EmptyComponentID_AsString()
     {
-        return EMPTY_ID;
+        return EmptyComponentDefinition.id;
     }
 
     public string GET_FrameID_AsString(string frameWeight)
@@ -118,12 +144,12 @@ public class ComponentCatalogue : ScriptableObject
 
         switch(frameWeight)
         {
-            case "light":
-                returnID = "FRAME_LIGHT"; break;
-            case "medium":
-                returnID = "FRAME_MEDIUM"; break;
-            case "heavy":
-                returnID = "FRAME_HEAVY"; break;
+            case "LIGHT":
+                returnID = LightFrameDefinition.id; break;
+            case "MEDIUM":
+                returnID = MediumFrameDefinition.id; break;
+            case "HEAVY":
+                returnID = HeavyFrameDefinition.id; break;
             default:
                 Debug.LogError("Invalid Frame Weight: " + frameWeight + " - Sent to Receive ID");
                 returnID = null; break;
@@ -131,6 +157,8 @@ public class ComponentCatalogue : ScriptableObject
         }
         return returnID;
     }
+
+
 
 
 }
