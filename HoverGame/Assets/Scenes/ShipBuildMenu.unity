@@ -5210,6 +5210,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d4b856ff28d50a46ae4ad43293c302d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelCatalogue: {fileID: 0}
 --- !u!114 &562666874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6142,6 +6143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d4b856ff28d50a46ae4ad43293c302d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelCatalogue: {fileID: 0}
 --- !u!114 &648974954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11868,6 +11870,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d4b856ff28d50a46ae4ad43293c302d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelCatalogue: {fileID: 0}
 --- !u!114 &1145858354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16003,6 +16006,7 @@ GameObject:
   - component: {fileID: 1732465202}
   - component: {fileID: 1732465204}
   - component: {fileID: 1732465205}
+  - component: {fileID: 1732465206}
   m_Layer: 0
   m_Name: Menu Constructor
   m_TagString: Untagged
@@ -16027,6 +16031,7 @@ MonoBehaviour:
   backRight1_Dropdown: {fileID: 850568683}
   backLeft1Label: {fileID: 1212793780}
   backRight1Label: {fileID: 1800260551}
+  _componentCatalogue_Wrapper: {fileID: 0}
   SCRIPT_ComponentCatalogue: {fileID: 11400000, guid: 227856b83cd7dcc47963e9074dbdcaf8, type: 2}
   currentFrameIsHeavy: 0
 --- !u!4 &1732465193
@@ -16185,6 +16190,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d55e3769b317d24cbed20be76f6aff3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1732465206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1732465191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 815801da2d2d40b4481562ab4b64975d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentCatalogue: {fileID: 11400000, guid: 227856b83cd7dcc47963e9074dbdcaf8, type: 2}
 --- !u!1 &1753811538
 GameObject:
   m_ObjectHideFlags: 0
@@ -18647,6 +18665,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d4b856ff28d50a46ae4ad43293c302d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelCatalogue: {fileID: 0}
 --- !u!114 &2018656466
 MonoBehaviour:
   m_ObjectHideFlags: 0

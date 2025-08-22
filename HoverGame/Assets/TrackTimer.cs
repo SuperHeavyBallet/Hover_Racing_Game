@@ -12,6 +12,8 @@ public class TrackTimer : MonoBehaviour
     public float lapScore;
     //private float bestLapTime = 999999999;
 
+    [SerializeField] private LapCounterController LAPCOUNTERCONTROLLER;
+
 
     public Ghost_Ship_Controller ghostShipController;
 
@@ -36,11 +38,18 @@ public class TrackTimer : MonoBehaviour
         if(other.gameObject.CompareTag("TimeStart"))
         {
             StartTimer();
+
         }
         else if(other.gameObject.CompareTag("TimeStop") && timerActive)
         {
             StopTimer();
+            AddLap();
         }
+    }
+
+    void AddLap()
+    {
+        LAPCOUNTERCONTROLLER.AddLap();
     }
 
     private void StartTimer()

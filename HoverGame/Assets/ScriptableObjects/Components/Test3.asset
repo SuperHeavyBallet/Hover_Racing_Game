@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 815cad06ef997054784b4b2fb3f0a464, type: 3}
+  m_Name: Test3
+  m_EditorClassIdentifier: 
+  id: TEST_3
+  displayName: Test 1
+  category: 0
+  prefab: {fileID: 3423024166324285631, guid: 266145e1ff7eb2546987c30b08035611, type: 3}
+  icon: {fileID: 21300000, guid: de4145141eecad04692640065d81d1f1, type: 3}
+  cost: 99
+  weight: 99
+  topSpeedDelta: 99
+  powerDelta: 99
+  controlDelta: 99
+  normalfuelDelta: 99
+  boostFuelDelta: 99
+  normalFuelConsumptionDelta: 99
+  boostFuelConsumptionDelta: 99
+  hasExtraBackEngineSlots: 0

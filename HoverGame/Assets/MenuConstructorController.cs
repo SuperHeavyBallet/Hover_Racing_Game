@@ -48,9 +48,9 @@ public class MenuConstructorController : MonoBehaviour
 
     [Header("References")]
 
-    private ComponentCatalogue_Wrapper _componentCatalogue_Wrapper;
+    [SerializeField] ComponentCatalogue_Wrapper _componentCatalogue_Wrapper;
 
-    //public ComponentCatalogue SCRIPT_ComponentCatalogue; // assign the asset in the inspector
+    public ComponentCatalogue SCRIPT_ComponentCatalogue; // assign the asset in the inspector
     ShipComponentsList_Controller SCRIPT_shipComponentsList_Controller;
     MeshDisplayController SCRIPT_MeshDisplayController;
     ShipStatsUI_Updater SCRIPT_ShipStatsUI_Updater;
@@ -595,10 +595,10 @@ public class MenuConstructorController : MonoBehaviour
 
     void SETUP_SET_LocalIDs()
     {
-        LOCAL_EMPTY_ID = _componentCatalogue_Wrapper.GET_EmptyComponentID_AsString();
-        LOCAL_FRAME_LIGHT_ID = _componentCatalogue_Wrapper.GET_FrameID_AsString("LIGHT");
-        LOCAL_FRAME_MEDIUM_ID = _componentCatalogue_Wrapper.GET_FrameID_AsString("MEDIUM");
-        LOCAL_FRAME_HEAVY_ID = _componentCatalogue_Wrapper.GET_FrameID_AsString("HEAVY");
+        LOCAL_EMPTY_ID = SCRIPT_ComponentCatalogue.GET_EmptyComponentID_AsString();
+        LOCAL_FRAME_LIGHT_ID = SCRIPT_ComponentCatalogue.GET_FrameID_AsString("LIGHT");
+        LOCAL_FRAME_MEDIUM_ID = SCRIPT_ComponentCatalogue.GET_FrameID_AsString("MEDIUM");
+        LOCAL_FRAME_HEAVY_ID = SCRIPT_ComponentCatalogue.GET_FrameID_AsString("HEAVY");
     }
     #endregion
 
