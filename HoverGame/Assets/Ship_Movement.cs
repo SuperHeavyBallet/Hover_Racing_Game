@@ -10,6 +10,8 @@ using System.Drawing;
 
 public class Ship_Movement : MonoBehaviour
 {
+    [SerializeField] LapCounterController lapCounterController;
+    bool inputEnabled = false;
 
     UI_Controller UI_Router;
 
@@ -131,6 +133,21 @@ public class Ship_Movement : MonoBehaviour
     [SerializeField] float snapOutThreshold = 6f;          // optional “shoot straight” snap
     [SerializeField] float snapImpulse = 3f;               // small burst to kill big slips
 
+    private void OnEnable()
+    {
+        if (lapCounterController != null)
+            lapCounterController.CountdownFinished += HandleCountdownFinished;
+    }
+    void OnDisable()
+    {
+        if (lapCounterController != null)
+            lapCounterController.CountdownFinished -= HandleCountdownFinished;
+    }
+    void HandleCountdownFinished()
+    {
+        inputEnabled = true;
+        // enable your input here
+    }
     private void Awake()
     {
         InitialiseReferences();
@@ -164,7 +181,11 @@ public class Ship_Movement : MonoBehaviour
 
     public void AddBoostStartImpulse(float amount)
     {
-        rigidBody.AddForce(this.transform.forward * amount, ForceMode.Impulse);
+        if(inputEnabled)
+        {
+            rigidBody.AddForce(this.transform.forward * amount, ForceMode.Impulse);
+        }
+        
     }
 
     public void AddSurgeBoost(bool pressed )
@@ -193,7 +214,10 @@ public class Ship_Movement : MonoBehaviour
     void FixedUpdate()
     {
         AddHoverForces();
-        ApplyMovement();
+      
+         ApplyMovement();
+        
+        
         ApplyLateralGrip();
         UpdateVisualTilt();
         UpdateVisualBounce();
@@ -602,26 +626,14 @@ public class Ship_Movement : MonoBehaviour
         if (forwardSpeed < CURRENT_TopSpeed)
         {
             Vector3 forwardForce = transform.forward * receivedThrust * CURRENT_MovementForce;
-            rigidBody.AddForce(forwardForce, ForceMode.Acceleration);
+            if(inputEnabled)
+            {
+                rigidBody.AddForce(forwardForce, ForceMode.Acceleration);
+            }
+           
         }
 
-        /* Hold off for now
-        // Apply side boost impulse
-        if (isSideBoosting)
-        {
-            Vector3 sideForce = transform.right * receivedSideBoost * CURRENT_SideBoostAmount;
-            rigidBody.AddForce(sideForce, ForceMode.VelocityChange);
-
-            if (TurnOffSideBoost == null)
-            {
-                TurnOffSideBoost = StartCoroutine(TurnOffSideBoostAfterTime(0.1f));
-            }
-            else
-            {
-                receivedSideBoost = 0;
-                StopCoroutine(TurnOffSideBoost);
-            }
-        }*/
+       
 
         // Clamp only forward component
         Vector3 currentVelocity = rigidBody.linearVelocity;
@@ -631,7 +643,10 @@ public class Ship_Movement : MonoBehaviour
         if (forwardComponent.magnitude > CURRENT_TopSpeed)
         {
             Vector3 excess = forwardComponent - (forwardComponent.normalized * CURRENT_TopSpeed);
-            rigidBody.AddForce(-excess, ForceMode.VelocityChange);
+            if (inputEnabled)
+            {
+                rigidBody.AddForce(-excess, ForceMode.VelocityChange);
+            }
         }
 
 

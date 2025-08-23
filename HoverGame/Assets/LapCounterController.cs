@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 
 public class LapCounterController : MonoBehaviour
 {
+    public event Action CountdownFinished;
+
     public LevelCatalogue LevelCatalogue;
 
     public LevelDefinition thisLevel;
@@ -56,7 +59,11 @@ public class LapCounterController : MonoBehaviour
         raceHasStarted = true;
         waitUIText.SetActive(false);
         goUIText.SetActive(true);
-       StartCoroutine(TurnOffGoText(1));
+
+        //fire the event
+        CountdownFinished?.Invoke();
+
+        StartCoroutine(TurnOffGoText(1));
     }
 
     IEnumerator TurnOffGoText(int delay)

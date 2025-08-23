@@ -23,6 +23,7 @@ public class ShipComponents_DropdownGenerator : MonoBehaviour
     Ship_Passport SHIP_PASSPORT;
 
     List<ComponentDefinition> unlockedComponents = new List<ComponentDefinition>();
+    HashSet<string> unlockedDisplayNames = new(); // <- fast membership check
 
 
     private void Start()
@@ -38,29 +39,70 @@ public class ShipComponents_DropdownGenerator : MonoBehaviour
 
     public void CreateDropdownOptions(Dictionary<ComponentSlotPosition, SlotState> existingSlot)
     {
+        if (componentCatalogue == null)
+        {
+            Debug.LogError("DropdownGenerator: componentCatalogue not assigned.");
+            return;
+        }
+
         componentCatalogue.EnsureBuilt();
+
+        // reset caches so we don't double-add between calls
+        unlockedComponents.Clear();
+        unlockedDisplayNames.Clear();
 
         unlockedComponents = FetchUnlockedList();
 
-        SetDropdownOptions(frameDropdown, AssembleDropDown(ComponentCategory.Frame), 1);
+        foreach (var def in unlockedComponents)
+        {
+            // we choose displayName as the canonical text used in dropdowns
+            if (!string.IsNullOrEmpty(def.displayName))
+                unlockedDisplayNames.Add(def.displayName);
+        }
 
-        SetDropdownOptions(frontLeftDropdown, AssembleDropDown(ComponentCategory.Engine), AssembleDropDown(ComponentCategory.Engine).Count - 1);
-        SetDropdownOptions(frontRightDropdown, AssembleDropDown(ComponentCategory.Engine), AssembleDropDown(ComponentCategory.Engine).Count - 1);
-        SetDropdownOptions(backLeftDropdown, AssembleDropDown(ComponentCategory.Engine), AssembleDropDown(ComponentCategory.Engine).Count - 1);
-        SetDropdownOptions(backRightDropdown, AssembleDropDown(ComponentCategory.Engine), AssembleDropDown(ComponentCategory.Engine).Count - 1);
-        SetDropdownOptions(backLeft1Dropdown, AssembleDropDown(ComponentCategory.Engine), AssembleDropDown(ComponentCategory.Engine).Count - 1);
-        SetDropdownOptions(backRight1Dropdown, AssembleDropDown(ComponentCategory.Engine), AssembleDropDown(ComponentCategory.Engine).Count - 1);
-        SetDropdownOptions(extraTopDropdown, AssembleDropDown(ComponentCategory.ExtraTop), AssembleDropDown(ComponentCategory.Engine).Count - 1);
-        SetDropdownOptions(extraLeftDropdown, AssembleDropDown(ComponentCategory.Extra), AssembleDropDown(ComponentCategory.Extra).Count - 1);
-        SetDropdownOptions(extraRightDropdown, AssembleDropDown(ComponentCategory.Extra), AssembleDropDown(ComponentCategory.Extra).Count - 1);
+        // Precompute option lists once
+        var frameOptions = AssembleDropDown(ComponentCategory.Frame);
+        var engineOptions = AssembleDropDown(ComponentCategory.Engine);
+        var extraTopOpts = AssembleDropDown(ComponentCategory.ExtraTop);
+        var extraOpts = AssembleDropDown(ComponentCategory.Extra);
+
+
+
+
+        // Set options; pick sensible defaults (e.g., 0 or last = "Empty")
+    SetDropdownOptions(frameDropdown,     frameOptions,  Mathf.Min(1, frameOptions.Count - 1));
+
+    SetDropdownOptions(frontLeftDropdown, engineOptions, Mathf.Min(1, engineOptions.Count - 1));              // "Empty" last
+    SetDropdownOptions(frontRightDropdown,engineOptions, Mathf.Min(1, engineOptions.Count - 1));
+    SetDropdownOptions(backLeftDropdown,  engineOptions, Mathf.Min(1, engineOptions.Count - 1));
+    SetDropdownOptions(backRightDropdown, engineOptions, Mathf.Min(1, engineOptions.Count - 1));
+    SetDropdownOptions(backLeft1Dropdown, engineOptions, Mathf.Min(1, engineOptions.Count - 1));
+    SetDropdownOptions(backRight1Dropdown,engineOptions, Mathf.Min(1, engineOptions.Count - 1));
+
+    SetDropdownOptions(extraTopDropdown,  extraTopOpts, Mathf.Min(1, extraTopOpts.Count - 1));
+    SetDropdownOptions(extraLeftDropdown, extraOpts, Mathf.Min(1, extraOpts.Count - 1));
+    SetDropdownOptions(extraRightDropdown,extraOpts, Mathf.Min(1, extraOpts.Count - 1));
     }
 
     void SetDropdownOptions(TMP_Dropdown dropdown, List<string> options, int defaultIndex = 0)
     {
+        if (dropdown == null)
+            return;
+
         dropdown.ClearOptions();
+        // Add once, not inside a loop
         dropdown.AddOptions(options);
 
-
+        // clamp and set default index
+        if (options.Count == 0)
+        {
+            dropdown.SetValueWithoutNotify(0);
+        }
+        else
+        {
+            defaultIndex = Mathf.Clamp(defaultIndex, 0, options.Count - 1);
+            dropdown.SetValueWithoutNotify(defaultIndex);
+        }
 
         dropdown.RefreshShownValue();
     }
@@ -200,38 +242,25 @@ public class ShipComponents_DropdownGenerator : MonoBehaviour
 
     List<string> AssembleDropDown(ComponentCategory componentCategory)
     {
-        List<string> dropdownOptions = new();
+        var dropdownOptions = new List<string>();
 
-        foreach (ComponentDefinition componentDefinition in componentCatalogue.GetByCategory(componentCategory))
+        // Pull all components in this category
+        foreach (var def in componentCatalogue.GetByCategory(componentCategory))
         {
-            bool componentUnlocked = false;
-            string componentName = componentDefinition.displayName;
+            var name = def.displayName;
+            if (string.IsNullOrEmpty(name))
+                continue;
 
-            foreach (ComponentDefinition component in unlockedComponents)
+            // Only include if unlocked; we’re comparing DISPLAY NAMES to DISPLAY NAMES now
+            if (unlockedDisplayNames.Contains(name) && !dropdownOptions.Contains(name))
             {
-                //Debug.Log("CHECK: " + componentName + " : " + component.displayName);
-
-                if (component.displayName == componentName)
-                {
-                    componentUnlocked = true;
-                }
-            }
-
-
-            if (!dropdownOptions.Contains(componentName) && componentUnlocked)
-            {
-                dropdownOptions.Add(componentName);
-            }
-            else
-            {
-               // Debug.Log("NOT UNLOCKED! : " + componentName);
+                dropdownOptions.Add(name);
             }
         }
 
-        if(componentCategory != ComponentCategory.Frame)
-        {
+        // Non-frame slots get a robust "Empty" choice
+        if (componentCategory != ComponentCategory.Frame)
             dropdownOptions.Add("Empty");
-        }
 
         return dropdownOptions;
 

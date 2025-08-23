@@ -33100,7 +33100,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -47558,6 +47558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a678440a8b63ac64ab557350c664d596, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lapCounterController: {fileID: 511648765}
   worldCamera: {fileID: 993692165061898565}
   playerCamera: {fileID: 8199512005986270382}
   forwardSpeed: 0
