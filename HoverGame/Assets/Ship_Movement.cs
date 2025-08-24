@@ -614,7 +614,7 @@ public class Ship_Movement : MonoBehaviour
     {
 
         Vector3 flatVelocity = rigidBody.linearVelocity;
-        flatVelocity.y = 0f; // Only consider horizontal movement
+        flatVelocity.y = 0f; // < FIX This flattening may ovveride 'falling'
         forwardSpeed = Vector3.Dot(flatVelocity, transform.forward);
 
         if(isHoldingThrust)
